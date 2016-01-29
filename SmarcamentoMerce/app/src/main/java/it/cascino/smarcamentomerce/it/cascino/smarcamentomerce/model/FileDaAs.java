@@ -14,14 +14,14 @@ public class FileDaAs {
     private Timestamp timeInvio;
 
     private String campiSep = "|";
-    private String insideCampSep;
+    private String insideCampSep = ",";
     private String decimalSep = ",";
 
     public FileDaAs() {
         this.utente = "";
         this.deposito = "";
         this.progressivo = 0;
-        this.articoliLs = new ArrayList<Articolo>(null);
+        this.articoliLs = new ArrayList<Articolo>();
         this.timeRicezione = null;
         this.timeModifica = null;
         this.timeInvio = null;

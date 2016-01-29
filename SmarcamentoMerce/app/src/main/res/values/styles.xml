@@ -17,4 +17,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="listaArticoliHeader">
+        <item name="android:textStyle">italic|bold</item>
+     </style>
+
 </resources>

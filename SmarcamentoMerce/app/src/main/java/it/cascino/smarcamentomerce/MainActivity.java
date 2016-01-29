@@ -1,20 +1,35 @@
 package it.cascino.smarcamentomerce;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,39 +37,158 @@ import it.cascino.smarcamentomerce.adapter.ArticoloAdapter;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Barcode;
 
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
+import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.FileDaAs;
 
 public class MainActivity extends Activity {
+	private List<Articolo> articoliLs = new ArrayList<Articolo>();
+    private ArticoloAdapter adapterArticoliLs;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-        TextView numDep = (TextView) findViewById(R.id.numDep);
-        numDep.setText("02");
-        TextView dataSync = (TextView) findViewById(R.id.dataSyncd);
-        dataSync.setText("13:15 - 22/01/2016");
+		TextView numDep = (TextView) findViewById(R.id.numDep);
+		numDep.setText("02");
+		TextView dataSync = (TextView) findViewById(R.id.dataSync);
+		dataSync.setText("13:15 - 22/01/2016");
 
-        final List<Articolo> articoliLs = new ArrayList<Articolo>();
-        Barcode bcode[] = new Barcode[1];
-        bcode[0] = new Barcode("12454", "ean13");
-        articoliLs.add(new Articolo("cod 1", bcode, "desc 1", "PZ", 3.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
-        articoliLs.add(new Articolo("cod 2", bcode, "desc 2", "PZ", 0.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
-        articoliLs.add(new Articolo("cod 3", bcode, "desc 3", "PZ", 10f, 0.0f, "00/00/00", "01/08/15", 2, null));
+	   /*
+		final List<Articolo> articoliLs = new ArrayList<Articolo>();
+		Barcode bcode[] = new Barcode[1];
+		bcode[0] = new Barcode("12454", "ean13");
+		articoliLs.add(new Articolo("cod 1", bcode, "desc 1", "PZ", 3.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
+		articoliLs.add(new Articolo("cod 2", bcode, "desc 2", "PZ", 0.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
+		articoliLs.add(new Articolo("cod 3", bcode, "desc 3", "PZ", 10f, 0.0f, "00/00/00", "01/08/15", 2, null));
+		*/
+
+		Button syncButton = (Button)findViewById(R.id.syncButton);
+		syncButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new DownloadThread().execute("");
+			}
+		});
+
+		// ArrayAdapter<String> adapterArticoliLs = new ArrayAdapter<String>(this, R.layout.rowarticolo, articoliLs);
+		ListView listViewArticoliLs = (ListView) findViewById(R.id.articoliList);
+		listViewArticoliLs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(getApplicationContext(), "Sel: " + articoliLs.get(position).getCodice(), Toast.LENGTH_LONG).show();
+			}
+		});
+		adapterArticoliLs = new ArticoloAdapter(getApplicationContext(), articoliLs);
+		listViewArticoliLs.setAdapter(adapterArticoliLs);
+	}
+
+	private class DownloadThread extends AsyncTask<String, Void, String>{
+		@Override
+		protected String doInBackground(String... params) {
+			String dep = "02";
+			String usr = "AGORIN";
+			String userFtp = "androidftp";
+			String passwordFtp = "androidftp";
+			String directoryFtp = "/";
+			String filenameFtp = "inventario_dep" + dep + "_" + usr + ".csv";
+			//String filenameFtp = "a.csv";
+			try {
+			   // URL url = new URL("ftp://" + userFtp + ":" + passwordFtp + "@" + "ftp1.cascino.it" + directoryFtp + filenameFtp);
+				//URLConnection conn = url.openConnection();
+				//InputStream inputStream = conn.getInputStream();
 
 
+				FTPClient ftpClient = new FTPClient();
+				InetAddress ia = InetAddress.getByName("ftp1.cascino.it");
+				ftpClient.connect(ia, 21);
+				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.enterLocalPassiveMode();
+				//ftpClient.storeFile("test.txt", new FileInputStream(file));
+				ftpClient.changeWorkingDirectory(directoryFtp);
+				InputStream inputStream = ftpClient.retrieveFileStream(filenameFtp);
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF8");
+				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        // ArrayAdapter<String> adapterArticoliLs = new ArrayAdapter<String>(this, R.layout.rowarticolo, articoliLs);
-        ListView listViewArticoliLs = (ListView) findViewById(R.id.articoliList);
-        listViewArticoliLs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Sel: " + articoliLs.get(position).getCodice(), Toast.LENGTH_LONG).show();
-            }
-        });
-        ArticoloAdapter adapterArticoliLs = new ArticoloAdapter(getApplicationContext(), articoliLs);
-        listViewArticoliLs.setAdapter(adapterArticoliLs);
+			   // Toast.makeText(MainActivity.this, "collegato", Toast.LENGTH_LONG).show();
 
-    }
+				String lineRead = "";
+				// List<Articolo> articoliLs = null;
+				FileDaAs fileDaAs = new FileDaAs();
+				// salto le prime due righe che sono di intestazione
+				lineRead = bufferedReader.readLine();
+				lineRead = bufferedReader.readLine();
+				while((lineRead = bufferedReader.readLine()) != null){
+					Articolo art = new Articolo();
+					//String campiSlit[] = lineRead.split("\\" + fileDaAs.getCampiSep());
+					String campiSlit[] = StringUtils.split(lineRead, fileDaAs.getCampiSep());
+					art.setCodice(campiSlit[0]);
+					String barcodeLine[] = campiSlit[1].split(fileDaAs.getInsideCampSep());
+					Barcode barcode[] = new Barcode[barcodeLine.length];
+					for(int b = 0; b < barcodeLine.length; b++){
+						barcode[b] = new Barcode(barcodeLine[b], "ean13");
+					}
+					art.setBarcode(barcode);
+					art.setDesc(campiSlit[2]);
+					art.setUm(campiSlit[3]);
 
+					DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+					symbols.setDecimalSeparator(',');
+					DecimalFormat format = new DecimalFormat();
+					format.setDecimalFormatSymbols(symbols);
+					Float f = 0.0f;
+					try {
+						f = format.parse(campiSlit[4]).floatValue();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					art.setQty(f); // Float.parseFloat(campiSlit[4]));
+					try {
+						f = format.parse(campiSlit[5]).floatValue();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					art.setDifettosi(f); // Float.parseFloat(campiSlit[5]));
+					art.setDataCarico(campiSlit[6]);
+					art.setDataScarico(campiSlit[7]);
+					art.setStato(Integer.parseInt(campiSlit[8]));
+					DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
+					try {
+						Date date = (Date)formatter.parse(campiSlit[9]);
+						art.setTimestamp(new Timestamp(date.getTime()));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					articoliLs.add(art);
+				}
+				//fileDaAs.setArticoliLs(articoliLs);
+				ftpClient.logout();
+				ftpClient.disconnect();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return "Thread terminato";
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			Toast.makeText(MainActivity.this, "post", Toast.LENGTH_LONG).show();
+			//findViewById(R.id.articoliList).invalidate();
+            adapterArticoliLs.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			Toast.makeText(MainActivity.this, "pre", Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values) {
+			Toast.makeText(MainActivity.this, "progress", Toast.LENGTH_LONG).show();
+		}
+	}
 }

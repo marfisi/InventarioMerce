@@ -54,4 +54,9 @@ public class ArticoloAdapter extends BaseAdapter {
         txt.setText("c: " + a.getDataCarico() + " - s: " + a.getDataScarico());
         return v;
 	}
+
+	@Override
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+	}
 }
