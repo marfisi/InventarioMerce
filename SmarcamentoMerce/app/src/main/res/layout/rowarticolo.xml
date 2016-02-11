@@ -1,43 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:padding="10dp">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="2dp"
+    >
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/art_codart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/ll_art">
+        android:text="art_codart"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        style="@style/codart"/>
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:id="@+id/art_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="art_desc"
+        android:layout_below="@+id/art_codart"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/art_dataCarScar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/art_desc"
+        android:layout_below="@+id/art_desc"
+        android:text="art_dataCarScar"/>
+
+    <TextView
+        android:id="@+id/art_bcod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/art_dataCarScar"
+        android:layout_below="@+id/art_dataCarScar"
+        android:text="art_bcod"/>
+
+    <ImageButton
+        android:id="@+id/check"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:hint="bottone check"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:textColor="#ff8317"
+        android:layout_marginLeft="5dp"
+        style="@style/check"/>
+
+    <ImageButton
+        android:id="@+id/reset"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@id/check"
+        android:hint="bottone cancel"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="5dp"
+        style="@style/reset"/>
+    <Button
+        android:id="@+id/btnIncrementa"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/check"
+        android:text="+"
+        android:background="#5eb1ff"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"/>
+
+    <Button
+        android:id="@+id/btnDecrementa"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/layQty"
+        android:text="-"
+        android:background="#87e8fc"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"/>
+
+    <LinearLayout
+        android:id="@+id/layQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/btnIncrementa"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:inputType="number"
+            android:ems="13"
+            style="@style/qty"
+            android:id="@+id/art_qty"
+            android:layout_gravity="center"
+            android:background="@drawable/qty_backg"/>
+
+        <TextView
+            android:id="@+id/art_um_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/art_codart">
-        </TextView>
+            android:text="art_um_qty"
+            android:layout_gravity="center"
+            android:ems="6"
+            style="@style/um_qty"/>
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        <TextView
+            android:id="@+id/art_difet_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/art_bcod">
-        </TextView>
-
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/art_desc">
-        </TextView>
-
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/art_qty">
-        </TextView>
-
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/art_dataCarScar">
-        </TextView>
+            android:text="art_difet_qty"
+            android:layout_gravity="center"
+            style="@style/difet_qty"
+            android:ems="9"/>
     </LinearLayout>
+
+
 </RelativeLayout>

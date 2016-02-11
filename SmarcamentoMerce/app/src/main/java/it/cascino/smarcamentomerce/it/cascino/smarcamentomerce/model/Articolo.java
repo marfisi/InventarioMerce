@@ -1,13 +1,17 @@
 package it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model;
 
+import android.util.Log;
+
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 public class Articolo {
 	private String codice;
 	private Barcode[] barcode;
 	private String desc;
 	private String um;
-	private Float qty;
+	private Float qtyOriginale;
+	private Float qtyRilevata;
 	private Float difettosi;
 	private String dataCarico;
 	private String dataScarico;
@@ -19,7 +23,8 @@ public class Articolo {
 		this.barcode = new Barcode[1];
 		this.desc = "";
 		this.um = "";
-		this.qty = -999.99f;
+		this.qtyOriginale = -999.99f;
+		this.qtyRilevata =  -999.99f;
 		this.difettosi = 0.0f;
 		this.dataCarico = "";
 		this.dataScarico = "";
@@ -27,12 +32,13 @@ public class Articolo {
 		this.timestamp = null;
 	}
 
-	public Articolo(String codice, Barcode[] barcode, String desc, String um, Float qty, Float difettosi, String dataCarico, String dataScarico, Integer stato, Timestamp timestamp) {
+	public Articolo(String codice, Barcode[] barcode, String desc, String um, Float qtyOriginale, Float qtyRilevata, Float difettosi, String dataCarico, String dataScarico, Integer stato, Timestamp timestamp) {
 		this.codice = codice;
 		this.barcode = barcode;
 		this.desc = desc;
 		this.um = um;
-		this.qty = qty;
+		this.qtyOriginale = qtyOriginale;
+		this.qtyRilevata = qtyRilevata;
 		this.difettosi = difettosi;
 		this.dataCarico = dataCarico;
 		this.dataScarico = dataScarico;
@@ -72,12 +78,20 @@ public class Articolo {
 		this.um = um;
 	}
 
-	public Float getQty() {
-		return qty;
+	public Float getQtyOriginale() {
+		return qtyOriginale;
 	}
 
-	public void setQty(Float qty) {
-		this.qty = qty;
+	public void setQtyOriginale(Float qtyOriginale) {
+		this.qtyOriginale = qtyOriginale;
+	}
+
+	public Float getQtyRilevata() {
+		return qtyRilevata;
+	}
+
+	public void setQtyRilevata(Float qtyRilevata) {
+		this.qtyRilevata = qtyRilevata;
 	}
 
 	public Float getDifettosi() {
@@ -124,5 +138,14 @@ public class Articolo {
 
 	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public String toString(){
+		String strToStr = getCodice() + " - ";
+		for(int i=0;i<getBarcode().length;i++){
+			strToStr = strToStr + getBarcode()[i].getCodice() + " ";
+		}
+		Log.i("artToString", strToStr);
+		return strToStr;
 	}
 }

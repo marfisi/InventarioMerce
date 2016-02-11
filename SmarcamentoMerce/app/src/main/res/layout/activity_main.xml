@@ -12,18 +12,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="deposito" android:padding="2dp" />
+            android:padding="2dp"
+            android:text="deposito" />
+
         <TextView
             android:id="@+id/numDep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="numDep"
-            android:padding="2dp"/>
+            android:padding="2dp"
+            android:text="numDep" />
 
-         <TextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="dataSync"  android:padding="2dp"/>
+            android:padding="2dp"
+            android:text="dataSync" />
 
         <TextView
             android:id="@+id/dataSync"
@@ -35,72 +38,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="right">
-
-        <Button
-            android:layout_width="66dp"
-            android:layout_height="34dp"
-            android:id="@+id/syncButton"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#ff0000"
-            android:text="sync" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/articoli"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Articoli" />
-
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:gravity="right"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cod. Art"
-            android:padding="2dp"
-            style="@style/listaArticoliHeader" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bcode"
-            android:padding="2dp"
-            style="@style/listaArticoliHeader" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Qty"
-            android:padding="2dp"
-            style="@style/listaArticoliHeader" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Desc"
-            android:padding="2dp"
-            style="@style/listaArticoliHeader" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Data Ultimo Car - Scar"
-            android:padding="2dp"
-            style="@style/listaArticoliHeader" />
+        <Button
+            android:id="@+id/syncButton"
+            android:layout_width="66dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center_horizontal"
+            android:text="sync"
+            android:textColor="#ff0000" />
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/myFilter"
+        android:layout_width="173dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/hint_filtro">
+        <!--requestFocus /-->
+    </EditText>
 
     <ListView
         android:id="@+id/articoliList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-
     </ListView>
 
 

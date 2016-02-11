@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,19 +42,21 @@ import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Barcode;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.FileDaAs;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
-    private ArticoloAdapter adapterArticoliLs;
+	private ArticoloAdapter adapterArticoliLs;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		TextView numDep = (TextView) findViewById(R.id.numDep);
+		TextView numDep = (TextView)findViewById(R.id.numDep);
 		numDep.setText("02");
-		TextView dataSync = (TextView) findViewById(R.id.dataSync);
-		dataSync.setText("13:15 - 22/01/2016");
+		TextView dataSync = (TextView)findViewById(R.id.dataSync);
+		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
+		String dataSyncStr = formatter.format(new Date());
+		dataSync.setText(dataSyncStr);
 
 	   /*
 		final List<Articolo> articoliLs = new ArrayList<Articolo>();
@@ -63,28 +68,52 @@ public class MainActivity extends Activity {
 		*/
 
 		Button syncButton = (Button)findViewById(R.id.syncButton);
-		syncButton.setOnClickListener(new View.OnClickListener() {
+		syncButton.setOnClickListener(new View.OnClickListener(){
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v){
 				new DownloadThread().execute("");
 			}
 		});
 
 		// ArrayAdapter<String> adapterArticoliLs = new ArrayAdapter<String>(this, R.layout.rowarticolo, articoliLs);
-		ListView listViewArticoliLs = (ListView) findViewById(R.id.articoliList);
-		listViewArticoliLs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		ListView listViewArticoliLs = (ListView)findViewById(R.id.articoliList);
+		listViewArticoliLs.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Toast.makeText(getApplicationContext(), "Sel: " + articoliLs.get(position).getCodice(), Toast.LENGTH_LONG).show();
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+				Articolo articoloSel = articoliLs.get(position);
+				Toast.makeText(getApplicationContext(), "Sel: " + articoloSel.getCodice(), Toast.LENGTH_LONG).show();
 			}
 		});
 		adapterArticoliLs = new ArticoloAdapter(getApplicationContext(), articoliLs);
 		listViewArticoliLs.setAdapter(adapterArticoliLs);
+
+		// abilito il filtro
+		listViewArticoliLs.setTextFilterEnabled(true);
+
+		final EditText myFilter = (EditText)findViewById(R.id.myFilter);
+		myFilter.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s){
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after){
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before, int count){
+				adapterArticoliLs.getFilter().filter(s.toString());
+			}
+		});
+		myFilter.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				myFilter.setText("");
+			}
+		});
+
 	}
 
 	private class DownloadThread extends AsyncTask<String, Void, String>{
 		@Override
-		protected String doInBackground(String... params) {
+		protected String doInBackground(String... params){
 			String dep = "02";
 			String usr = "AGORIN";
 			String userFtp = "androidftp";
@@ -92,11 +121,13 @@ public class MainActivity extends Activity {
 			String directoryFtp = "/";
 			String filenameFtp = "inventario_dep" + dep + "_" + usr + ".csv";
 			//String filenameFtp = "a.csv";
-			try {
-			   // URL url = new URL("ftp://" + userFtp + ":" + passwordFtp + "@" + "ftp1.cascino.it" + directoryFtp + filenameFtp);
+			try{
+				// URL url = new URL("ftp://" + userFtp + ":" + passwordFtp + "@" + "ftp1.cascino.it" + directoryFtp + filenameFtp);
 				//URLConnection conn = url.openConnection();
 				//InputStream inputStream = conn.getInputStream();
 
+				// controllare se la lista e' gia' modificata, in caso non la devo sync fino a quando non faccio l'upload o annullamento
+				articoliLs.clear();
 
 				FTPClient ftpClient = new FTPClient();
 				InetAddress ia = InetAddress.getByName("ftp1.cascino.it");
@@ -109,7 +140,7 @@ public class MainActivity extends Activity {
 				InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF8");
 				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-			   // Toast.makeText(MainActivity.this, "collegato", Toast.LENGTH_LONG).show();
+				// Toast.makeText(MainActivity.this, "collegato", Toast.LENGTH_LONG).show();
 
 				String lineRead = "";
 				// List<Articolo> articoliLs = null;
@@ -136,15 +167,16 @@ public class MainActivity extends Activity {
 					DecimalFormat format = new DecimalFormat();
 					format.setDecimalFormatSymbols(symbols);
 					Float f = 0.0f;
-					try {
+					try{
 						f = format.parse(campiSlit[4]).floatValue();
-					} catch (ParseException e) {
+					}catch(ParseException e){
 						e.printStackTrace();
 					}
-					art.setQty(f); // Float.parseFloat(campiSlit[4]));
-					try {
+					art.setQtyOriginale(f); // Float.parseFloat(campiSlit[4]));
+					art.setQtyRilevata(f);
+					try{
 						f = format.parse(campiSlit[5]).floatValue();
-					} catch (ParseException e) {
+					}catch(ParseException e){
 						e.printStackTrace();
 					}
 					art.setDifettosi(f); // Float.parseFloat(campiSlit[5]));
@@ -152,10 +184,10 @@ public class MainActivity extends Activity {
 					art.setDataScarico(campiSlit[7]);
 					art.setStato(Integer.parseInt(campiSlit[8]));
 					DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
-					try {
+					try{
 						Date date = (Date)formatter.parse(campiSlit[9]);
 						art.setTimestamp(new Timestamp(date.getTime()));
-					} catch (ParseException e) {
+					}catch(ParseException e){
 						e.printStackTrace();
 					}
 					articoliLs.add(art);
@@ -163,31 +195,34 @@ public class MainActivity extends Activity {
 				//fileDaAs.setArticoliLs(articoliLs);
 				ftpClient.logout();
 				ftpClient.disconnect();
-			} catch (MalformedURLException e) {
+			}catch(MalformedURLException e){
 				e.printStackTrace();
-			} catch (IOException e) {
+			}catch(IOException e){
 				e.printStackTrace();
 			}
+
+			adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
+			//adapterArticoliLs.setArticoliLs(articoliLs);
 
 			return "Thread terminato";
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(String result){
 			super.onPostExecute(result);
 			Toast.makeText(MainActivity.this, "post", Toast.LENGTH_LONG).show();
 			//findViewById(R.id.articoliList).invalidate();
-            adapterArticoliLs.notifyDataSetChanged();
+			adapterArticoliLs.notifyDataSetChanged();
 		}
 
 		@Override
-		protected void onPreExecute() {
+		protected void onPreExecute(){
 			super.onPreExecute();
 			Toast.makeText(MainActivity.this, "pre", Toast.LENGTH_LONG).show();
 		}
 
 		@Override
-		protected void onProgressUpdate(Void... values) {
+		protected void onProgressUpdate(Void... values){
 			Toast.makeText(MainActivity.this, "progress", Toast.LENGTH_LONG).show();
 		}
 	}
