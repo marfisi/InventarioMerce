@@ -173,19 +173,31 @@ public class MainActivity extends Activity{
 						e.printStackTrace();
 					}
 					art.setQtyOriginale(f); // Float.parseFloat(campiSlit[4]));
-					art.setQtyRilevata(f);
 					try{
 						f = format.parse(campiSlit[5]).floatValue();
 					}catch(ParseException e){
 						e.printStackTrace();
 					}
-					art.setDifettosi(f); // Float.parseFloat(campiSlit[5]));
-					art.setDataCarico(campiSlit[6]);
-					art.setDataScarico(campiSlit[7]);
-					art.setStato(Integer.parseInt(campiSlit[8]));
+					art.setQtyRilevata(f);
+					try{
+						f = format.parse(campiSlit[6]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setQtyDifettOriginale(f);
+					try{
+						f = format.parse(campiSlit[7]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setQtyDifettRilevata(f);
+					art.setDataCarico(campiSlit[8]);
+					art.setDataScarico(campiSlit[9]);
+					art.setDataUltimoInventario(campiSlit[10]);
+					art.setStato(Integer.parseInt(campiSlit[11]));
 					DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
 					try{
-						Date date = (Date)formatter.parse(campiSlit[9]);
+						Date date = (Date)formatter.parse(campiSlit[12]);
 						art.setTimestamp(new Timestamp(date.getTime()));
 					}catch(ParseException e){
 						e.printStackTrace();

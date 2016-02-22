@@ -12,9 +12,11 @@ public class Articolo {
 	private String um;
 	private Float qtyOriginale;
 	private Float qtyRilevata;
-	private Float difettosi;
+	private Float qtyDifettOriginale;
+	private Float qtyDifettRilevata;
 	private String dataCarico;
 	private String dataScarico;
+	private String dataUltimoInventario;
 	private Integer stato;
 	private Timestamp timestamp;
 
@@ -25,23 +27,27 @@ public class Articolo {
 		this.um = "";
 		this.qtyOriginale = -999.99f;
 		this.qtyRilevata =  -999.99f;
-		this.difettosi = 0.0f;
+		this.qtyDifettOriginale = -999.99f;
+		this.qtyDifettRilevata =  -999.99f;
 		this.dataCarico = "";
 		this.dataScarico = "";
+		this.dataUltimoInventario = "";
 		this.stato = -1;
 		this.timestamp = null;
 	}
 
-	public Articolo(String codice, Barcode[] barcode, String desc, String um, Float qtyOriginale, Float qtyRilevata, Float difettosi, String dataCarico, String dataScarico, Integer stato, Timestamp timestamp) {
+	public Articolo(String codice, Barcode[] barcode, String desc, String um, Float qtyOriginale, Float qtyRilevata, Float qtyDifettOriginale, Float qtyDifettRilevata, String dataCarico, String dataScarico, String dataUltimoInventario, Integer stato, Timestamp timestamp) {
 		this.codice = codice;
 		this.barcode = barcode;
 		this.desc = desc;
 		this.um = um;
 		this.qtyOriginale = qtyOriginale;
 		this.qtyRilevata = qtyRilevata;
-		this.difettosi = difettosi;
+		this.qtyDifettOriginale = qtyDifettOriginale;
+		this.qtyDifettRilevata =  qtyDifettRilevata;
 		this.dataCarico = dataCarico;
 		this.dataScarico = dataScarico;
+		this.dataUltimoInventario = dataUltimoInventario;
 		this.stato = stato;
 		this.timestamp = timestamp;
 	}
@@ -94,12 +100,20 @@ public class Articolo {
 		this.qtyRilevata = qtyRilevata;
 	}
 
-	public Float getDifettosi() {
-		return difettosi;
+	public Float getQtyDifettOriginale() {
+		return qtyDifettOriginale;
 	}
 
-	public void setDifettosi(Float difettosi) {
-		this.difettosi = difettosi;
+	public void setQtyDifettOriginale(Float qtyDifettOriginale) {
+		this.qtyDifettOriginale = qtyDifettOriginale;
+	}
+
+	public Float getQtyDifettRilevata() {
+		return qtyDifettRilevata;
+	}
+
+	public void setQtyDifettRilevata(Float qtyDifettRilevata) {
+		this.qtyDifettRilevata = qtyDifettRilevata;
 	}
 
 	public String getDataCarico() {
@@ -116,6 +130,14 @@ public class Articolo {
 
 	public void setDataScarico(String dataScarico) {
 		this.dataScarico = dataScarico;
+	}
+
+	public String getDataUltimoInventario() {
+		return dataUltimoInventario;
+	}
+
+	public void setDataUltimoInventario(String dataUltimoInventario) {
+		this.dataUltimoInventario = dataUltimoInventario;
 	}
 
 	public Integer getStato() {

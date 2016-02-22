@@ -1,27 +1,29 @@
 package it.cascino.smarcamentomerce.adapter;
 
 import android.content.Context;
-import android.text.InputType;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import it.cascino.smarcamentomerce.R;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
@@ -61,37 +63,6 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		return getItem(position).hashCode();
 	}
 
-	/* @Override
-	public View getView(int position, View v, ViewGroup vg){
-		// con " extends ArrayAdapter<Articolo>" avrei potuto usare
-		// LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		if(v == null){
-			v = LayoutInflater.from(context).inflate(R.layout.rowarticolo, null);
-		}
-		Articolo a = (Articolo)getItem(position);
-		TextView txt = (TextView)v.findViewById(R.id.art_codart);
-		txt.setText(a.getCodice());
-		txt = (TextView)v.findViewById(R.id.art_bcod);
-		String bcod = "";
-		for(int i = 0; i < a.getBarcode().length; i++){
-			bcod = bcod + "," + a.getBarcode()[i].getCodice();
-		}
-		txt.setText(StringUtils.removeStart(bcod, ","));
-		txt = (TextView)v.findViewById(R.id.art_desc);
-		txt.setText(a.getDesc());
-		txt = (TextView)v.findViewById(R.id.art_um_qty);
-		txt.setText(a.getUm());
-		txt = (TextView)v.findViewById(R.id.art_qtyTxt);
-		txt.setText(Float.toString(a.getQty()));
-		txt = (TextView)v.findViewById(R.id.art_qty);
-		txt.setText(Float.toString(a.getQty()));
-		txt = (TextView)v.findViewById(R.id.art_difet_qty);
-		txt.setText(Float.toString(a.getDifettosi()));
-		txt = (TextView)v.findViewById(R.id.art_dataCarScar);
-		txt.setText("c: " + a.getDataCarico() + " - s: " + a.getDataScarico());
-		return v;
-	} */
-
 	@Override
 	public View getView(int position, View v, ViewGroup vg){
 		return getViewOptimize(position, v, vg);
@@ -106,11 +77,14 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.art_bcod = (TextView)v.findViewById(R.id.art_bcod);
 			viewHolder.art_desc = (TextView)v.findViewById(R.id.art_desc);
 			viewHolder.art_um_qty = (TextView)v.findViewById(R.id.art_um_qty);
-			viewHolder.art_qty = (TextView)v.findViewById(R.id.art_qty);
+			viewHolder.art_qty = (EditText)v.findViewById(R.id.art_qty);
 			viewHolder.art_difet_qty = (TextView)v.findViewById(R.id.art_difet_qty);
 			viewHolder.art_dataCarScar = (TextView)v.findViewById(R.id.art_dataCarScar);
+			viewHolder.art_dataUltimoInvent = (TextView)v.findViewById(R.id.art_dataUltimoInvent);
 			viewHolder.btnIncrementa = (Button)v.findViewById(R.id.btnIncrementa);
 			viewHolder.btnDecrementa = (Button)v.findViewById(R.id.btnDecrementa);
+			viewHolder.btnCheck = (ImageButton)v.findViewById(R.id.btnCheck);
+			viewHolder.btnReset = (ImageButton)v.findViewById(R.id.btnReset);
 			v.setTag(viewHolder);
 		}else{
 			viewHolder = (ViewHolder)v.getTag();
@@ -125,14 +99,10 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.art_desc.setText(a.getDesc());
 		viewHolder.art_um_qty.setText(a.getUm());
 		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()));
-		//viewHolder.art_qty.setInputType(InputType.TYPE_CLASS_NUMBER);//.TYPE_NUMBER_FLAG_DECIMAL);
-		//viewHolder.art_qty.requestFocus();
-		//InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		//inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
-		//inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
-		//inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-		viewHolder.art_difet_qty.setText(floatToString(a.getDifettosi()));
-		viewHolder.art_dataCarScar.setText("c: " + a.getDataCarico() + " - s: " + a.getDataScarico());
+		manageQtyTextColor(viewHolder, a);
+		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettOriginale()));
+		viewHolder.art_dataCarScar.setText("data car: " + a.getDataCarico() + " - scar: " + a.getDataScarico());
+		viewHolder.art_dataUltimoInvent.setText("data ultimo invent: " + a.getDataUltimoInventario());
 		final ViewHolder finalViewHolder = viewHolder;
 		viewHolder.btnIncrementa.setOnClickListener(new View.OnClickListener(){
 			@Override
@@ -147,15 +117,6 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				return true;
 			}
 		});
-		/*viewHolder.btnIncrementa.setOnTouchListener(new Button.OnTouchListener(){
-			@Override
-			public boolean onTouch(View v, MotionEvent event){
-				if(event.getAction() == MotionEvent.ACTION_HOVER_ENTER){
-					manageClickIncDec(finalViewHolder, a, true, 0.2f);
-				}
-				return false;
-			}
-		});*/
 		viewHolder.btnDecrementa.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -169,6 +130,76 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				return true;
 			}
 		});
+		viewHolder.btnCheck.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Boolean qtyRilUgualeOrig = false;
+				if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
+					a.setStato(0);
+					qtyRilUgualeOrig = true;
+				}else{
+					a.setStato(1);
+					qtyRilUgualeOrig = false;
+				}
+				a.setTimestamp(new Timestamp((new Date().getTime())));
+				//manageBckgRow(finalViewHolder, a, v);
+
+				Integer ordinamento = 0;
+				Integer ordinamentoDestinazione = 0;
+				if(!articoliLs.isEmpty()){
+					Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
+					Articolo art = null;
+					while(iter_articoliLs.hasNext()){
+						art = iter_articoliLs.next();
+						if(StringUtils.equals(art.getCodice(), a.getCodice())){
+							iter_articoliLs.remove();	// articoliLs.remove(ordinamento);
+
+							Iterator<Articolo> iter_articoliDestinazioneLs = articoliLs.iterator();
+							Articolo artDestinazione = null;
+							while(iter_articoliDestinazioneLs.hasNext()){
+								artDestinazione = iter_articoliDestinazioneLs.next();
+								if((artDestinazione.getStato() == 1) && (!(qtyRilUgualeOrig))){
+									break;
+								}
+								if((artDestinazione.getStato() == 0) && (qtyRilUgualeOrig)){
+									break;
+								}
+								ordinamentoDestinazione++;
+							}
+							articoliLs.add(ordinamentoDestinazione, a);
+							break;
+						}
+						ordinamento++;
+					}
+				}
+				notifyDataSetChanged();
+			}
+		});
+		viewHolder.btnReset.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setStato(2);
+				a.setQtyRilevata(a.getQtyOriginale());
+
+				Integer ordinamento = 0;
+				if(!articoliLs.isEmpty()){
+					Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
+					Articolo art = null;
+					while(iter_articoliLs.hasNext()){
+						art = iter_articoliLs.next();
+						if(StringUtils.equals(art.getCodice(), a.getCodice())){
+							iter_articoliLs.remove();	// articoliLs.remove(ordinamento);
+							break;
+						}
+						ordinamento++;
+					}
+				}
+				articoliLs.add(0, a);
+
+				notifyDataSetChanged();
+			}
+		});
+		manageBckgRow(a, v);//, viewHolder.btnCheck);
 		return v;
 	}
 
@@ -179,6 +210,29 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			a.setQtyRilevata(a.getQtyRilevata() - step);
 		}
 		vh.art_qty.setText(floatToString(a.getQtyRilevata()));
+
+		manageQtyTextColor(vh, a);
+	}
+
+	private void manageQtyTextColor(ViewHolder vh, Articolo a){
+		if(a.getQtyRilevata() < 0.0f){
+			vh.art_qty.setTextColor(ContextCompat.getColor(this.context, R.color.qtyTextColorNeg));
+		}else{
+			vh.art_qty.setTextColor(ContextCompat.getColor(this.context, R.color.qtyTextColor));
+		}
+	}
+
+	private void manageBckgRow(Articolo a, View v){ // private void manageBckgRow(ViewHolder vh, Articolo a, View v){
+		//View daMod = (View)v.getParent().getParent().getParent();
+		if(!(a.getStato().equals(2))){
+			if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
+				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkOK));
+			}else{
+				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkDiffer));
+			}
+		}else{
+			v.setBackgroundColor(Color.TRANSPARENT);
+		}
 	}
 
 	private class ViewHolder{
@@ -186,12 +240,15 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView art_bcod;
 		public TextView art_desc;
 		public TextView art_um_qty;
-		public TextView art_qty;
+		public EditText art_qty;
 		public TextView art_difet_qty;
 		public TextView art_dataCarScar;
+		public TextView art_dataUltimoInvent;
 
 		public Button btnIncrementa;
 		public Button btnDecrementa;
+		public ImageButton btnCheck;
+		public ImageButton btnReset;
 	}
 
 	@Override
