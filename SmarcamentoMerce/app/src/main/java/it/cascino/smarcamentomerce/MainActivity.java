@@ -1,13 +1,18 @@
 package it.cascino.smarcamentomerce;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,10 +51,15 @@ public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
 	private ArticoloAdapter adapterArticoliLs;
 
+	private Integer posStatoOk = -1;
+	private Integer posStatoRettificato = -1;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 		TextView numDep = (TextView)findViewById(R.id.numDep);
 		numDep.setText("02");
@@ -57,15 +67,6 @@ public class MainActivity extends Activity{
 		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
 		String dataSyncStr = formatter.format(new Date());
 		dataSync.setText(dataSyncStr);
-
-	   /*
-		final List<Articolo> articoliLs = new ArrayList<Articolo>();
-		Barcode bcode[] = new Barcode[1];
-		bcode[0] = new Barcode("12454", "ean13");
-		articoliLs.add(new Articolo("cod 1", bcode, "desc 1", "PZ", 3.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
-		articoliLs.add(new Articolo("cod 2", bcode, "desc 2", "PZ", 0.25f, 0.0f, "00/00/00", "01/08/15", 2, null));
-		articoliLs.add(new Articolo("cod 3", bcode, "desc 3", "PZ", 10f, 0.0f, "00/00/00", "01/08/15", 2, null));
-		*/
 
 		Button syncButton = (Button)findViewById(R.id.syncButton);
 		syncButton.setOnClickListener(new View.OnClickListener(){
@@ -100,15 +101,29 @@ public class MainActivity extends Activity{
 
 			public void onTextChanged(CharSequence s, int start, int before, int count){
 				adapterArticoliLs.getFilter().filter(s.toString());
+				hideSoftKeyboard(MainActivity.this);
 			}
 		});
 		myFilter.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				myFilter.setText("");
+				hideSoftKeyboard(MainActivity.this);
 			}
 		});
+		//myFilter.setFocusableInTouchMode(false);
+		myFilter.setOnTouchListener(new View.OnTouchListener(){
+			@Override
+			public boolean onTouch(View v, MotionEvent event){
+				hideSoftKeyboard(MainActivity.this);
+				return false;
+			}
+		});
+	}
 
+	public static void hideSoftKeyboard(Activity activity){
+		InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
 
 	private class DownloadThread extends AsyncTask<String, Void, String>{
@@ -142,6 +157,7 @@ public class MainActivity extends Activity{
 
 				// Toast.makeText(MainActivity.this, "collegato", Toast.LENGTH_LONG).show();
 
+				Integer ordinamento = 0;
 				String lineRead = "";
 				// List<Articolo> articoliLs = null;
 				FileDaAs fileDaAs = new FileDaAs();
@@ -149,7 +165,9 @@ public class MainActivity extends Activity{
 				lineRead = bufferedReader.readLine();
 				lineRead = bufferedReader.readLine();
 				while((lineRead = bufferedReader.readLine()) != null){
+					ordinamento++;
 					Articolo art = new Articolo();
+					art.setOrdinamento(ordinamento);
 					//String campiSlit[] = lineRead.split("\\" + fileDaAs.getCampiSep());
 					String campiSlit[] = StringUtils.split(lineRead, fileDaAs.getCampiSep());
 					art.setCodice(campiSlit[0]);
@@ -194,10 +212,35 @@ public class MainActivity extends Activity{
 					art.setDataCarico(campiSlit[8]);
 					art.setDataScarico(campiSlit[9]);
 					art.setDataUltimoInventario(campiSlit[10]);
-					art.setStato(Integer.parseInt(campiSlit[11]));
+					try{
+						f = format.parse(campiSlit[11]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setScortaMinOriginale(f);
+					try{
+						f = format.parse(campiSlit[12]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setScortaMinRilevata(f);
+					try{
+						f = format.parse(campiSlit[13]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setScortaMaxOriginale(f);
+					try{
+						f = format.parse(campiSlit[14]).floatValue();
+					}catch(ParseException e){
+						e.printStackTrace();
+					}
+					art.setScortaMaxRilevata(f);
+					art.setCommento(campiSlit[15]);
+					art.setStato(Integer.parseInt(campiSlit[16]));
 					DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
 					try{
-						Date date = (Date)formatter.parse(campiSlit[12]);
+						Date date = (Date)formatter.parse(campiSlit[17]);
 						art.setTimestamp(new Timestamp(date.getTime()));
 					}catch(ParseException e){
 						e.printStackTrace();

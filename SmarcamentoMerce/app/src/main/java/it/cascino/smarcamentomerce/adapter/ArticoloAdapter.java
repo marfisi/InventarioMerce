@@ -2,11 +2,18 @@ package it.cascino.smarcamentomerce.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,10 +41,15 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private Context context;
 	private ArticoloFiltro articoloFiltro;
 
+	private Handler repeatUpdateHandler = new Handler();
+	private boolean mAutoIncrement = false;
+	private boolean mAutoDecrement = false;
+	private static Integer REP_DELAY = 50;
+
 	public ArticoloAdapter(Context context, List<Articolo> articoliLs){
 		this.context = context;
 		this.articoliLs = articoliLs;
-		this.articoliOriginaleLs =  articoliLs; //articoliOriginaleLs;
+		this.articoliOriginaleLs = articoliLs; //articoliOriginaleLs;
 	}
 
 	@Override
@@ -99,6 +111,20 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.art_desc.setText(a.getDesc());
 		viewHolder.art_um_qty.setText(a.getUm());
 		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()));
+		viewHolder.art_qty.addTextChangedListener(new TextWatcher(){
+			public void onTextChanged(CharSequence c, int start, int before, int count){
+				Float fLetto = Float.parseFloat(StringUtils.replace(c.toString(), ",", "."));
+				a.setQtyRilevata(fLetto);
+			}
+
+			public void beforeTextChanged(CharSequence c, int start, int count, int after){
+			}
+
+			public void afterTextChanged(Editable c){
+			}
+		});
+		InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
 		manageQtyTextColor(viewHolder, a);
 		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettOriginale()));
 		viewHolder.art_dataCarScar.setText("data car: " + a.getDataCarico() + " - scar: " + a.getDataScarico());
@@ -113,8 +139,19 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.btnIncrementa.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
-				manageClickIncDec(finalViewHolder, a, true, 5.0f);
-				return true;
+				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
+				//return true;
+				mAutoIncrement = true;
+				repeatUpdateHandler.post(new RptUpdater(finalViewHolder, a));
+				return false;
+			}
+		});
+		viewHolder.btnIncrementa.setOnTouchListener(new View.OnTouchListener(){
+			public boolean onTouch(View v, MotionEvent event){
+				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoIncrement){
+					mAutoIncrement = false;
+				}
+				return false;
 			}
 		});
 		viewHolder.btnDecrementa.setOnClickListener(new View.OnClickListener(){
@@ -126,8 +163,19 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.btnDecrementa.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
-				manageClickIncDec(finalViewHolder, a, false, 5.0f);
-				return true;
+				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
+				//return true;
+				mAutoDecrement = true;
+				repeatUpdateHandler.post(new RptUpdater(finalViewHolder, a));
+				return false;
+			}
+		});
+		viewHolder.btnDecrementa.setOnTouchListener(new View.OnTouchListener(){
+			public boolean onTouch(View v, MotionEvent event){
+				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoDecrement){
+					mAutoDecrement = false;
+				}
+				return false;
 			}
 		});
 		viewHolder.btnCheck.setOnClickListener(new View.OnClickListener(){
@@ -152,7 +200,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					while(iter_articoliLs.hasNext()){
 						art = iter_articoliLs.next();
 						if(StringUtils.equals(art.getCodice(), a.getCodice())){
-							iter_articoliLs.remove();	// articoliLs.remove(ordinamento);
+							iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
 
 							Iterator<Articolo> iter_articoliDestinazioneLs = articoliLs.iterator();
 							Articolo artDestinazione = null;
@@ -172,6 +220,13 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 						ordinamento++;
 					}
 				}
+
+				Animation animation = new ScaleAnimation(1, 1, 1, 0);
+				animation.setDuration(200);
+				//v.getParent().getParent().startAnimation(animation);
+				View daMod = (View)v.getParent().getParent().getParent();
+				daMod.startAnimation(animation);
+
 				notifyDataSetChanged();
 			}
 		});
@@ -188,7 +243,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					while(iter_articoliLs.hasNext()){
 						art = iter_articoliLs.next();
 						if(StringUtils.equals(art.getCodice(), a.getCodice())){
-							iter_articoliLs.remove();	// articoliLs.remove(ordinamento);
+							iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
 							break;
 						}
 						ordinamento++;
@@ -204,6 +259,10 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	}
 
 	private void manageClickIncDec(ViewHolder vh, Articolo a, boolean incrementa, float step){
+		// devo poter modificcare solo se non e' stato confermato in precedenza
+		if(a.getStato() != 2){
+			return;
+		}
 		if(incrementa){
 			a.setQtyRilevata(a.getQtyRilevata() + step);
 		}else{
@@ -251,6 +310,26 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public ImageButton btnReset;
 	}
 
+	class RptUpdater implements Runnable{
+		ViewHolder vh;
+		Articolo a;
+
+		public RptUpdater(ViewHolder vh, Articolo a){
+			this.vh = vh;
+			this.a = a;
+		}
+
+		public void run(){
+			if(mAutoIncrement){
+				manageClickIncDec(vh, a, true, 1.0f);
+				repeatUpdateHandler.postDelayed(new RptUpdater(vh, a), REP_DELAY);
+			}else if(mAutoDecrement){
+				manageClickIncDec(vh, a, false, 1.0f);
+				repeatUpdateHandler.postDelayed(new RptUpdater(vh, a), REP_DELAY);
+			}
+		}
+	}
+
 	@Override
 	public void notifyDataSetChanged(){
 		super.notifyDataSetChanged();
@@ -289,8 +368,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			/*if(results.count == 0){
 				notifyDataSetInvalidated();
 			}else{*/
-				articoliLs = (ArrayList)results.values;
-				notifyDataSetChanged();
+			articoliLs = (ArrayList)results.values;
+			notifyDataSetChanged();
 			//}
 
 			/* articoliLs = (ArrayList<Articolo>)results.values;
@@ -328,3 +407,4 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		return format.format(f);
 	}
 }
+
