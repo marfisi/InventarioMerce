@@ -60,6 +60,91 @@
             android:layout_alignLeft="@+id/art_dataCarScar"
             android:layout_below="@+id/art_dataUltimoInvent"
             android:text="art_bcod"/>
+
+        <LinearLayout
+            android:id="@+id/llScortaMin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/art_bcod"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/scortaMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="scorta min"/>
+
+            <Button
+                android:id="@+id/btnDecrementaScortaMin"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="-"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="scortaMin"/>
+
+            <Button
+                android:id="@+id/btnIncrementaScortaMin"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="+" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llScortaMax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llScortaMin"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/scortaMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="scorta max"/>
+
+            <Button
+                android:id="@+id/btnDecrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="-"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="scortaMax"/>
+
+            <Button
+                android:id="@+id/btnIncrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="+" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llCommento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llScortaMax"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="comm."/>
+
+            <Spinner
+                 android:id="@+id/spinnerCommento"
+                 android:layout_width="120dp"
+                 android:layout_height="60dp"
+                 android:entries="@array/commenti_predef"></Spinner>
+
+            <EditText android:id="@+id/commento"
+                      android:layout_width="90dp"
+                      android:layout_height="wrap_content"
+                      android:textColor="#000000"/>
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
@@ -75,7 +160,7 @@
             android:layout_weight="0.85">
 
             <Button
-                android:id="@+id/btnDecrementa"
+                android:id="@+id/btnDecrementaQty"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="-"
@@ -131,7 +216,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btnIncrementa"
+                android:id="@+id/btnIncrementaQty"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="+"
@@ -161,8 +246,8 @@
 
             <ImageButton
                 android:id="@+id/btnCheck"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_toLeftOf="@id/btnReset"
                 android:layout_marginRight="15dp"
                 android:layout_centerVertical="true"

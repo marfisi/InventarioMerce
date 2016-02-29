@@ -94,14 +94,14 @@ public class MainActivity extends Activity{
 		final EditText myFilter = (EditText)findViewById(R.id.myFilter);
 		myFilter.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s){
+				adapterArticoliLs.getFilter().filter(s.toString());
+				hideSoftKeyboard(MainActivity.this);
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
 			}
 
 			public void onTextChanged(CharSequence s, int start, int before, int count){
-				adapterArticoliLs.getFilter().filter(s.toString());
-				hideSoftKeyboard(MainActivity.this);
 			}
 		});
 		myFilter.setOnClickListener(new View.OnClickListener(){
@@ -168,8 +168,7 @@ public class MainActivity extends Activity{
 					ordinamento++;
 					Articolo art = new Articolo();
 					art.setOrdinamento(ordinamento);
-					//String campiSlit[] = lineRead.split("\\" + fileDaAs.getCampiSep());
-					String campiSlit[] = StringUtils.split(lineRead, fileDaAs.getCampiSep());
+					String campiSlit[] = StringUtils.splitByWholeSeparatorPreserveAllTokens(lineRead, fileDaAs.getCampiSep());
 					art.setCodice(campiSlit[0]);
 					String barcodeLine[] = campiSlit[1].split(fileDaAs.getInsideCampSep());
 					Barcode barcode[] = new Barcode[barcodeLine.length];

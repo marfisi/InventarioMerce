@@ -229,6 +229,7 @@ public class Articolo{
 		this.timestamp = timestamp;
 	}
 
+	// occhio a non modificarla, e' utilizzata per il filtro della listview
 	public String toString(){
 		String strToStr = getCodice() + " - ";
 		for(int i = 0; i < getBarcode().length; i++){

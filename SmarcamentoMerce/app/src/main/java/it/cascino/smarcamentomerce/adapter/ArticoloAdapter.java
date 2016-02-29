@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,11 +92,21 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.art_desc = (TextView)v.findViewById(R.id.art_desc);
 			viewHolder.art_um_qty = (TextView)v.findViewById(R.id.art_um_qty);
 			viewHolder.art_qty = (EditText)v.findViewById(R.id.art_qty);
+			viewHolder.mutableWatcher = new MutableWatcher();
+			viewHolder.art_qty.addTextChangedListener(viewHolder.mutableWatcher);
 			viewHolder.art_difet_qty = (TextView)v.findViewById(R.id.art_difet_qty);
 			viewHolder.art_dataCarScar = (TextView)v.findViewById(R.id.art_dataCarScar);
 			viewHolder.art_dataUltimoInvent = (TextView)v.findViewById(R.id.art_dataUltimoInvent);
-			viewHolder.btnIncrementa = (Button)v.findViewById(R.id.btnIncrementa);
-			viewHolder.btnDecrementa = (Button)v.findViewById(R.id.btnDecrementa);
+			viewHolder.art_qtyScortaMin = (TextView)v.findViewById(R.id.qtyScortaMin);
+			viewHolder.btnIncrementaScortaMin = (Button)v.findViewById(R.id.btnIncrementaScortaMin);
+			viewHolder.btnDecrementaScortaMin = (Button)v.findViewById(R.id.btnDecrementaScortaMin);
+			viewHolder.art_qtyScortaMax = (TextView)v.findViewById(R.id.qtyScortaMax);
+			viewHolder.btnIncrementaScortaMax = (Button)v.findViewById(R.id.btnIncrementaScortaMax);
+			viewHolder.btnDecrementaScortaMax = (Button)v.findViewById(R.id.btnDecrementaScortaMax);
+			viewHolder.spinnerCommneto = (Spinner)v.findViewById(R.id.spinnerCommento);
+			viewHolder.art_commento = (EditText)v.findViewById(R.id.commento);
+			viewHolder.btnIncrementaQty = (Button)v.findViewById(R.id.btnIncrementaQty);
+			viewHolder.btnDecrementaQty = (Button)v.findViewById(R.id.btnDecrementaQty);
 			viewHolder.btnCheck = (ImageButton)v.findViewById(R.id.btnCheck);
 			viewHolder.btnReset = (ImageButton)v.findViewById(R.id.btnReset);
 			v.setTag(viewHolder);
@@ -110,9 +122,14 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.art_bcod.setText(StringUtils.removeStart(bcod, "-"));
 		viewHolder.art_desc.setText(a.getDesc());
 		viewHolder.art_um_qty.setText(a.getUm());
-		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()));
-		viewHolder.art_qty.addTextChangedListener(new TextWatcher(){
+		viewHolder.mutableWatcher.setActive(false);
+		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()), TextView.BufferType.EDITABLE);
+		viewHolder.mutableWatcher.setArticolo(a);
+		//viewHolder.mutableWatcher.setPosition(position);
+		viewHolder.mutableWatcher.setActive(true);
+		/*viewHolder.art_qty.addTextChangedListener(new TextWatcher(){
 			public void onTextChanged(CharSequence c, int start, int before, int count){
+				Log.i("qty cambiata", a.getCodice() + " " + c.toString());
 				Float fLetto = Float.parseFloat(StringUtils.replace(c.toString(), ",", "."));
 				a.setQtyRilevata(fLetto);
 			}
@@ -122,21 +139,65 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 
 			public void afterTextChanged(Editable c){
 			}
-		});
-		InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
+		});*/
+		//InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		//inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
 		manageQtyTextColor(viewHolder, a);
 		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettOriginale()));
 		viewHolder.art_dataCarScar.setText("data car: " + a.getDataCarico() + " - scar: " + a.getDataScarico());
 		viewHolder.art_dataUltimoInvent.setText("data ultimo invent: " + a.getDataUltimoInventario());
+		viewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
 		final ViewHolder finalViewHolder = viewHolder;
-		viewHolder.btnIncrementa.setOnClickListener(new View.OnClickListener(){
+		viewHolder.btnIncrementaScortaMin.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setScortaMinRilevata(a.getScortaMinRilevata() + 1.0f);
+				finalViewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
+			}
+		});
+		viewHolder.btnDecrementaScortaMin.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setScortaMinRilevata(a.getScortaMinRilevata() - 1.0f);
+				finalViewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
+			}
+		});
+		viewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
+		viewHolder.btnIncrementaScortaMax.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setScortaMaxRilevata(a.getScortaMaxRilevata() + 1.0f);
+				finalViewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
+			}
+		});
+		viewHolder.btnDecrementaScortaMax.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setScortaMaxRilevata(a.getScortaMaxRilevata() - 1.0f);
+				finalViewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
+			}
+		});
+		viewHolder.spinnerCommneto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+				a.setCommento(parent.getSelectedItem().toString());
+				Log.i("spinner", "onItemSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
+				finalViewHolder.art_commento.setText(a.getCommento());
+			}
+
+			public void onNothingSelected(AdapterView<?> parent){
+				a.setCommento("");
+				finalViewHolder.art_commento.setText(a.getCommento());
+			}
+		});
+		viewHolder.art_commento.setText(a.getCommento());
+		viewHolder.btnIncrementaQty.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				manageClickIncDec(finalViewHolder, a, true, 1.0f);
 			}
 		});
-		viewHolder.btnIncrementa.setOnLongClickListener(new View.OnLongClickListener(){
+		viewHolder.btnIncrementaQty.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
 				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
@@ -146,7 +207,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				return false;
 			}
 		});
-		viewHolder.btnIncrementa.setOnTouchListener(new View.OnTouchListener(){
+		viewHolder.btnIncrementaQty.setOnTouchListener(new View.OnTouchListener(){
 			public boolean onTouch(View v, MotionEvent event){
 				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoIncrement){
 					mAutoIncrement = false;
@@ -154,13 +215,13 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				return false;
 			}
 		});
-		viewHolder.btnDecrementa.setOnClickListener(new View.OnClickListener(){
+		viewHolder.btnDecrementaQty.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				manageClickIncDec(finalViewHolder, a, false, 1.0f);
 			}
 		});
-		viewHolder.btnDecrementa.setOnLongClickListener(new View.OnLongClickListener(){
+		viewHolder.btnDecrementaQty.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
 				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
@@ -170,7 +231,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				return false;
 			}
 		});
-		viewHolder.btnDecrementa.setOnTouchListener(new View.OnTouchListener(){
+		viewHolder.btnDecrementaQty.setOnTouchListener(new View.OnTouchListener(){
 			public boolean onTouch(View v, MotionEvent event){
 				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoDecrement){
 					mAutoDecrement = false;
@@ -300,14 +361,60 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView art_desc;
 		public TextView art_um_qty;
 		public EditText art_qty;
+		public MutableWatcher mutableWatcher;
 		public TextView art_difet_qty;
 		public TextView art_dataCarScar;
 		public TextView art_dataUltimoInvent;
 
-		public Button btnIncrementa;
-		public Button btnDecrementa;
+		public TextView art_qtyScortaMin;
+		public Button btnIncrementaScortaMin;
+		public Button btnDecrementaScortaMin;
+		public TextView art_qtyScortaMax;
+		public Button btnIncrementaScortaMax;
+		public Button btnDecrementaScortaMax;
+		public Spinner spinnerCommneto;
+		public EditText art_commento;
+
+		public Button btnIncrementaQty;
+		public Button btnDecrementaQty;
 		public ImageButton btnCheck;
 		public ImageButton btnReset;
+	}
+
+	class MutableWatcher implements TextWatcher {
+		//private int mPosition;
+		private boolean mActive;
+		private Articolo a;
+
+		void setArticolo(Articolo a){
+			this.a = a;
+		}
+
+		/*void setPosition(int position) {
+			mPosition = position;
+		}*/
+
+		void setActive(boolean active) {
+			mActive = active;
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			if(mActive){
+				//mUserDetails.set(mPosition, s.toString());
+				Log.i("qty cambiata", a.getCodice() + " " + s.toString());
+				Float fLetto = Float.parseFloat(StringUtils.replace(s.toString(), ",", "."));
+				a.setQtyRilevata(fLetto);
+				//articoliLs.set(mPosition, a);
+			}
+		}
 	}
 
 	class RptUpdater implements Runnable{
@@ -343,12 +450,12 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				ArrayList<Articolo> filteredItems = new ArrayList<Articolo>();
 
 				constraint = constraint.toString().toLowerCase();
-				Log.i("ricerca: ", constraint.toString());
+				Log.i("ricerca", constraint.toString());
 				for(int i = 0; i < articoliOriginaleLs.size(); i++){
 					Articolo articolo = articoliOriginaleLs.get(i);
 					if(articolo.toString().toLowerCase().contains(constraint)){
 						filteredItems.add(articolo);
-						Log.i("trovato: ", articolo.toString());
+						Log.i("trovato", articolo.toString());
 					}
 				}
 				result.values = filteredItems;

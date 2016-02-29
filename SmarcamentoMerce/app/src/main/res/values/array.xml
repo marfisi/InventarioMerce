@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="commenti_predef">
+        <item></item>
+        <item>Errore Unità di Misura</item>
+        <item>Articolo non presente</item>
+        <item>Difettoso</item>
+        <item>Quantità incompatibile</item>
+    </string-array>
+</resources>
