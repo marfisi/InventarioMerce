@@ -2,6 +2,7 @@ package it.cascino.smarcamentomerce;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -40,6 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import it.cascino.smarcamentomerce.adapter.ArticoloAdapter;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Barcode;
@@ -51,8 +53,14 @@ public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
 	private ArticoloAdapter adapterArticoliLs;
 
-	private Integer posStatoOk = -1;
-	private Integer posStatoRettificato = -1;
+	//private Integer posStatoOk = -1;
+	//private Integer posStatoRettificato = -1;
+
+	//private TextView numeroInvetariare;
+
+	private Integer numeroInvetariare = 0;
+
+	private String SHARED_PREF = "shared_pref_inventario";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -61,18 +69,52 @@ public class MainActivity extends Activity{
 
 		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString("operatore", "AGORIN");
+		editor.putString("deposito", "2");
+		editor.apply();
+
+		String deposito = "";
+		String operatore = "";
+		if (sharedPreferences != null) {
+			operatore = sharedPreferences.getString("operatore", "nd");
+			deposito = sharedPreferences.getString("deposito", "0");
+		}
 		TextView numDep = (TextView)findViewById(R.id.numDep);
-		numDep.setText("02");
+		numDep.setText(deposito);
 		TextView dataSync = (TextView)findViewById(R.id.dataSync);
 		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
 		String dataSyncStr = formatter.format(new Date());
 		dataSync.setText(dataSyncStr);
 
+		final TextView testoNumeroInvetariati = (TextView)findViewById(R.id.numeroInvetariati);
+		testoNumeroInvetariati.setText("0");
+		final TextView testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
+		testoNumeroInvetariare.setText("0");
+		//final TextView testoNumeroInvetariatiRimanenti = (TextView)findViewById(R.id.numeroInvetariatiRimanenti);
+		//testoNumeroInvetariatiRimanenti.setText("0");
+
 		Button syncButton = (Button)findViewById(R.id.syncButton);
 		syncButton.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				new DownloadThread().execute("");
+				DownloadThread dt = new DownloadThread();
+				try{
+					dt.execute("").get();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}catch(ExecutionException e){
+					e.printStackTrace();
+				}
+				/*synchronized(articoliLs){
+					numeroInvetariare.setText(articoliLs.size());
+				}*/
+				//dt.cancel(true);
+
+				testoNumeroInvetariare.setText(numeroInvetariare.toString());
+				//testoNumeroInvetariatiRimanenti.setText(numeroInvetariare.toString());
 			}
 		});
 
@@ -87,6 +129,15 @@ public class MainActivity extends Activity{
 		});
 		adapterArticoliLs = new ArticoloAdapter(getApplicationContext(), articoliLs);
 		listViewArticoliLs.setAdapter(adapterArticoliLs);
+
+		adapterArticoliLs.setOnModifcaQuantitaListener(new ArticoloAdapter.ModifcaQuantitaInventariati(){
+			@Override
+			public void modifcaQtyInventariati(Integer qty){
+				//testoNumeroInvetariati.setText(qty.toString());
+				//testoNumeroInvetariatiRimanenti.setText(numeroInvetariare);
+				testoNumeroInvetariati.setText(qty.toString());
+			}
+		});
 
 		// abilito il filtro
 		listViewArticoliLs.setTextFilterEnabled(true);
@@ -257,6 +308,8 @@ public class MainActivity extends Activity{
 
 			adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
 			//adapterArticoliLs.setArticoliLs(articoliLs);
+
+			numeroInvetariare = articoliLs.size();
 
 			return "Thread terminato";
 		}

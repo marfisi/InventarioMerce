@@ -38,6 +38,51 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:text="invetariati: "/>
+
+        <TextView
+            android:id="@+id/numeroInvetariati"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            style="@style/qty"
+            android:text="numeroInvetariati"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"/>
+
+        <TextView
+            android:id="@+id/numeroInvetariare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="numeroInvetariare"/>
+
+        <!--TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - da fare: "
+            android:padding="2dp"/>
+
+        <TextView
+            android:id="@+id/numeroInvetariatiRimanenti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            style="@style/qty"
+            android:text="numeroInvetariatiRimanenti"/-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="right"
         android:orientation="horizontal">
 

@@ -23,9 +23,7 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import org.apache.commons.lang3.StringUtils;
-
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import it.cascino.smarcamentomerce.R;
 import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
 
@@ -47,6 +44,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private boolean mAutoIncrement = false;
 	private boolean mAutoDecrement = false;
 	private static Integer REP_DELAY = 50;
+
+	private Integer numeroInvetariare = 0;
 
 	public ArticoloAdapter(Context context, List<Articolo> articoliLs){
 		this.context = context;
@@ -242,77 +241,100 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.btnCheck.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				Boolean qtyRilUgualeOrig = false;
-				if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
-					a.setStato(0);
-					qtyRilUgualeOrig = true;
-				}else{
-					a.setStato(1);
-					qtyRilUgualeOrig = false;
-				}
-				a.setTimestamp(new Timestamp((new Date().getTime())));
-				//manageBckgRow(finalViewHolder, a, v);
+				if(a.getStato() == 2){
+					Boolean qtyRilUgualeOrig = false;
+					if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
+						a.setStato(0);
+						qtyRilUgualeOrig = true;
+					}else{
+						a.setStato(1);
+						qtyRilUgualeOrig = false;
+					}
+					a.setTimestamp(new Timestamp((new Date().getTime())));
+					//manageBckgRow(finalViewHolder, a, v);
 
-				Integer ordinamento = 0;
-				Integer ordinamentoDestinazione = 0;
-				if(!articoliLs.isEmpty()){
-					Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
-					Articolo art = null;
-					while(iter_articoliLs.hasNext()){
-						art = iter_articoliLs.next();
-						if(StringUtils.equals(art.getCodice(), a.getCodice())){
-							iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
+					Integer ordinamento = 0;
+					Integer ordinamentoDestinazione = 0;
+					if(!articoliOriginaleLs.isEmpty()){
+						Iterator<Articolo> iter_articoliLs = articoliOriginaleLs.iterator();
+						Articolo art = null;
+						while(iter_articoliLs.hasNext()){
+							art = iter_articoliLs.next();
+							if(StringUtils.equals(art.getCodice(), a.getCodice())){
+								iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
 
-							Iterator<Articolo> iter_articoliDestinazioneLs = articoliLs.iterator();
-							Articolo artDestinazione = null;
-							while(iter_articoliDestinazioneLs.hasNext()){
-								artDestinazione = iter_articoliDestinazioneLs.next();
-								if((artDestinazione.getStato() == 1) && (!(qtyRilUgualeOrig))){
-									break;
+								Iterator<Articolo> iter_articoliDestinazioneLs = articoliOriginaleLs.iterator();    // .listIterator(ordinamento);
+								Articolo artDestinazione = null;
+								Articolo artDestinazionePrecedente = new Articolo();
+								artDestinazionePrecedente.setStato(999);
+								while(iter_articoliDestinazioneLs.hasNext()){
+									artDestinazione = iter_articoliDestinazioneLs.next();
+
+									if((artDestinazione.getStato() == 1) && (!(qtyRilUgualeOrig))){
+										break;
+									}
+									if((artDestinazione.getStato() == 0) && (qtyRilUgualeOrig)){
+										break;
+									}
+									// gestione del rosso sempre sopra il verde
+									if((artDestinazione.getStato() == 0) && (artDestinazionePrecedente.getStato() == 2) && (!(qtyRilUgualeOrig))){
+										//ordinamentoDestinazione = ordinamentoDestinazione - 2;
+										break;
+									}
+									ordinamentoDestinazione++;
+									artDestinazionePrecedente = artDestinazione;
 								}
-								if((artDestinazione.getStato() == 0) && (qtyRilUgualeOrig)){
-									break;
-								}
-								ordinamentoDestinazione++;
+								articoliOriginaleLs.add(ordinamentoDestinazione, a);
+								break;
 							}
-							articoliLs.add(ordinamentoDestinazione, a);
-							break;
+							ordinamento++;
 						}
-						ordinamento++;
+					}
+
+					Animation animation = new ScaleAnimation(1, 1, 1, 0);
+					animation.setDuration(200);
+					//v.getParent().getParent().startAnimation(animation);
+					View daMod = (View)v.getParent().getParent().getParent();
+					daMod.startAnimation(animation);
+
+					notifyDataSetChanged();
+
+					numeroInvetariare++;
+					if(modifcaQuantitaInventariati != null){
+						modifcaQuantitaInventariati.modifcaQtyInventariati(numeroInvetariare);
 					}
 				}
-
-				Animation animation = new ScaleAnimation(1, 1, 1, 0);
-				animation.setDuration(200);
-				//v.getParent().getParent().startAnimation(animation);
-				View daMod = (View)v.getParent().getParent().getParent();
-				daMod.startAnimation(animation);
-
-				notifyDataSetChanged();
 			}
 		});
 		viewHolder.btnReset.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				a.setStato(2);
-				a.setQtyRilevata(a.getQtyOriginale());
+				if(a.getStato() != 2){
+					a.setStato(2);
+					a.setQtyRilevata(a.getQtyOriginale());
 
-				Integer ordinamento = 0;
-				if(!articoliLs.isEmpty()){
-					Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
-					Articolo art = null;
-					while(iter_articoliLs.hasNext()){
-						art = iter_articoliLs.next();
-						if(StringUtils.equals(art.getCodice(), a.getCodice())){
-							iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
-							break;
+					Integer ordinamento = 0;
+					if(!articoliOriginaleLs.isEmpty()){
+						Iterator<Articolo> iter_articoliLs = articoliOriginaleLs.iterator();
+						Articolo art = null;
+						while(iter_articoliLs.hasNext()){
+							art = iter_articoliLs.next();
+							if(StringUtils.equals(art.getCodice(), a.getCodice())){
+								iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
+								break;
+							}
+							ordinamento++;
 						}
-						ordinamento++;
+					}
+					articoliOriginaleLs.add(0, a);
+
+					notifyDataSetChanged();
+
+					numeroInvetariare--;
+					if(modifcaQuantitaInventariati != null){
+						modifcaQuantitaInventariati.modifcaQtyInventariati(numeroInvetariare);
 					}
 				}
-				articoliLs.add(0, a);
-
-				notifyDataSetChanged();
 			}
 		});
 		manageBckgRow(a, v);//, viewHolder.btnCheck);
@@ -512,6 +534,16 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		format.setDecimalFormatSymbols(symbols);
 		format.applyPattern("0.00");
 		return format.format(f);
+	}
+
+
+	// gestione del callback per la modifica della textview nella main activity gui
+	public interface ModifcaQuantitaInventariati{
+		public void modifcaQtyInventariati(Integer qty);
+	}
+	ModifcaQuantitaInventariati modifcaQuantitaInventariati;
+	public void setOnModifcaQuantitaListener(ModifcaQuantitaInventariati onDataChangeListener){
+		modifcaQuantitaInventariati = onDataChangeListener;
 	}
 }
 

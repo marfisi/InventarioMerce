@@ -13,6 +13,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="listaFont">
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -27,12 +31,11 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="um_qty">
+    <style name="um_qty" parent="listaFont">
         <item name="android:textStyle">italic</item>
-
     </style>
 
-    <style name="difet_qty">
+    <style name="difet_qty" parent="listaFont">
 
     </style>
 

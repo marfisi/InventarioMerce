@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="textColor">#696969</color>
+
     <color name="qtyTextColor">#000479</color>
     <color name="qtyTextColorNeg">#f5856a</color>
 
