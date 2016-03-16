@@ -1,4 +1,4 @@
-package it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model;
+package it.cascino.smarcamentomerce.model;
 
 import android.util.Log;
 

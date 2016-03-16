@@ -1,4 +1,4 @@
-package it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model;
+package it.cascino.smarcamentomerce.model;
 
 public class Barcode {
 	private String codice;

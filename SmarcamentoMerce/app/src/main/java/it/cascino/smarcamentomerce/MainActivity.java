@@ -2,6 +2,7 @@ package it.cascino.smarcamentomerce;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.lang3.StringUtils;
@@ -43,11 +46,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import it.cascino.smarcamentomerce.activity.LoginFileActivity;
 import it.cascino.smarcamentomerce.adapter.ArticoloAdapter;
-import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Barcode;
+import it.cascino.smarcamentomerce.model.Barcode;
 
-import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
-import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.FileDaAs;
+import it.cascino.smarcamentomerce.model.Articolo;
+import it.cascino.smarcamentomerce.model.FileDaAs;
 
 public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
@@ -62,6 +66,10 @@ public class MainActivity extends Activity{
 
 	private String SHARED_PREF = "shared_pref_inventario";
 
+	static final int PICK_CONTACT_REQUEST = 1;  // The request code
+
+	private TextView testoNumeroInvetariare;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -69,7 +77,7 @@ public class MainActivity extends Activity{
 
 		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-		SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+		/*SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
 
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString("operatore", "AGORIN");
@@ -84,6 +92,7 @@ public class MainActivity extends Activity{
 		}
 		TextView numDep = (TextView)findViewById(R.id.numDep);
 		numDep.setText(deposito);
+		*/
 		TextView dataSync = (TextView)findViewById(R.id.dataSync);
 		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
 		String dataSyncStr = formatter.format(new Date());
@@ -91,14 +100,14 @@ public class MainActivity extends Activity{
 
 		final TextView testoNumeroInvetariati = (TextView)findViewById(R.id.numeroInvetariati);
 		testoNumeroInvetariati.setText("0");
-		final TextView testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
+		testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
 		testoNumeroInvetariare.setText("0");
 		//final TextView testoNumeroInvetariatiRimanenti = (TextView)findViewById(R.id.numeroInvetariatiRimanenti);
 		//testoNumeroInvetariatiRimanenti.setText("0");
 
 		Button syncButton = (Button)findViewById(R.id.syncButton);
 		syncButton.setOnClickListener(new View.OnClickListener(){
-			@Override
+			/*@Override
 			public void onClick(View v){
 				DownloadThread dt = new DownloadThread();
 				try{
@@ -110,11 +119,20 @@ public class MainActivity extends Activity{
 				}
 				/*synchronized(articoliLs){
 					numeroInvetariare.setText(articoliLs.size());
-				}*/
+				}/
 				//dt.cancel(true);
 
 				testoNumeroInvetariare.setText(numeroInvetariare.toString());
 				//testoNumeroInvetariatiRimanenti.setText(numeroInvetariare.toString());
+			}*/
+			@Override
+			public void onClick(View v){
+				Intent intentLoginFileActivity = new Intent(getApplicationContext(), LoginFileActivity.class);
+				intentLoginFileActivity.putExtra("nomeParametro", "nomeParametroContenuto");
+				//startActivity(intentLoginFileActivity);
+				Integer resultCode = 0;
+				startActivityForResult(intentLoginFileActivity, PICK_CONTACT_REQUEST); //resultCode);
+				Log.i("resultCode", String.valueOf(resultCode));
 			}
 		});
 
@@ -173,11 +191,11 @@ public class MainActivity extends Activity{
 	}
 
 	public static void hideSoftKeyboard(Activity activity){
-		InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+		//InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		//inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
 
-	private class DownloadThread extends AsyncTask<String, Void, String>{
+/*	private class DownloadThread extends AsyncTask<String, Void, String>{
 		@Override
 		protected String doInBackground(String... params){
 			String dep = "02";
@@ -332,5 +350,36 @@ public class MainActivity extends Activity{
 		protected void onProgressUpdate(Void... values){
 			Toast.makeText(MainActivity.this, "progress", Toast.LENGTH_LONG).show();
 		}
+	}
+	*/
+
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		super.onActivityResult(requestCode, resultCode, data);
+		if(data != null){
+			switch(requestCode){
+				case 1:
+					if(resultCode == Activity.RESULT_OK){
+						String nomeFile = data.getStringExtra("nomeFile");
+						Log.i("nomeFile", nomeFile);
+						//numeroInvetariare = data.getIntExtra("numeroArticoli", -999);
+						//FileDaAs fileDaAs = (FileDaAs)data.getSerializableExtra("fileDaAsSel");
+						String gSonString = data.getStringExtra("fileDaAsSel");
+						Gson gSon = new Gson();
+						FileDaAs fileDaAs = gSon.fromJson(gSonString, FileDaAs.class);
+						articoliLs = fileDaAs.getArticoliLs();
+						numeroInvetariare = articoliLs.size();
+						testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
+						adapterArticoliLs.updateArticoliLs(articoliLs);
+
+						/*adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
+						adapterArticoliLs.notifyDataSetChanged();
+						adapterArticoliLs.*/
+					}
+					break;
+			}
+		}
+
 	}
 }

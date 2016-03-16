@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import it.cascino.smarcamentomerce.R;
-import it.cascino.smarcamentomerce.it.cascino.smarcamentomerce.model.Articolo;
+import it.cascino.smarcamentomerce.model.Articolo;
 
 public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private List<Articolo> articoliLs;
@@ -292,7 +292,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					}
 
 					Animation animation = new ScaleAnimation(1, 1, 1, 0);
-					animation.setDuration(200);
+					animation.setDuration(400);
 					//v.getParent().getParent().startAnimation(animation);
 					View daMod = (View)v.getParent().getParent().getParent();
 					daMod.startAnimation(animation);
@@ -462,6 +462,12 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	@Override
 	public void notifyDataSetChanged(){
 		super.notifyDataSetChanged();
+	}
+
+	public void updateArticoliLs(List<Articolo> newArticoliLs){
+		articoliLs.clear();
+		articoliLs.addAll(newArticoliLs);
+		notifyDataSetChanged();
 	}
 
 	private class ArticoloFiltro extends Filter{
