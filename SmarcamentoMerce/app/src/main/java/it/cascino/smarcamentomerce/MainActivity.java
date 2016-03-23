@@ -66,9 +66,13 @@ public class MainActivity extends Activity{
 
 	private String SHARED_PREF = "shared_pref_inventario";
 
-	static final int PICK_CONTACT_REQUEST = 1;  // The request code
+	static final int PICK_CONTACT_REQUEST = 1;
 
 	private TextView testoNumeroInvetariare;
+
+	private Button saveButton;
+
+	private FileDaAs fileDaAs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -105,6 +109,8 @@ public class MainActivity extends Activity{
 		//final TextView testoNumeroInvetariatiRimanenti = (TextView)findViewById(R.id.numeroInvetariatiRimanenti);
 		//testoNumeroInvetariatiRimanenti.setText("0");
 
+		saveButton = (Button)findViewById(R.id.saveButton);
+
 		Button syncButton = (Button)findViewById(R.id.syncButton);
 		syncButton.setOnClickListener(new View.OnClickListener(){
 			/*@Override
@@ -129,10 +135,29 @@ public class MainActivity extends Activity{
 			public void onClick(View v){
 				Intent intentLoginFileActivity = new Intent(getApplicationContext(), LoginFileActivity.class);
 				intentLoginFileActivity.putExtra("nomeParametro", "nomeParametroContenuto");
-				//startActivity(intentLoginFileActivity);
 				Integer resultCode = 0;
 				startActivityForResult(intentLoginFileActivity, PICK_CONTACT_REQUEST); //resultCode);
 				Log.i("resultCode", String.valueOf(resultCode));
+			}
+		});
+
+		saveButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				saveButton.setVisibility(View.INVISIBLE);
+				Gson gSon = new Gson();
+				String gSonString = gSon.toJson(articoliLs);
+				Intent intentLoginFileActivity = new Intent(getApplicationContext(), LoginFileActivity.class);
+				intentLoginFileActivity.putExtra("articoliLs", gSonString);
+				intentLoginFileActivity.putExtra("nomeFile", fileDaAs.getNomeFile());
+				Integer resultCode = 0;
+				startActivityForResult(intentLoginFileActivity, PICK_CONTACT_REQUEST); //resultCode);
+				Log.i("saveButton", saveButton.toString());
+				articoliLs.clear();
+				numeroInvetariare = articoliLs.size();
+				testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
+				adapterArticoliLs.updateArticoliLs(articoliLs);
+				testoNumeroInvetariati.setText("0");
 			}
 		});
 
@@ -195,165 +220,6 @@ public class MainActivity extends Activity{
 		//inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 	}
 
-/*	private class DownloadThread extends AsyncTask<String, Void, String>{
-		@Override
-		protected String doInBackground(String... params){
-			String dep = "02";
-			String usr = "AGORIN";
-			String userFtp = "androidftp";
-			String passwordFtp = "androidftp";
-			String directoryFtp = "/";
-			String filenameFtp = "inventario_dep" + dep + "_" + usr + ".csv";
-			//String filenameFtp = "a.csv";
-			try{
-				// URL url = new URL("ftp://" + userFtp + ":" + passwordFtp + "@" + "ftp1.cascino.it" + directoryFtp + filenameFtp);
-				//URLConnection conn = url.openConnection();
-				//InputStream inputStream = conn.getInputStream();
-
-				// controllare se la lista e' gia' modificata, in caso non la devo sync fino a quando non faccio l'upload o annullamento
-				articoliLs.clear();
-
-				FTPClient ftpClient = new FTPClient();
-				InetAddress ia = InetAddress.getByName("ftp1.cascino.it");
-				ftpClient.connect(ia, 21);
-				ftpClient.login(userFtp, passwordFtp);
-				ftpClient.enterLocalPassiveMode();
-				//ftpClient.storeFile("test.txt", new FileInputStream(file));
-				ftpClient.changeWorkingDirectory(directoryFtp);
-				InputStream inputStream = ftpClient.retrieveFileStream(filenameFtp);
-				InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF8");
-				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-				// Toast.makeText(MainActivity.this, "collegato", Toast.LENGTH_LONG).show();
-
-				Integer ordinamento = 0;
-				String lineRead = "";
-				// List<Articolo> articoliLs = null;
-				FileDaAs fileDaAs = new FileDaAs();
-				// salto le prime due righe che sono di intestazione
-				lineRead = bufferedReader.readLine();
-				lineRead = bufferedReader.readLine();
-				while((lineRead = bufferedReader.readLine()) != null){
-					ordinamento++;
-					Articolo art = new Articolo();
-					art.setOrdinamento(ordinamento);
-					String campiSlit[] = StringUtils.splitByWholeSeparatorPreserveAllTokens(lineRead, fileDaAs.getCampiSep());
-					art.setCodice(campiSlit[0]);
-					String barcodeLine[] = campiSlit[1].split(fileDaAs.getInsideCampSep());
-					Barcode barcode[] = new Barcode[barcodeLine.length];
-					for(int b = 0; b < barcodeLine.length; b++){
-						barcode[b] = new Barcode(barcodeLine[b], "ean13");
-					}
-					art.setBarcode(barcode);
-					art.setDesc(campiSlit[2]);
-					art.setUm(campiSlit[3]);
-
-					DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-					symbols.setDecimalSeparator(',');
-					DecimalFormat format = new DecimalFormat();
-					format.setDecimalFormatSymbols(symbols);
-					Float f = 0.0f;
-					try{
-						f = format.parse(campiSlit[4]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setQtyOriginale(f); // Float.parseFloat(campiSlit[4]));
-					try{
-						f = format.parse(campiSlit[5]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setQtyRilevata(f);
-					try{
-						f = format.parse(campiSlit[6]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setQtyDifettOriginale(f);
-					try{
-						f = format.parse(campiSlit[7]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setQtyDifettRilevata(f);
-					art.setDataCarico(campiSlit[8]);
-					art.setDataScarico(campiSlit[9]);
-					art.setDataUltimoInventario(campiSlit[10]);
-					try{
-						f = format.parse(campiSlit[11]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setScortaMinOriginale(f);
-					try{
-						f = format.parse(campiSlit[12]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setScortaMinRilevata(f);
-					try{
-						f = format.parse(campiSlit[13]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setScortaMaxOriginale(f);
-					try{
-						f = format.parse(campiSlit[14]).floatValue();
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					art.setScortaMaxRilevata(f);
-					art.setCommento(campiSlit[15]);
-					art.setStato(Integer.parseInt(campiSlit[16]));
-					DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
-					try{
-						Date date = (Date)formatter.parse(campiSlit[17]);
-						art.setTimestamp(new Timestamp(date.getTime()));
-					}catch(ParseException e){
-						e.printStackTrace();
-					}
-					articoliLs.add(art);
-				}
-				//fileDaAs.setArticoliLs(articoliLs);
-				ftpClient.logout();
-				ftpClient.disconnect();
-			}catch(MalformedURLException e){
-				e.printStackTrace();
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-
-			adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
-			//adapterArticoliLs.setArticoliLs(articoliLs);
-
-			numeroInvetariare = articoliLs.size();
-
-			return "Thread terminato";
-		}
-
-		@Override
-		protected void onPostExecute(String result){
-			super.onPostExecute(result);
-			Toast.makeText(MainActivity.this, "post", Toast.LENGTH_LONG).show();
-			//findViewById(R.id.articoliList).invalidate();
-			adapterArticoliLs.notifyDataSetChanged();
-		}
-
-		@Override
-		protected void onPreExecute(){
-			super.onPreExecute();
-			Toast.makeText(MainActivity.this, "pre", Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values){
-			Toast.makeText(MainActivity.this, "progress", Toast.LENGTH_LONG).show();
-		}
-	}
-	*/
-
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		super.onActivityResult(requestCode, resultCode, data);
@@ -367,7 +233,7 @@ public class MainActivity extends Activity{
 						//FileDaAs fileDaAs = (FileDaAs)data.getSerializableExtra("fileDaAsSel");
 						String gSonString = data.getStringExtra("fileDaAsSel");
 						Gson gSon = new Gson();
-						FileDaAs fileDaAs = gSon.fromJson(gSonString, FileDaAs.class);
+						fileDaAs = gSon.fromJson(gSonString, FileDaAs.class);
 						articoliLs = fileDaAs.getArticoliLs();
 						numeroInvetariare = articoliLs.size();
 						testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
@@ -376,6 +242,8 @@ public class MainActivity extends Activity{
 						/*adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
 						adapterArticoliLs.notifyDataSetChanged();
 						adapterArticoliLs.*/
+
+						saveButton.setVisibility(View.VISIBLE);
 					}
 					break;
 			}

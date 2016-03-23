@@ -24,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
+
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
 import it.cascino.smarcamentomerce.R;
 import it.cascino.smarcamentomerce.model.Articolo;
 
@@ -534,14 +538,14 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	}
 
 	private String floatToString(Float f){
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		symbols.setDecimalSeparator(',');
-		DecimalFormat format = new DecimalFormat();
-		format.setDecimalFormatSymbols(symbols);
-		format.applyPattern("0.00");
-		return format.format(f);
+		String decimalSep = ",";
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
+		symbols.setDecimalSeparator(decimalSep.charAt(0));
+		DecimalFormat decimalFormat = new DecimalFormat("9.99", symbols);
+		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+		String fToStr = decimalFormat.format(f);
+		return fToStr;
 	}
-
 
 	// gestione del callback per la modifica della textview nella main activity gui
 	public interface ModifcaQuantitaInventariati{

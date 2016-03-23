@@ -2,8 +2,16 @@ package it.cascino.smarcamentomerce.model;
 
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class Articolo{
 	private Integer ordinamento;
@@ -231,11 +239,70 @@ public class Articolo{
 
 	// occhio a non modificarla, e' utilizzata per il filtro della listview
 	public String toString(){
-		String strToStr = getCodice() + " - ";
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(getCodice());
+		stringBuilder.append(" - ");
 		for(int i = 0; i < getBarcode().length; i++){
-			strToStr = strToStr + getBarcode()[i].getCodice() + " ";
+			stringBuilder.append(getBarcode()[i].getCodice());
+			stringBuilder.append(" ");
 		}
-		Log.i("artToString", strToStr);
-		return strToStr;
+		Log.i("artToString", stringBuilder.toString());
+		return stringBuilder.toString();
+	}
+
+	public String toStringPerFtpFile(){
+		String campiSep = "|";
+		String insideCampSep = ",";
+
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(getCodice()).append(campiSep);
+		for(int i = 0; i < getBarcode().length; i++){
+			stringBuilder.append(getBarcode()[i].getCodice()).append(insideCampSep);
+		}
+		stringBuilder.append(campiSep);
+		stringBuilder.append(getDesc()).append(campiSep);
+		stringBuilder.append(getUm()).append(campiSep);
+		stringBuilder.append(floatToString(getQtyOriginale())).append(campiSep);
+		if(getStato().compareTo(2) != 0){
+			stringBuilder.append(floatToString(getQtyRilevata())).append(campiSep);
+		}else{
+			stringBuilder.append(floatToString(getQtyOriginale())).append(campiSep);
+		}
+		stringBuilder.append(floatToString(getQtyDifettOriginale())).append(campiSep);
+		if(getStato().compareTo(2) != 0){
+			stringBuilder.append(floatToString(getQtyDifettRilevata())).append(campiSep);
+		}else{
+			stringBuilder.append(floatToString(getQtyDifettOriginale())).append(campiSep);
+		}
+		stringBuilder.append(getDataCarico()).append(campiSep);
+		stringBuilder.append(getDataScarico()).append(campiSep);
+		stringBuilder.append(getDataUltimoInventario()).append(campiSep);
+		stringBuilder.append(floatToString(getScortaMinOriginale())).append(campiSep);
+		if(getStato().compareTo(2) != 0){
+			stringBuilder.append(floatToString(getScortaMinRilevata())).append(campiSep);
+		}else{
+			stringBuilder.append(floatToString(getScortaMinOriginale())).append(campiSep);
+		}
+		stringBuilder.append(floatToString(getScortaMaxOriginale())).append(campiSep);
+		if(getStato().compareTo(2) != 0){
+			stringBuilder.append(floatToString(getScortaMaxRilevata())).append(campiSep);
+		}else{
+			stringBuilder.append(floatToString(getScortaMaxOriginale())).append(campiSep);
+		}
+		stringBuilder.append(getCommento()).append(campiSep);
+		stringBuilder.append(getStato()).append(campiSep);
+		stringBuilder.append((new SimpleDateFormat("yyyyMMddHHmmss")).format(getTimestamp()));
+		String ret = StringUtils.replace(stringBuilder.toString(), insideCampSep+campiSep, campiSep);
+		return ret;
+	}
+
+	private String floatToString(Float f){
+		String decimalSep = ",";
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
+		symbols.setDecimalSeparator(decimalSep.charAt(0));
+		DecimalFormat decimalFormat = new DecimalFormat("9.99", symbols);
+		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+		String fToStr = decimalFormat.format(f);
+		return fToStr;
 	}
 }

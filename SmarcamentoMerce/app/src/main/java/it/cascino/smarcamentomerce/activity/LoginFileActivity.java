@@ -20,15 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.sql.Timestamp;
@@ -39,7 +44,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import it.cascino.smarcamentomerce.R;
@@ -63,6 +70,13 @@ public class LoginFileActivity extends Activity{
 	private String deposito = "";
 	private String operatore = "";
 
+	private final String serverFtp = "ftp1.cascino.it";
+	private final String userFtp = "androidftp";
+	private final String passwordFtp = "androidftp";
+	private final String directoryFtp = "/";
+	private FTPClient ftpClient = new FTPClient();
+	private InetAddress ia;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -71,9 +85,9 @@ public class LoginFileActivity extends Activity{
 		sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
 		updatePreferencesData();
 
-		final Intent intentLoginFileActivity = getIntent();
+		/*final Intent intentLoginFileActivity = getIntent();
 		String nomeParametro = intentLoginFileActivity.getStringExtra("nomeParametro");
-		Log.i("parametro intent", nomeParametro);
+		Log.i("parametro intent", nomeParametro);*/
 
 		depositoEditText = (EditText)findViewById(R.id.deposito);
 		depositoEditText.setText(deposito);
@@ -95,7 +109,6 @@ public class LoginFileActivity extends Activity{
 				savePreferencesData();
 				/*depositoEditText.setText(deposito);
 				operatoreEditText.setText(operatore);*/
-
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
@@ -104,6 +117,8 @@ public class LoginFileActivity extends Activity{
 			public void onTextChanged(CharSequence s, int start, int before, int count){
 			}
 		});
+
+		final Button caricaButton = (Button)findViewById(R.id.caricaButton);
 
 		Button leggiButton = (Button)findViewById(R.id.leggiButton);
 		leggiButton.setOnClickListener(new View.OnClickListener(){
@@ -117,6 +132,7 @@ public class LoginFileActivity extends Activity{
 				}catch(ExecutionException e){
 					e.printStackTrace();
 				}
+				caricaButton.setEnabled(false);
 			}
 		});
 
@@ -126,12 +142,12 @@ public class LoginFileActivity extends Activity{
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 				fileDaAsSel = fileLs.get(position);
 				Toast.makeText(getApplicationContext(), "Sel: " + fileDaAsSel.getNomeFile(), Toast.LENGTH_LONG).show();
+				caricaButton.setEnabled(true);	// e' false da xml
 			}
 		});
 		fileDaAsAdapter = new FileDaAsAdapter(getApplicationContext(), fileLs);
 		listViewFileDaAsLs.setAdapter(fileDaAsAdapter);
 
-		Button caricaButton = (Button)findViewById(R.id.caricaButton);
 		caricaButton.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -146,32 +162,45 @@ public class LoginFileActivity extends Activity{
 				finish();
 			}
 		});
+
+		Intent intentFtpUpload = getIntent();
+		if(intentFtpUpload != null){
+			String gSonString = intentFtpUpload.getStringExtra("articoliLs");
+			String nomeFile = intentFtpUpload.getStringExtra("nomeFile");
+			if(StringUtils.isNotEmpty(gSonString)){
+				Gson gSon = new Gson();
+				Type listType = new TypeToken<ArrayList<Articolo>>(){
+				}.getType();
+				List<Articolo> articoliLsDaSalv = gSon.fromJson(gSonString, listType);
+				UploadThread ut = new UploadThread(articoliLsDaSalv, nomeFile);
+				try{
+					ut.execute("").get();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}catch(ExecutionException e){
+					e.printStackTrace();
+				}
+				finish();
+			}
+		}
 	}
 
 	private class DownloadThread extends AsyncTask<String, Void, String>{
 		@Override
 		protected String doInBackground(String... params){
-			//String dep = "02";
-			//String usr = "AGORIN";
-			String userFtp = "androidftp";
-			String passwordFtp = "androidftp";
-			String directoryFtp = "/";
-			//String filenameFtp = "inventario_dep" + dep + "_" + usr + ".csv";
 			try{
-				// URL url = new URL("ftp://" + userFtp + ":" + passwordFtp + "@" + "ftp1.cascino.it" + directoryFtp + filenameFtp);
-				//URLConnection conn = url.openConnection();
-				//InputStream inputStream = conn.getInputStream();
-
-				// controllare se la lista e' gia' modificata, in caso non la devo sync fino a quando non faccio l'upload o annullamento
 				fileLs.clear();
 
-				FTPClient ftpClient = new FTPClient();
-				InetAddress ia = InetAddress.getByName("ftp1.cascino.it");
+				Boolean resultFtpOper = false;
+				ia = InetAddress.getByName(serverFtp);
 				ftpClient.connect(ia, 21);
 				ftpClient.login(userFtp, passwordFtp);
 				ftpClient.enterLocalPassiveMode();
 				//ftpClient.storeFile("test.txt", new FileInputStream(file));
-				ftpClient.changeWorkingDirectory(directoryFtp);
+				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
+				if(!(resultFtpOper)){
+					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
+				}
 
 				FTPFile[] ftpFiles = ftpClient.listFiles();
 				for(FTPFile fileCorrente : ftpFiles){
@@ -221,31 +250,31 @@ public class LoginFileActivity extends Activity{
 						art.setDesc(campiSlit[2]);
 						art.setUm(campiSlit[3]);
 
-						DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-						symbols.setDecimalSeparator(',');
-						DecimalFormat format = new DecimalFormat();
-						format.setDecimalFormatSymbols(symbols);
+						DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
+						symbols.setDecimalSeparator(fileDaAs.getDecimalSep().charAt(0));
+						DecimalFormat decimalFormat = new DecimalFormat("#.##", symbols);
+						//decimalFormat.setDecimalFormatSymbols(symbols);
 						Float f = 0.0f;
 						try{
-							f = format.parse(campiSlit[4]).floatValue();
+							f = decimalFormat.parse(campiSlit[4]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setQtyOriginale(f); // Float.parseFloat(campiSlit[4]));
 						try{
-							f = format.parse(campiSlit[5]).floatValue();
+							f = decimalFormat.parse(campiSlit[5]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setQtyRilevata(f);
 						try{
-							f = format.parse(campiSlit[6]).floatValue();
+							f = decimalFormat.parse(campiSlit[6]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setQtyDifettOriginale(f);
 						try{
-							f = format.parse(campiSlit[7]).floatValue();
+							f = decimalFormat.parse(campiSlit[7]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
@@ -254,32 +283,32 @@ public class LoginFileActivity extends Activity{
 						art.setDataScarico(campiSlit[9]);
 						art.setDataUltimoInventario(campiSlit[10]);
 						try{
-							f = format.parse(campiSlit[11]).floatValue();
+							f = decimalFormat.parse(campiSlit[11]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setScortaMinOriginale(f);
 						try{
-							f = format.parse(campiSlit[12]).floatValue();
+							f = decimalFormat.parse(campiSlit[12]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setScortaMinRilevata(f);
 						try{
-							f = format.parse(campiSlit[13]).floatValue();
+							f = decimalFormat.parse(campiSlit[13]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setScortaMaxOriginale(f);
 						try{
-							f = format.parse(campiSlit[14]).floatValue();
+							f = decimalFormat.parse(campiSlit[14]).floatValue();
 						}catch(ParseException e){
 							e.printStackTrace();
 						}
 						art.setScortaMaxRilevata(f);
 						art.setCommento(campiSlit[15]);
 						art.setStato(Integer.parseInt(campiSlit[16]));
-						DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
+						DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 						try{
 							Date date = (Date)formatter.parse(campiSlit[17]);
 							art.setTimestamp(new Timestamp(date.getTime()));
@@ -299,6 +328,7 @@ public class LoginFileActivity extends Activity{
 					fileLs.add(fileDaAs);
 				}
 				//fileDaAs.setArticoliLs(articoliLs);
+
 				ftpClient.logout();
 				ftpClient.disconnect();
 			}catch(MalformedURLException e){
@@ -311,7 +341,85 @@ public class LoginFileActivity extends Activity{
 
 			//numeroInvetariare = articoliLs.size();
 
-			return "Thread terminato";
+			return "Thread Download terminato";
+		}
+
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+			Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
+			fileDaAsAdapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+			Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values){
+			Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private class UploadThread extends AsyncTask<String, Void, String>{
+		private List<Articolo> articoliLsDaSalv;
+		private String nomeFile;
+
+		public UploadThread(List<Articolo> articoliLsDaSalv, String nomeFile){
+			this.articoliLsDaSalv = articoliLsDaSalv;
+			this.nomeFile = nomeFile;
+		}
+
+		@Override
+		protected String doInBackground(String... params){
+			try{
+				Boolean resultFtpOper = false;
+				ia = InetAddress.getByName(serverFtp);
+				ftpClient.connect(ia, 21);
+				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.enterLocalPassiveMode();
+				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
+				if(!(resultFtpOper)){
+					Log.e("ftp cambio direc fallit", Boolean.toString(resultFtpOper));
+				}
+
+				DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+				String dataSyncStr = formatter.format(new Date());
+
+				String nomeFileOriginale = StringUtils.join(dataSyncStr, "_orig_", nomeFile);
+				String nomeFileInventariato = StringUtils.join(dataSyncStr, "_invent_", nomeFile);
+
+				resultFtpOper = ftpClient.rename(nomeFile, nomeFileOriginale);
+				if(!(resultFtpOper)){
+					Log.e("ftp rename file", Boolean.toString(resultFtpOper));
+				}
+
+				StringBuilder stringBuilder = new StringBuilder();
+
+				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
+				Articolo art = null;
+				while(iter_articoliLs.hasNext()){
+					art = iter_articoliLs.next();
+					stringBuilder.append(art.toStringPerFtpFile()).append("\n");
+				}
+
+				ftpClient.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
+				InputStream inputStream = new ByteArrayInputStream(stringBuilder.toString().getBytes());
+				ftpClient.storeFile(nomeFileInventariato, inputStream);
+				inputStream.close();
+
+				//ftpClient.completePendingCommand();
+
+				ftpClient.logout();
+				ftpClient.disconnect();
+			}catch(MalformedURLException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+			return "Thread Upload terminato";
 		}
 
 		@Override
@@ -351,4 +459,5 @@ public class LoginFileActivity extends Activity{
 			operatore = sharedPreferences.getString("operatore", "nd");
 		}
 	}
+
 }

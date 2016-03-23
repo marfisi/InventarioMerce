@@ -3,40 +3,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="15dp">
 
     <TextView
         android:id="@+id/nomeFile"
+        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="nomefile"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:text="nomefile"/>
 
     <TextView
+        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- progres:"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:text="- progres:"/>
 
     <TextView
         android:id="@+id/progressivo"
+        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="progressivo"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:text="progressivo"/>
 
     <TextView
+        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- articoli:"
-        android:padding="2dp"/>
+        android:padding="2dp"
+        android:text="- articoli:"/>
 
     <TextView
         android:id="@+id/numeroArticoli"
+        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="numarticoli"
-        android:padding="2dp"/>
-
-
+        android:padding="2dp"
+        android:text="numarticoli"/>
 </LinearLayout>
