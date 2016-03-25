@@ -65,37 +65,101 @@
             style="@style/listaFont"
             android:text="art_bcod"/>
 
-        <LinearLayout
-            android:id="@+id/llScortaMin"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/art_bcod"
-            android:orientation="horizontal">
+            android:id="@+id/rlScorte"
+            android:layout_below="@+id/art_bcod">
+
             <TextView
                 android:id="@+id/scortaMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/listaFont"
-                android:text="scorta min"/>
+                android:text="scorta min"
+                android:layout_alignBaseline="@+id/btnDecrementaScortaMin"
+                android:layout_alignBottom="@+id/btnDecrementaScortaMin"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
 
             <Button
                 android:id="@+id/btnDecrementaScortaMin"
                 android:layout_width="@dimen/btnScorta"
                 android:layout_height="@dimen/btnScorta"
-                android:text="-"/>
+                android:text="-"
+                android:layout_alignParentTop="true"
+                android:layout_alignLeft="@+id/btnDecrementaScortaMax"
+                android:layout_alignStart="@+id/btnDecrementaScortaMax"
+                />
 
             <TextView
                 android:id="@+id/qtyScortaMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/listaFont"
-                android:text="scortaMin"/>
+                android:text="scortaMin"
+                android:layout_alignTop="@+id/scortaMin"
+                android:layout_toRightOf="@+id/btnDecrementaScortaMin"
+                android:layout_toEndOf="@+id/btnDecrementaScortaMin"
+                android:layout_alignBaseline="@id/scortaMin"/>
 
             <Button
                 android:id="@+id/btnIncrementaScortaMin"
                 android:layout_width="@dimen/btnScorta"
                 android:layout_height="@dimen/btnScorta"
-                android:text="+" />
+                android:text="+"
+                android:layout_alignParentTop="true"
+                android:layout_alignLeft="@+id/btnIncrementaScortaMax"
+                android:layout_alignStart="@+id/btnIncrementaScortaMax"/>
+
+            <TextView
+                android:id="@+id/scortaMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/listaFont"
+                android:text="scorta max"
+                android:layout_alignBaseline="@+id/btnDecrementaScortaMax"
+                android:layout_alignBottom="@+id/btnDecrementaScortaMax"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+
+            <Button
+                android:id="@+id/btnDecrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="-"
+                android:layout_below="@+id/btnDecrementaScortaMin"
+                android:layout_toRightOf="@+id/scortaMax"
+                android:layout_toEndOf="@+id/scortaMax"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/listaFont"
+                android:text="scortaMax"
+                android:layout_alignTop="@+id/scortaMax"
+                android:layout_toRightOf="@+id/btnDecrementaScortaMax"
+                android:layout_toEndOf="@+id/btnDecrementaScortaMax"
+                android:layout_alignBaseline="@id/scortaMax"/>
+
+            <Button
+                android:id="@+id/btnIncrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:text="+"
+                android:layout_below="@+id/btnIncrementaScortaMin"
+                android:layout_toRightOf="@+id/qtyScortaMax"
+                android:layout_toEndOf="@+id/qtyScortaMin"/>
+        </RelativeLayout>
+
+        <!--LinearLayout
+            android:id="@+id/llScortaMin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/art_bcod"
+            android:orientation="horizontal">
+
         </LinearLayout>
 
         <LinearLayout
@@ -104,38 +168,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/llScortaMin"
             android:orientation="horizontal">
-            <TextView
-                android:id="@+id/scortaMax"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/listaFont"
-                android:text="scorta max"/>
 
-            <Button
-                android:id="@+id/btnDecrementaScortaMax"
-                android:layout_width="@dimen/btnScorta"
-                android:layout_height="@dimen/btnScorta"
-                android:text="-"/>
-
-            <TextView
-                android:id="@+id/qtyScortaMax"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/listaFont"
-                android:text="scortaMax"/>
-
-            <Button
-                android:id="@+id/btnIncrementaScortaMax"
-                android:layout_width="@dimen/btnScorta"
-                android:layout_height="@dimen/btnScorta"
-                android:text="+" />
-        </LinearLayout>
+        </LinearLayout-->
 
         <LinearLayout
             android:id="@+id/llCommento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/llScortaMax"
+            android:layout_below="@+id/rlScorte"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
