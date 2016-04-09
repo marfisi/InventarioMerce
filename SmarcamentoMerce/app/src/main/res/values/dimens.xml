@@ -5,4 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="btnScorta">50dp</dimen>
+    <dimen name="btnDifet">30dp</dimen>
 </resources>

@@ -347,19 +347,19 @@ public class LoginFileActivity extends Activity{
 		@Override
 		protected void onPostExecute(String result){
 			super.onPostExecute(result);
-			Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
 			fileDaAsAdapter.notifyDataSetChanged();
 		}
 
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
-			Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		protected void onProgressUpdate(Void... values){
-			Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -425,19 +425,19 @@ public class LoginFileActivity extends Activity{
 		@Override
 		protected void onPostExecute(String result){
 			super.onPostExecute(result);
-			Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
 			fileDaAsAdapter.notifyDataSetChanged();
 		}
 
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
-			Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		protected void onProgressUpdate(Void... values){
-			Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
+			//Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
 		}
 	}
 

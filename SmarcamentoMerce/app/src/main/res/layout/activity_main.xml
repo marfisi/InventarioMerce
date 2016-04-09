@@ -88,8 +88,8 @@
 
         <Button
             android:id="@+id/syncButton"
-            android:layout_width="66dp"
-            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="sync"
             android:textColor="#ff0000"/>
@@ -104,19 +104,24 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="0px"
-        android:layout_height="0px"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/myFilter"
+            android:layout_width="173dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_filtro">
+        </EditText>
 
-    <EditText
-        android:id="@+id/myFilter"
-        android:layout_width="173dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/hint_filtro"
-       >
-    </EditText>
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/keyboardButton"
+            style="@style/keyboard"/>
+
+    </LinearLayout>
+
 
     <ListView
         android:id="@+id/articoliList"

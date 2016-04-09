@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="it.cascino.smarcamentomerce"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="it.cascino.smarcamentomerce"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -13,12 +14,13 @@
         android:icon="@drawable/inv"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateAlwaysHidden">
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboard"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize|keyboard">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -27,8 +29,8 @@
         <activity
             android:name=".activity.LoginFileActivity"
             android:label="Selezione file">
-            <action android:name="android.intent.action.ANOTHER_ACTIVITY" />
-            <category android:name="android.intent.category.DEFAULT" />
+            <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
+            <category android:name="android.intent.category.DEFAULT"/>
         </activity>
     </application>
 

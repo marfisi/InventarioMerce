@@ -55,4 +55,8 @@
         <item name="android:background">#f2c086</item>
     </style>
 
+    <style name="keyboard">
+        <item name="android:background">@drawable/keyboard</item>
+    </style>
+
 </resources>

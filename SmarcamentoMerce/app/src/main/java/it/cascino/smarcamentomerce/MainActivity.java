@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.InputType;
@@ -18,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +47,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import it.cascino.smarcamentomerce.activity.LoginFileActivity;
@@ -57,57 +62,58 @@ public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
 	private ArticoloAdapter adapterArticoliLs;
 
-	//private Integer posStatoOk = -1;
-	//private Integer posStatoRettificato = -1;
-
-	//private TextView numeroInvetariare;
-
 	private Integer numeroInvetariare = 0;
 
 	private String SHARED_PREF = "shared_pref_inventario";
 
 	static final int PICK_CONTACT_REQUEST = 1;
 
+	private TextView testoNumeroInventariati;
 	private TextView testoNumeroInvetariare;
 
 	private Button saveButton;
 
 	private FileDaAs fileDaAs;
 
+	private Boolean keyboardVisible;
+	// private InputMethodManager inputMethodManager;
+
+	private EditText myFilter;
+
+	private String stringaDaCercare = null;
+	private void setStringaDaCercare(String stringaDaCercare){
+		this.stringaDaCercare = stringaDaCercare;
+	}
+
+	private final int TRIGGER_SERACH = 1;
+	private Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == TRIGGER_SERACH) {
+				//triggerSearch();
+				adapterArticoliLs.getFilter().filter(stringaDaCercare);
+				Log.i("Filtro", "handleMessage");
+			}
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+		//inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		/*SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putString("operatore", "AGORIN");
-		editor.putString("deposito", "2");
-		editor.apply();
-
-		String deposito = "";
-		String operatore = "";
-		if (sharedPreferences != null) {
-			operatore = sharedPreferences.getString("operatore", "nd");
-			deposito = sharedPreferences.getString("deposito", "0");
-		}
-		TextView numDep = (TextView)findViewById(R.id.numDep);
-		numDep.setText(deposito);
-		*/
 		TextView dataSync = (TextView)findViewById(R.id.dataSync);
 		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
 		String dataSyncStr = formatter.format(new Date());
 		dataSync.setText(dataSyncStr);
 
-		final TextView testoNumeroInvetariati = (TextView)findViewById(R.id.numeroInvetariati);
-		testoNumeroInvetariati.setText("0");
+		testoNumeroInventariati = (TextView)findViewById(R.id.numeroInvetariati);
+		testoNumeroInventariati.setText("0");
 		testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
 		testoNumeroInvetariare.setText("0");
-		//final TextView testoNumeroInvetariatiRimanenti = (TextView)findViewById(R.id.numeroInvetariatiRimanenti);
-		//testoNumeroInvetariatiRimanenti.setText("0");
 
 		saveButton = (Button)findViewById(R.id.saveButton);
 
@@ -157,7 +163,8 @@ public class MainActivity extends Activity{
 				numeroInvetariare = articoliLs.size();
 				testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
 				adapterArticoliLs.updateArticoliLs(articoliLs);
-				testoNumeroInvetariati.setText("0");
+				adapterArticoliLs.setNumeroInvetariare(0);
+				testoNumeroInventariati.setText("0");
 			}
 		});
 
@@ -178,18 +185,54 @@ public class MainActivity extends Activity{
 			public void modifcaQtyInventariati(Integer qty){
 				//testoNumeroInvetariati.setText(qty.toString());
 				//testoNumeroInvetariatiRimanenti.setText(numeroInvetariare);
-				testoNumeroInvetariati.setText(qty.toString());
+				testoNumeroInventariati.setText(qty.toString());
 			}
 		});
 
-		// abilito il filtro
-		listViewArticoliLs.setTextFilterEnabled(true);
+		// abilito il filtro - non utilizzare dato che lo filtro con un adapter
+		//listViewArticoliLs.setTextFilterEnabled(true);
 
-		final EditText myFilter = (EditText)findViewById(R.id.myFilter);
+		myFilter = (EditText)findViewById(R.id.myFilter);
 		myFilter.addTextChangedListener(new TextWatcher(){
-			public void afterTextChanged(Editable s){
-				adapterArticoliLs.getFilter().filter(s.toString());
-				hideSoftKeyboard(MainActivity.this);
+			//private Timer timer = new Timer();
+			//private String sringaDaCercare = "";
+			//private Boolean daCercare = false;
+
+			public void afterTextChanged(final Editable s){
+				//adapterArticoliLs.getFilter().filter(s.toString());
+				//keyboardHide(myFilter);
+				//sringaDaCercare = s.toString();
+				//if(sringaDaCercare.length() > 2){
+				/*	timer.cancel();
+					timer = new Timer();
+					timer.schedule(new TimerTask(){
+						@Override
+						public void run(){
+							sringaDaCercare = s.toString();
+							Log.i("Filtro", "run: " + sringaDaCercare);
+							//adapterArticoliLs.getFilter().filter(sletto);
+							//Toast.makeText(getApplicationContext(), "cerco: " + sletto, Toast.LENGTH_LONG);
+							adapterArticoliLs.getFilter().filter(sringaDaCercare);
+							daCercare = true;
+							Log.i("Filtro", "daCercare 1: " + daCercare);
+						}
+					}, 500);*/
+				//}
+
+				/*synchronized(daCercare){
+				Log.i("Filtro", "daCercare 2: " + daCercare);
+				if(daCercare){
+					daCercare = false;
+					adapterArticoliLs.getFilter().filter(sringaDaCercare);
+					sringaDaCercare = null;
+					adapterArticoliLs.notifyDataSetChanged();
+				}}*/
+				//Log.i("Filtro", "daCercare 3: " + daCercare);
+
+				setStringaDaCercare(s.toString());
+				handler.removeMessages(TRIGGER_SERACH);
+				handler.sendEmptyMessageDelayed(TRIGGER_SERACH, 500);
+				Log.i("Filtro", "afterTextChanged");
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
@@ -202,22 +245,57 @@ public class MainActivity extends Activity{
 			@Override
 			public void onClick(View v){
 				myFilter.setText("");
-				hideSoftKeyboard(MainActivity.this);
+				keyboardHide(myFilter);
+				Log.i("Filtro", "onClick");
 			}
 		});
 		//myFilter.setFocusableInTouchMode(false);
 		myFilter.setOnTouchListener(new View.OnTouchListener(){
 			@Override
 			public boolean onTouch(View v, MotionEvent event){
-				hideSoftKeyboard(MainActivity.this);
+				//hideSoftKeyboard(MainActivity.this);
+				myFilter.setText("");
+				keyboardHide(myFilter);
+				Log.i("Filtro", "onTouch");
 				return false;
+			}
+		});
+
+		keyboardVisible = false;
+		ImageButton keyboardButton = (ImageButton)findViewById(R.id.keyboardButton);
+		keyboardButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				keyboardSwitch(v);
 			}
 		});
 	}
 
-	public static void hideSoftKeyboard(Activity activity){
-		//InputMethodManager inputMethodManager = (InputMethodManager)activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-		//inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+
+
+	public void keyboardSwitch(View v){
+		if(keyboardVisible){
+			keyboardHide(v);
+			myFilter.clearFocus();
+			keyboardVisible = false;
+		}else{
+	//		inputMethodManager.showSoftInput(myFilter, InputMethodManager.SHOW_FORCED);
+			keyboardVisible = true;
+		}
+		Log.i("keyboard", "visibile " + keyboardVisible);
+		Log.i("Filtro", "keyboardSwitch");
+	}
+
+	public void keyboardHide(View v){
+	//	inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		myFilter.clearFocus();
+		keyboardVisible = false;
+		Log.i("Filtro", "keyboardHide");
+	}
+
+	public void keyboardShow(View v){
+	//	inputMethodManager.showSoftInput(v, InputMethodManager.SHOW_FORCED);
+		keyboardVisible = true;
 	}
 
 	@Override
@@ -229,20 +307,15 @@ public class MainActivity extends Activity{
 					if(resultCode == Activity.RESULT_OK){
 						String nomeFile = data.getStringExtra("nomeFile");
 						Log.i("nomeFile", nomeFile);
-						//numeroInvetariare = data.getIntExtra("numeroArticoli", -999);
-						//FileDaAs fileDaAs = (FileDaAs)data.getSerializableExtra("fileDaAsSel");
 						String gSonString = data.getStringExtra("fileDaAsSel");
 						Gson gSon = new Gson();
 						fileDaAs = gSon.fromJson(gSonString, FileDaAs.class);
 						articoliLs = fileDaAs.getArticoliLs();
 						numeroInvetariare = articoliLs.size();
 						testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
+						adapterArticoliLs.setNumeroInvetariare(0);
+						testoNumeroInventariati.setText("0");
 						adapterArticoliLs.updateArticoliLs(articoliLs);
-
-						/*adapterArticoliLs.setArticoliOriginaleLs(articoliLs);
-						adapterArticoliLs.notifyDataSetChanged();
-						adapterArticoliLs.*/
-
 						saveButton.setVisibility(View.VISIBLE);
 					}
 					break;

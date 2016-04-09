@@ -59,6 +59,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 
 	@Override
 	public Filter getFilter(){
+		// Log.i("getFilter", "articoloFiltro: " + articoloFiltro);
 		if(articoloFiltro == null){
 			articoloFiltro = new ArticoloFiltro();
 		}
@@ -94,10 +95,12 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.art_bcod = (TextView)v.findViewById(R.id.art_bcod);
 			viewHolder.art_desc = (TextView)v.findViewById(R.id.art_desc);
 			viewHolder.art_um_qty = (TextView)v.findViewById(R.id.art_um_qty);
+			viewHolder.qtyTextWatcher = new QtyTextWatcher();
 			viewHolder.art_qty = (EditText)v.findViewById(R.id.art_qty);
-			viewHolder.mutableWatcher = new MutableWatcher();
-			viewHolder.art_qty.addTextChangedListener(viewHolder.mutableWatcher);
+			viewHolder.art_qty.addTextChangedListener(viewHolder.qtyTextWatcher);
 			viewHolder.art_difet_qty = (TextView)v.findViewById(R.id.art_difet_qty);
+			viewHolder.btnIncrementaDifettosi = (Button)v.findViewById(R.id.btnIncrementaDifettosi);
+			viewHolder.btnDecrementaDifettosi = (Button)v.findViewById(R.id.btnDecrementaDifettosi);
 			viewHolder.art_dataCarScar = (TextView)v.findViewById(R.id.art_dataCarScar);
 			viewHolder.art_dataUltimoInvent = (TextView)v.findViewById(R.id.art_dataUltimoInvent);
 			viewHolder.art_qtyScortaMin = (TextView)v.findViewById(R.id.qtyScortaMin);
@@ -106,8 +109,12 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.art_qtyScortaMax = (TextView)v.findViewById(R.id.qtyScortaMax);
 			viewHolder.btnIncrementaScortaMax = (Button)v.findViewById(R.id.btnIncrementaScortaMax);
 			viewHolder.btnDecrementaScortaMax = (Button)v.findViewById(R.id.btnDecrementaScortaMax);
+			viewHolder.spinnerCommentoWatcher = new SpinnerCommentoWatcher();
 			viewHolder.spinnerCommneto = (Spinner)v.findViewById(R.id.spinnerCommento);
+			viewHolder.spinnerCommneto.setOnItemSelectedListener(viewHolder.spinnerCommentoWatcher);
+			viewHolder.commentoTextWatcher = new CommentoTextWatcher();
 			viewHolder.art_commento = (EditText)v.findViewById(R.id.commento);
+			viewHolder.art_commento.addTextChangedListener(viewHolder.commentoTextWatcher);
 			viewHolder.btnIncrementaQty = (Button)v.findViewById(R.id.btnIncrementaQty);
 			viewHolder.btnDecrementaQty = (Button)v.findViewById(R.id.btnDecrementaQty);
 			viewHolder.btnCheck = (ImageButton)v.findViewById(R.id.btnCheck);
@@ -125,32 +132,30 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.art_bcod.setText(StringUtils.removeStart(bcod, "-"));
 		viewHolder.art_desc.setText(a.getDesc());
 		viewHolder.art_um_qty.setText(a.getUm());
-		viewHolder.mutableWatcher.setActive(false);
+		viewHolder.qtyTextWatcher.setActive(false);
 		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()), TextView.BufferType.EDITABLE);
-		viewHolder.mutableWatcher.setArticolo(a);
-		//viewHolder.mutableWatcher.setPosition(position);
-		viewHolder.mutableWatcher.setActive(true);
-		/*viewHolder.art_qty.addTextChangedListener(new TextWatcher(){
-			public void onTextChanged(CharSequence c, int start, int before, int count){
-				Log.i("qty cambiata", a.getCodice() + " " + c.toString());
-				Float fLetto = Float.parseFloat(StringUtils.replace(c.toString(), ",", "."));
-				a.setQtyRilevata(fLetto);
-			}
-
-			public void beforeTextChanged(CharSequence c, int start, int count, int after){
-			}
-
-			public void afterTextChanged(Editable c){
-			}
-		});*/
-		//InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		//inputMethodManager.showSoftInput(viewHolder.art_qty, InputMethodManager.SHOW_FORCED);
+		viewHolder.qtyTextWatcher.setArticolo(a);
+		viewHolder.qtyTextWatcher.setActive(true);
 		manageQtyTextColor(viewHolder, a);
-		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettOriginale()));
+		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
+		final ViewHolder finalViewHolder = viewHolder;
+		viewHolder.btnIncrementaDifettosi.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setQtyDifettRilevata(a.getQtyDifettRilevata() + 1.0f);
+				finalViewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
+			}
+		});
+		viewHolder.btnDecrementaDifettosi.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				a.setQtyDifettRilevata(a.getQtyDifettRilevata() - 1.0f);
+				finalViewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
+			}
+		});
 		viewHolder.art_dataCarScar.setText("data car: " + a.getDataCarico() + " - scar: " + a.getDataScarico());
 		viewHolder.art_dataUltimoInvent.setText("data ultimo invent: " + a.getDataUltimoInventario());
 		viewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
-		final ViewHolder finalViewHolder = viewHolder;
 		viewHolder.btnIncrementaScortaMin.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -180,20 +185,15 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				finalViewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
 			}
 		});
-		viewHolder.spinnerCommneto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-				a.setCommento(parent.getSelectedItem().toString());
-				Log.i("spinner", "onItemSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
-				finalViewHolder.art_commento.setText(a.getCommento());
-			}
+		viewHolder.spinnerCommentoWatcher.setActive(false);
+		viewHolder.spinnerCommentoWatcher.setArticolo(a);
+		viewHolder.spinnerCommentoWatcher.setViewHolder(viewHolder);
+		viewHolder.spinnerCommentoWatcher.setActive(true);
+		viewHolder.commentoTextWatcher.setActive(false);
+		viewHolder.art_commento.setText(a.getCommento(), TextView.BufferType.EDITABLE);
+		viewHolder.commentoTextWatcher.setArticolo(a);
+		viewHolder.commentoTextWatcher.setActive(true);
 
-			public void onNothingSelected(AdapterView<?> parent){
-				a.setCommento("");
-				finalViewHolder.art_commento.setText(a.getCommento());
-			}
-		});
-		viewHolder.art_commento.setText(a.getCommento());
 		viewHolder.btnIncrementaQty.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -316,6 +316,10 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				if(a.getStato() != 2){
 					a.setStato(2);
 					a.setQtyRilevata(a.getQtyOriginale());
+					a.setQtyDifettRilevata(a.getQtyDifettOriginale());
+					a.setScortaMinRilevata(a.getScortaMinOriginale());
+					a.setScortaMaxRilevata(a.getScortaMaxOriginale());
+					a.setCommento("");
 
 					Integer ordinamento = 0;
 					if(!articoliOriginaleLs.isEmpty()){
@@ -343,6 +347,14 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		});
 		manageBckgRow(a, v);//, viewHolder.btnCheck);
 		return v;
+	}
+
+	public Integer getNumeroInvetariare(){
+		return numeroInvetariare;
+	}
+
+	public void setNumeroInvetariare(Integer numeroInvetariare){
+		this.numeroInvetariare = numeroInvetariare;
 	}
 
 	private void manageClickIncDec(ViewHolder vh, Articolo a, boolean incrementa, float step){
@@ -386,9 +398,11 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView art_bcod;
 		public TextView art_desc;
 		public TextView art_um_qty;
+		public QtyTextWatcher qtyTextWatcher;
 		public EditText art_qty;
-		public MutableWatcher mutableWatcher;
 		public TextView art_difet_qty;
+		public Button btnIncrementaDifettosi;
+		public Button btnDecrementaDifettosi;
 		public TextView art_dataCarScar;
 		public TextView art_dataUltimoInvent;
 
@@ -398,7 +412,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView art_qtyScortaMax;
 		public Button btnIncrementaScortaMax;
 		public Button btnDecrementaScortaMax;
+		public SpinnerCommentoWatcher spinnerCommentoWatcher;
 		public Spinner spinnerCommneto;
+		public CommentoTextWatcher commentoTextWatcher;
 		public EditText art_commento;
 
 		public Button btnIncrementaQty;
@@ -407,18 +423,13 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public ImageButton btnReset;
 	}
 
-	class MutableWatcher implements TextWatcher {
-		//private int mPosition;
+	class QtyTextWatcher implements TextWatcher{
 		private boolean mActive;
 		private Articolo a;
 
 		void setArticolo(Articolo a){
 			this.a = a;
 		}
-
-		/*void setPosition(int position) {
-			mPosition = position;
-		}*/
 
 		void setActive(boolean active) {
 			mActive = active;
@@ -434,11 +445,77 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		@Override
 		public void afterTextChanged(Editable s) {
 			if(mActive){
-				//mUserDetails.set(mPosition, s.toString());
 				Log.i("qty cambiata", a.getCodice() + " " + s.toString());
-				Float fLetto = Float.parseFloat(StringUtils.replace(s.toString(), ",", "."));
-				a.setQtyRilevata(fLetto);
-				//articoliLs.set(mPosition, a);
+				try{
+					Float fLetto = Float.parseFloat(StringUtils.replace(s.toString(), ",", "."));
+					a.setQtyRilevata(fLetto);
+				}catch(NumberFormatException e){
+					a.setQtyRilevata(0.0f);
+				}
+			}
+		}
+	}
+
+	class CommentoTextWatcher implements TextWatcher{
+		private boolean mActive;
+		private Articolo a;
+
+		void setArticolo(Articolo a){
+			this.a = a;
+		}
+
+		void setActive(boolean active) {
+			mActive = active;
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+			if(mActive){
+				a.setCommento(s.toString());
+			}
+		}
+	}
+
+	class SpinnerCommentoWatcher implements AdapterView.OnItemSelectedListener{
+		private boolean mActive;
+		private Articolo a;
+		private ViewHolder viewHolder;
+
+		void setArticolo(Articolo a){
+			this.a = a;
+		}
+
+		void setActive(boolean active) {
+			mActive = active;
+		}
+
+		void setViewHolder(ViewHolder v){
+			this.viewHolder = v;
+		}
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
+			String selSpin = parent.getSelectedItem().toString();
+			if(mActive && StringUtils.isNotEmpty(selSpin) && StringUtils.isEmpty(a.getCommento())){
+				a.setCommento(parent.getSelectedItem().toString());
+				Log.i("spinner", "onItemSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
+				viewHolder.art_commento.setText(a.getCommento());
+			}
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> parent){
+			if(mActive){
+				a.setCommento("");
+				Log.i("spinner", "onNothingSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
+				viewHolder.art_commento.setText(a.getCommento());
 			}
 		}
 	}
