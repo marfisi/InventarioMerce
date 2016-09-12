@@ -85,12 +85,12 @@ public class MainActivity extends Activity{
 		this.stringaDaCercare = stringaDaCercare;
 	}
 
-	private final int TRIGGER_SERACH = 1;
+	private final int TRIGGER_SEARCH = 1;
 	private Handler handler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == TRIGGER_SERACH) {
+			if (msg.what == TRIGGER_SEARCH) {
 				//triggerSearch();
 				adapterArticoliLs.getFilter().filter(stringaDaCercare);
 				Log.i("Filtro", "handleMessage");
@@ -230,8 +230,8 @@ public class MainActivity extends Activity{
 				//Log.i("Filtro", "daCercare 3: " + daCercare);
 
 				setStringaDaCercare(s.toString());
-				handler.removeMessages(TRIGGER_SERACH);
-				handler.sendEmptyMessageDelayed(TRIGGER_SERACH, 500);
+				handler.removeMessages(TRIGGER_SEARCH);
+				handler.sendEmptyMessageDelayed(TRIGGER_SEARCH, 500);
 				Log.i("Filtro", "afterTextChanged");
 			}
 
