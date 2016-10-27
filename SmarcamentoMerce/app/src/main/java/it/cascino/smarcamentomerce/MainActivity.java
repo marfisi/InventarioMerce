@@ -1,22 +1,16 @@
 package it.cascino.smarcamentomerce;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,36 +21,40 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.greendao.query.QueryBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
-import it.cascino.smarcamentomerce.activity.LoginFileActivity;
+import it.cascino.dbsqlite.Articoli;
+import it.cascino.dbsqlite.ArticoliDao;
+import it.cascino.dbsqlite.BarcodeDao;
+import it.cascino.dbsqlite.CascinoOpenHandler;
+import it.cascino.dbsqlite.DaoMaster;
+import it.cascino.dbsqlite.DaoSession;
+import it.cascino.dbsqlite.Depositi;
+import it.cascino.dbsqlite.DepositiDao;
+import it.cascino.dbsqlite.Inventari_dettagli;
+import it.cascino.dbsqlite.Inventari_dettagliDao;
+import it.cascino.dbsqlite.Inventari_testate;
+import it.cascino.dbsqlite.Inventari_testateDao;
+import it.cascino.dbsqlite.Qty_originali;
+import it.cascino.dbsqlite.Qty_originaliDao;
+import it.cascino.dbsqlite.Rel_articoli_barcode;
+import it.cascino.dbsqlite.Rel_articoli_barcodeDao;
+import it.cascino.smarcamentomerce.activity.AggiungiArticoloDaBarcodeActivity;
+import it.cascino.smarcamentomerce.activity.SyncActivity;
 import it.cascino.smarcamentomerce.adapter.ArticoloAdapter;
-import it.cascino.smarcamentomerce.model.Barcode;
-
 import it.cascino.smarcamentomerce.model.Articolo;
-import it.cascino.smarcamentomerce.model.FileDaAs;
+import it.cascino.smarcamentomerce.model.Barcode;
+import it.cascino.smarcamentomerce.model.Inventario;
+import it.cascino.smarcamentomerce.utils.TipoStato;
 
 public class MainActivity extends Activity{
 	private List<Articolo> articoliLs = new ArrayList<Articolo>();
@@ -66,14 +64,31 @@ public class MainActivity extends Activity{
 
 	private String SHARED_PREF = "shared_pref_inventario";
 
-	static final int PICK_CONTACT_REQUEST = 1;
+	private static final int SYNC_REQUEST = 1;
+	private static final int ART_BCODE_REQUEST = 2;
+	private static final int ART_MODIF_REQUEST = 3;
+	private static final int SAVE_REQUEST = 4;
+
 
 	private TextView testoNumeroInventariati;
 	private TextView testoNumeroInvetariare;
 
+	final private String MYDATABASE_NAME = "cascinoinventario.db";
+	private CascinoOpenHandler helper = new CascinoOpenHandler(MainActivity.this, MYDATABASE_NAME, null);
+	private SQLiteDatabase db;
+	private DaoMaster daoMaster;
+	private DaoSession daoSession;
+	private ArticoliDao articoliDao;
+	private BarcodeDao barcodeDao;
+	private DepositiDao depositiDao;
+	private Inventari_testateDao inventariTestateDao;
+	private Inventari_dettagliDao inventariDettagliDao;
+	private Qty_originaliDao qtyOriginaliDao;
+	private Rel_articoli_barcodeDao relArticoliBarcodeDao;
+
 	private Button saveButton;
 
-	private FileDaAs fileDaAs;
+	private Inventario inventario;
 
 	private Boolean keyboardVisible;
 	// private InputMethodManager inputMethodManager;
@@ -82,8 +97,10 @@ public class MainActivity extends Activity{
 
 	private String stringaDaCercare = null;
 	private void setStringaDaCercare(String stringaDaCercare){
-		this.stringaDaCercare = stringaDaCercare;
+		this.stringaDaCercare = StringUtils.trimToEmpty(stringaDaCercare);
 	}
+
+	private Integer numeroRisultatoFiltro = -1;
 
 	private final int TRIGGER_SEARCH = 1;
 	private Handler handler = new Handler() {
@@ -104,6 +121,10 @@ public class MainActivity extends Activity{
 		setContentView(R.layout.activity_main);
 
 		//inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		helper.onUpgrade(db, 1, 2);
+		db = helper.getWritableDatabase();
+		daoMaster = new DaoMaster(db);
+		daoSession = daoMaster.newSession();
 
 		TextView dataSync = (TextView)findViewById(R.id.dataSync);
 		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
@@ -139,11 +160,9 @@ public class MainActivity extends Activity{
 			}*/
 			@Override
 			public void onClick(View v){
-				Intent intentLoginFileActivity = new Intent(getApplicationContext(), LoginFileActivity.class);
+				Intent intentLoginFileActivity = new Intent(getApplicationContext(), SyncActivity.class);
 				intentLoginFileActivity.putExtra("nomeParametro", "nomeParametroContenuto");
-				Integer resultCode = 0;
-				startActivityForResult(intentLoginFileActivity, PICK_CONTACT_REQUEST); //resultCode);
-				Log.i("resultCode", String.valueOf(resultCode));
+				startActivityForResult(intentLoginFileActivity, SYNC_REQUEST);
 			}
 		});
 
@@ -153,11 +172,10 @@ public class MainActivity extends Activity{
 				saveButton.setVisibility(View.INVISIBLE);
 				Gson gSon = new Gson();
 				String gSonString = gSon.toJson(articoliLs);
-				Intent intentLoginFileActivity = new Intent(getApplicationContext(), LoginFileActivity.class);
+				Intent intentLoginFileActivity = new Intent(getApplicationContext(), SyncActivity.class);
 				intentLoginFileActivity.putExtra("articoliLs", gSonString);
-				intentLoginFileActivity.putExtra("nomeFile", fileDaAs.getNomeFile());
-				Integer resultCode = 0;
-				startActivityForResult(intentLoginFileActivity, PICK_CONTACT_REQUEST); //resultCode);
+				intentLoginFileActivity.putExtra("nomeFile", inventario.getNomeFile());
+				startActivityForResult(intentLoginFileActivity, SAVE_REQUEST);
 				Log.i("saveButton", saveButton.toString());
 				articoliLs.clear();
 				numeroInvetariare = articoliLs.size();
@@ -186,6 +204,14 @@ public class MainActivity extends Activity{
 				//testoNumeroInvetariati.setText(qty.toString());
 				//testoNumeroInvetariatiRimanenti.setText(numeroInvetariare);
 				testoNumeroInventariati.setText(qty.toString());
+			}
+		});
+
+		adapterArticoliLs.setOnModifcaNumeroRisultatoFiltroListener(new ArticoloAdapter.ModifcaNumeroRisultatoFiltro(){
+			@Override
+			public void modifcaNumeroRisultatoFiltro(Integer qty){
+				numeroRisultatoFiltro = qty;
+				Log.i("Filtro", "size numeroRisultatoFiltro " + numeroRisultatoFiltro);
 			}
 		});
 
@@ -230,9 +256,23 @@ public class MainActivity extends Activity{
 				//Log.i("Filtro", "daCercare 3: " + daCercare);
 
 				setStringaDaCercare(s.toString());
+
+				if(StringUtils.length(stringaDaCercare) < 4){
+					return;
+				}
 				handler.removeMessages(TRIGGER_SEARCH);
 				handler.sendEmptyMessageDelayed(TRIGGER_SEARCH, 500);
 				Log.i("Filtro", "afterTextChanged");
+				Log.i("Filtro", "size numeroRisultatoFiltro " + numeroRisultatoFiltro);
+				if(numeroRisultatoFiltro == 0 && (StringUtils.length(stringaDaCercare) > 3)){
+					Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
+					if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
+						intent.putExtra("barcode", stringaDaCercare);
+					}else if(StringUtils.startsWith(stringaDaCercare, "%")){	// gestisco se inizia con %
+						intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
+					}
+					startActivityForResult(intent, ART_BCODE_REQUEST);
+				}
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
@@ -271,8 +311,6 @@ public class MainActivity extends Activity{
 		});
 	}
 
-
-
 	public void keyboardSwitch(View v){
 		if(keyboardVisible){
 			keyboardHide(v);
@@ -303,24 +341,89 @@ public class MainActivity extends Activity{
 		super.onActivityResult(requestCode, resultCode, data);
 		if(data != null){
 			switch(requestCode){
-				case 1:
+				case SYNC_REQUEST:
 					if(resultCode == Activity.RESULT_OK){
-						String nomeFile = data.getStringExtra("nomeFile");
-						Log.i("nomeFile", nomeFile);
-						String gSonString = data.getStringExtra("fileDaAsSel");
+						String gSonString = data.getStringExtra("inventarioSel");
 						Gson gSon = new Gson();
-						fileDaAs = gSon.fromJson(gSonString, FileDaAs.class);
-						articoliLs = fileDaAs.getArticoliLs();
-						numeroInvetariare = articoliLs.size();
+						inventario = gSon.fromJson(gSonString, Inventario.class);
+						articoliLs = inventario.getArticoliLs();
+						numeroInvetariare = inventario.getNumeroArticoliTotale();
 						testoNumeroInvetariare.setText(String.valueOf(numeroInvetariare));
-						adapterArticoliLs.setNumeroInvetariare(0);
-						testoNumeroInventariati.setText("0");
+						testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
+						adapterArticoliLs.setNumeroInvetariare(inventario.getNumeroArticoliInventariati());
 						adapterArticoliLs.updateArticoliLs(articoliLs);
 						saveButton.setVisibility(View.VISIBLE);
 					}
 					break;
+				case ART_BCODE_REQUEST:
+					if(resultCode == Activity.RESULT_OK){
+						String aggiungiCodiceArticolo = data.getStringExtra("aggiungi");
+						Log.i("aggiungiCodiceArticolo", aggiungiCodiceArticolo);
+						if(StringUtils.equals(aggiungiCodiceArticolo, "Y")){
+							String codiceArticolo = data.getStringExtra("codiceArticolo");
+							Log.i("codiceArticolo", codiceArticolo);
+						}else{
+							Log.i("codiceArticolo", "non aggiungerlo");
+						}
+					}
+					break;
+				case ART_MODIF_REQUEST:
+					if(resultCode == Activity.RESULT_OK){
+						String gSonString = data.getStringExtra("articolo");
+						Gson gSon = new Gson();
+						Articolo articoloInventariato = gSon.fromJson(gSonString, Articolo.class);
+						articoloInventariato.setInModifica(false);
+						articoloInventariato.setTimestamp(new Timestamp((new Date().getTime())));
+						articoloInventariato.setStato();
+
+						articoliLs.remove(articoloInventariato.getOrdinamento() - 1);
+						articoliLs.add(articoloInventariato.getOrdinamento() - 1, articoloInventariato);
+						ordinaArticoliLs();
+						adapterArticoliLs.updateArticoliLs(articoliLs);
+					}else if(resultCode == Activity.RESULT_CANCELED){
+						Log.i("modifica", "indietro da modifica");
+					}
+					break;
+				default:
+					break;
 			}
 		}
 
+	}
+
+	private void ordinaArticoliLs(){
+		ArrayList<Articolo> articoliLs0 = new ArrayList<Articolo>();
+		ArrayList<Articolo> articoliLs1 = new ArrayList<Articolo>();
+		ArrayList<Articolo> articoliLs2 = new ArrayList<Articolo>();
+
+		Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
+		Articolo art = null;
+		while(iter_articoliLs.hasNext()){
+			art = iter_articoliLs.next();
+			switch(art.getStato()){
+				case TipoStato.INVENTARIATO_OK:
+					articoliLs0.add(art);
+					break;
+				case TipoStato.INVENTARIATO_DIFFER:
+					articoliLs1.add(art);
+					break;
+				case TipoStato.DA_INVENTARIARE:
+					articoliLs2.add(art);break;
+				default:
+					break;
+			}
+		}
+		articoliLs.clear();
+		articoliLs.addAll(articoliLs2);
+		articoliLs.addAll(articoliLs1);
+		articoliLs.addAll(articoliLs0);
+
+		iter_articoliLs = articoliLs.iterator();
+		int posInLista = 0;
+		while(iter_articoliLs.hasNext()){
+			posInLista++;
+			art = iter_articoliLs.next();
+			art.setOrdinamento(posInLista);
+		}
 	}
 }

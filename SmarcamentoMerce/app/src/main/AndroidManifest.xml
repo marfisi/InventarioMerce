@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!--android:icon="@mipmap/ic_launcher"-->
     <application
@@ -27,8 +28,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LoginFileActivity"
-            android:label="Selezione file">
+            android:name=".activity.SyncActivity"
+            android:label="Selezione sorgente dati">
+            <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </activity>
+        <activity
+            android:name=".activity.AggiungiArticoloDaBarcodeActivity"
+            android:label="Aggiungi Articolo">
+            <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </activity>
+        <activity
+            android:name=".activity.ModificaArticoloActivity"
+            android:label="Gestione Articolo">
             <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
             <category android:name="android.intent.category.DEFAULT"/>
         </activity>

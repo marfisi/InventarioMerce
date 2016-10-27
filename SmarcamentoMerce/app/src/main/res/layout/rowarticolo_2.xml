@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/llrowarticolo"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:id="@+id/llInfo"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/art_codart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="art_codart"/>
+
+        <TextView
+            android:id="@+id/art_desc"
+            style="@style/listaFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="art_desc"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\u20ac "/>
+
+            <TextView
+                android:id="@+id/art_prez"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="art_prezzo"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lldate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="data ultimo"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="carico:  "/>
+
+                <TextView
+                    android:id="@+id/art_dataCar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="data_carico"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="scarico:  "/>
+
+                <TextView
+                    android:id="@+id/art_dataScar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="data_scarico"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="inventario:  "/>
+
+                <TextView
+                    android:id="@+id/art_dataUltimoInvent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="data_ultimo_inventario"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/art_bcod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="art_bcod"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="commento:  "/>
+
+            <TextView
+                android:id="@+id/art_commento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="commento"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llQty"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:orientation="vertical">
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:columnCount="2"
+            android:rowCount="12">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="quantità ("
+                android:layout_gravity="center|fill"/>
+
+            <TextView
+                android:id="@+id/art_um_qty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="um"
+                android:layout_gravity="center|fill"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="attese"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="rilevate"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center|fill"
+                android:layout_row="2"
+                android:text="ESPOSTE"
+                style="@style/qtyGrigliaTestata"
+                />
+
+            <TextView
+                android:id="@+id/qtyEsposteAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                style="@style/qtyGrigliaValAtteso"
+                android:text="ESattese"/>
+
+            <TextView
+                android:id="@+id/qtyEsposteRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="ESrilevate" style="@style/qtyGrigliaValRilevato"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_row="2"
+                android:text="MAGAZZINO"
+                style="@style/qtyGrigliaTestata"/>
+
+            <TextView
+                android:id="@+id/qtyMagazzinoAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="MAattese" style="@style/qtyGrigliaValAtteso"/>
+
+            <TextView
+                android:id="@+id/qtyMagazzinoRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="MArilevate" style="@style/qtyGrigliaValRilevato"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_row="2"
+                android:text="DIFETTOSI"
+                style="@style/qtyGrigliaTestata"/>
+
+            <TextView
+                android:id="@+id/qtyDifettoseAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="DIattese" style="@style/qtyGrigliaValAtteso"/>
+
+            <TextView
+                android:id="@+id/qtyDifettoseRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="DIrilevate" style="@style/qtyGrigliaValRilevato"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_row="2"
+                android:text="Scorte MINIME"
+                style="@style/qtyGrigliaTestata"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMinAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="SMIattese" style="@style/qtyGrigliaValAtteso"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMinRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="SMIrilevate" style="@style/qtyGrigliaValRilevato"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_row="2"
+                android:text="Scorte MASSIME"
+                style="@style/qtyGrigliaTestata"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMaxAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="SMAattese"
+                style="@style/qtyGrigliaValAtteso"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMaxRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="SMIrilevate" style="@style/qtyGrigliaValRilevato"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_row="2"
+                android:text="per confezione"
+                style="@style/qtyGrigliaTestata"/>
+
+            <TextView
+                android:id="@+id/qtyPerConfAttese"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Confattese"
+                style="@style/qtyGrigliaValAtteso"/>
+
+            <TextView
+                android:id="@+id/qtyPerConfRilevate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Confrilevate"
+                style="@style/qtyGrigliaValRilevato"/>
+        </GridLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llModif"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"
+        android:orientation="vertical"
+        >
+
+        <ImageButton
+            android:id="@+id/btnModif"
+            style="@style/modif"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+</LinearLayout>

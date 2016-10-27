@@ -1,6 +1,8 @@
 package it.cascino.smarcamentomerce.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -21,8 +23,12 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.RoundingMode;
@@ -35,8 +41,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+
 import it.cascino.smarcamentomerce.R;
+import it.cascino.smarcamentomerce.activity.AggiungiArticoloDaBarcodeActivity;
+import it.cascino.smarcamentomerce.activity.ModificaArticoloActivity;
 import it.cascino.smarcamentomerce.model.Articolo;
+import it.cascino.smarcamentomerce.utils.Support;
+import it.cascino.smarcamentomerce.utils.TipoStato;
 
 public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private List<Articolo> articoliLs;
@@ -44,12 +55,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private Context context;
 	private ArticoloFiltro articoloFiltro;
 
-	private Handler repeatUpdateHandler = new Handler();
-	private boolean mAutoIncrement = false;
-	private boolean mAutoDecrement = false;
-	private static Integer REP_DELAY = 50;
-
 	private Integer numeroInvetariare = 0;
+
+	private Integer numeroRisultatoFiltro = 0;
 
 	public ArticoloAdapter(Context context, List<Articolo> articoliLs){
 		this.context = context;
@@ -86,163 +94,133 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		return getViewOptimize(position, v, vg);
 	}
 
-	public View getViewOptimize(int position, View v, ViewGroup vg){
+	public View getViewOptimize(final int position, View v, final ViewGroup vg){
+		String valAtt;
+		String valRil;
 		ViewHolder viewHolder = null;
 		if(v == null){
 			v = LayoutInflater.from(context).inflate(R.layout.rowarticolo, null);
 			viewHolder = new ViewHolder();
 			viewHolder.art_codart = (TextView)v.findViewById(R.id.art_codart);
-			viewHolder.art_bcod = (TextView)v.findViewById(R.id.art_bcod);
 			viewHolder.art_desc = (TextView)v.findViewById(R.id.art_desc);
-			viewHolder.art_um_qty = (TextView)v.findViewById(R.id.art_um_qty);
-			viewHolder.qtyTextWatcher = new QtyTextWatcher();
-			viewHolder.art_qty = (EditText)v.findViewById(R.id.art_qty);
-			viewHolder.art_qty.addTextChangedListener(viewHolder.qtyTextWatcher);
-			viewHolder.art_difet_qty = (TextView)v.findViewById(R.id.art_difet_qty);
-			viewHolder.btnIncrementaDifettosi = (Button)v.findViewById(R.id.btnIncrementaDifettosi);
-			viewHolder.btnDecrementaDifettosi = (Button)v.findViewById(R.id.btnDecrementaDifettosi);
-			viewHolder.art_dataCarScar = (TextView)v.findViewById(R.id.art_dataCarScar);
+			viewHolder.art_descImg = (ImageView)v.findViewById(R.id.art_descImg);
+			viewHolder.art_prezzo  = (TextView)v.findViewById(R.id.art_prez);
+			viewHolder.art_prezzoImg = (ImageView)v.findViewById(R.id.art_prezImg);
+			viewHolder.art_dataCar = (TextView)v.findViewById(R.id.art_dataCar);
+			viewHolder.art_dataScar = (TextView)v.findViewById(R.id.art_dataScar);
 			viewHolder.art_dataUltimoInvent = (TextView)v.findViewById(R.id.art_dataUltimoInvent);
-			viewHolder.art_qtyScortaMin = (TextView)v.findViewById(R.id.qtyScortaMin);
-			viewHolder.btnIncrementaScortaMin = (Button)v.findViewById(R.id.btnIncrementaScortaMin);
-			viewHolder.btnDecrementaScortaMin = (Button)v.findViewById(R.id.btnDecrementaScortaMin);
-			viewHolder.art_qtyScortaMax = (TextView)v.findViewById(R.id.qtyScortaMax);
-			viewHolder.btnIncrementaScortaMax = (Button)v.findViewById(R.id.btnIncrementaScortaMax);
-			viewHolder.btnDecrementaScortaMax = (Button)v.findViewById(R.id.btnDecrementaScortaMax);
-			viewHolder.spinnerCommentoWatcher = new SpinnerCommentoWatcher();
-			viewHolder.spinnerCommneto = (Spinner)v.findViewById(R.id.spinnerCommento);
-			viewHolder.spinnerCommneto.setOnItemSelectedListener(viewHolder.spinnerCommentoWatcher);
-			viewHolder.commentoTextWatcher = new CommentoTextWatcher();
-			viewHolder.art_commento = (EditText)v.findViewById(R.id.commento);
-			viewHolder.art_commento.addTextChangedListener(viewHolder.commentoTextWatcher);
-			viewHolder.btnIncrementaQty = (Button)v.findViewById(R.id.btnIncrementaQty);
-			viewHolder.btnDecrementaQty = (Button)v.findViewById(R.id.btnDecrementaQty);
-			viewHolder.btnCheck = (ImageButton)v.findViewById(R.id.btnCheck);
-			viewHolder.btnReset = (ImageButton)v.findViewById(R.id.btnReset);
+			viewHolder.art_bcod = (TextView)v.findViewById(R.id.art_bcod);
+			viewHolder.art_bcodImg = (ImageView)v.findViewById(R.id.art_bcodImg);
+			viewHolder.art_commento = (TextView)v.findViewById(R.id.art_commento);
+			viewHolder.art_commentoImg = (ImageView)v.findViewById(R.id.art_commentoImg);
+			viewHolder.art_um_qty = (TextView)v.findViewById(R.id.art_um_qty);
+			viewHolder.qtyAttese = (TextView)v.findViewById(R.id.qtyAttese);
+			viewHolder.qtyRilevate = (TextView)v.findViewById(R.id.qtyRilevate);
+			viewHolder.qtyImg = (ImageView)v.findViewById(R.id.qtyImg);
+			//viewHolder.qtyEsposteAttese = (TextView)v.findViewById(R.id.qtyEsposteAttese);
+			viewHolder.qtyEsposteRilevate = (TextView)v.findViewById(R.id.qtyEsposteRilevate);
+			//viewHolder.qtyMagazzinoAttese = (TextView)v.findViewById(R.id.qtyMagazzinoAttese);
+			viewHolder.qtyMagazzinoRilevate = (TextView)v.findViewById(R.id.qtyMagazzinoRilevate);
+			viewHolder.qtyDifettoseAttese = (TextView)v.findViewById(R.id.qtyDifettoseAttese);
+			//viewHolder.qtyDifettoseRilevate = (TextView)v.findViewById(R.id.qtyDifettoseRilevate);
+			viewHolder.qtyScortaMinAttese = (TextView)v.findViewById(R.id.qtyScortaMinAttese);
+			viewHolder.qtyScortaMinRilevate = (TextView)v.findViewById(R.id.qtyScortaMinRilevate);
+			viewHolder.qtyScortaMinImg = (ImageView)v.findViewById(R.id.qtyScortaMinImg);
+			viewHolder.qtyScortaMaxAttese = (TextView)v.findViewById(R.id.qtyScortaMaxAttese);
+			viewHolder.qtyScortaMaxRilevate = (TextView)v.findViewById(R.id.qtyScortaMaxRilevate);
+			viewHolder.qtyScortaMaxImg = (ImageView)v.findViewById(R.id.qtyScortaMaxImg);
+			viewHolder.qtyPerConfAttese = (TextView)v.findViewById(R.id.qtyPerConfAttese);
+			viewHolder.qtyPerConfRilevate = (TextView)v.findViewById(R.id.qtyPerConfRilevate);
+			viewHolder.qtyPerConfImg = (ImageView)v.findViewById(R.id.qtyPerConfImg);
+			viewHolder.btnModif = (ImageButton)v.findViewById(R.id.btnModif);
 			v.setTag(viewHolder);
 		}else{
 			viewHolder = (ViewHolder)v.getTag();
 		}
 		final Articolo a = (Articolo)getItem(position);
 		viewHolder.art_codart.setText(a.getCodice());
+
+		valAtt = a.getDescOriginale() != null ? a.getDescOriginale() : "n.d.";
+		valRil = a.getDescRilevata() != null ? a.getDescRilevata() : "n.r.";
+		viewHolder.art_descImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+		valRil = a.getDescRilevata() != null ? a.getDescRilevata() : a.getDescOriginale();
+		viewHolder.art_desc.setText(valRil);
+
+		valAtt = a.getPrezzoOriginale() != null ? Support.floatToString(a.getPrezzoOriginale()) : "n.d.";
+		valRil = a.getPrezzoRilevata() != null ? Support.floatToString(a.getPrezzoRilevata()) : "n.r.";
+		viewHolder.art_prezzoImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+		valRil = a.getPrezzoRilevata() != null ? Support.floatToString(a.getPrezzoRilevata()) : Support.floatToString(a.getPrezzoOriginale());
+		viewHolder.art_prezzo.setText(valRil);
+
+		viewHolder.art_dataCar.setText(a.getDataCarico());
+		viewHolder.art_dataScar.setText(a.getDataScarico());
+		viewHolder.art_dataUltimoInvent.setText(a.getDataUltimoInventario());
+
 		String bcod = "";
-		for(int i = 0; i < a.getBarcode().length; i++){
-			bcod = bcod + "-" + a.getBarcode()[i].getCodice();
+		if(a.getBarcodeRilevata() != null){
+			for(int i = 0, n = a.getBarcodeRilevata().length; i < n; i++){
+				bcod = bcod + "-" + a.getBarcodeRilevata()[i].getCodice();
+			}
 		}
 		viewHolder.art_bcod.setText(StringUtils.removeStart(bcod, "-"));
-		viewHolder.art_desc.setText(a.getDesc());
-		viewHolder.art_um_qty.setText(a.getUm());
-		viewHolder.qtyTextWatcher.setActive(false);
-		viewHolder.art_qty.setText(floatToString(a.getQtyRilevata()), TextView.BufferType.EDITABLE);
-		viewHolder.qtyTextWatcher.setArticolo(a);
-		viewHolder.qtyTextWatcher.setActive(true);
-		manageQtyTextColor(viewHolder, a);
-		viewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
-		final ViewHolder finalViewHolder = viewHolder;
-		viewHolder.btnIncrementaDifettosi.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setQtyDifettRilevata(a.getQtyDifettRilevata() + 1.0f);
-				finalViewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
-			}
-		});
-		viewHolder.btnDecrementaDifettosi.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setQtyDifettRilevata(a.getQtyDifettRilevata() - 1.0f);
-				finalViewHolder.art_difet_qty.setText(floatToString(a.getQtyDifettRilevata()));
-			}
-		});
-		viewHolder.art_dataCarScar.setText("data car: " + a.getDataCarico() + " - scar: " + a.getDataScarico());
-		viewHolder.art_dataUltimoInvent.setText("data ultimo invent: " + a.getDataUltimoInventario());
-		viewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
-		viewHolder.btnIncrementaScortaMin.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setScortaMinRilevata(a.getScortaMinRilevata() + 1.0f);
-				finalViewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
-			}
-		});
-		viewHolder.btnDecrementaScortaMin.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setScortaMinRilevata(a.getScortaMinRilevata() - 1.0f);
-				finalViewHolder.art_qtyScortaMin.setText(floatToString(a.getScortaMinRilevata()));
-			}
-		});
-		viewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
-		viewHolder.btnIncrementaScortaMax.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setScortaMaxRilevata(a.getScortaMaxRilevata() + 1.0f);
-				finalViewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
-			}
-		});
-		viewHolder.btnDecrementaScortaMax.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				a.setScortaMaxRilevata(a.getScortaMaxRilevata() - 1.0f);
-				finalViewHolder.art_qtyScortaMax.setText(floatToString(a.getScortaMaxRilevata()));
-			}
-		});
-		viewHolder.spinnerCommentoWatcher.setActive(false);
-		viewHolder.spinnerCommentoWatcher.setArticolo(a);
-		viewHolder.spinnerCommentoWatcher.setViewHolder(viewHolder);
-		viewHolder.spinnerCommentoWatcher.setActive(true);
-		viewHolder.commentoTextWatcher.setActive(false);
-		viewHolder.art_commento.setText(a.getCommento(), TextView.BufferType.EDITABLE);
-		viewHolder.commentoTextWatcher.setArticolo(a);
-		viewHolder.commentoTextWatcher.setActive(true);
+		valAtt = a.getBarcodeOriginale() != null ? Integer.toString(a.getBarcodeOriginale().length) : "0";
+		valRil = a.getBarcodeRilevata() != null ? Integer.toString(a.getBarcodeRilevata().length) : "0";
+		viewHolder.art_bcodImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
 
-		viewHolder.btnIncrementaQty.setOnClickListener(new View.OnClickListener(){
+		valAtt = "n.r.";
+		valRil = a.getCommento() != null ? a.getCommento() : "n.r.";
+		viewHolder.art_commentoImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+		valRil = a.getCommento() != null ? a.getCommento() : "";
+		viewHolder.art_commento.setText(valRil);
+
+		viewHolder.art_um_qty.setText(a.getUm() + ")");
+
+		valAtt = a.getQtyOriginale() != null ? Support.floatToString(a.getQtyOriginale()) : "n.d.";
+		viewHolder.qtyAttese.setText(valAtt);
+		valRil = a.getQtyRilevata() != null ? Support.floatToString(a.getQtyRilevata()) : "n.r.";
+		viewHolder.qtyRilevate.setText(valRil);
+		viewHolder.qtyImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+
+		//viewHolder.qtyEsposteAttese.setText(a.getQtyEsposteOriginale() != null ? Support.floatToString(a.getQtyEsposteOriginale()) : "n.d.");
+		viewHolder.qtyEsposteRilevate.setText(a.getQtyEsposteRilevata() != null ? Support.floatToString(a.getQtyEsposteRilevata()) : "n.r.");
+
+		//viewHolder.qtyMagazzinoAttese.setText(a.getQtyMagazOriginale() != null ? Support.floatToString(a.getQtyMagazOriginale()) : "n.d.");
+		viewHolder.qtyMagazzinoRilevate.setText(a.getQtyMagazRilevata() != null ? Support.floatToString(a.getQtyMagazRilevata()) : "n.r.");
+
+		viewHolder.qtyDifettoseAttese.setText(a.getQtyDifettOriginale() != null ? Support.floatToString(a.getQtyDifettOriginale()) : "n.d.");
+		//viewHolder.qtyDifettoseRilevate.setText(a.getQtyDifettRilevata() != null ? Support.floatToString(a.getQtyDifettRilevata()) : "n.r.");
+
+		valAtt = a.getScortaMinOriginale() != null ? Support.floatToString(a.getScortaMinOriginale()) : "n.d.";
+		viewHolder.qtyScortaMinAttese.setText(valAtt);
+		valRil = a.getScortaMinRilevata() != null ? Support.floatToString(a.getScortaMinRilevata()) : "n.r.";
+		viewHolder.qtyScortaMinRilevate.setText(valRil);
+		viewHolder.qtyScortaMinImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+
+		valAtt = a.getScortaMaxOriginale() != null ? Support.floatToString(a.getScortaMaxOriginale()) : "n.d.";
+		viewHolder.qtyScortaMaxAttese.setText(valAtt);
+		valRil = a.getScortaMaxRilevata() != null ? Support.floatToString(a.getScortaMaxRilevata()) : "n.r.";
+		viewHolder.qtyScortaMaxRilevate.setText(valRil);
+		viewHolder.qtyScortaMaxImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+
+		valAtt = a.getQtyPerConfezOriginale() != null ? Support.floatToString(a.getQtyPerConfezOriginale()) : "n.d.";
+		viewHolder.qtyPerConfAttese.setText(valAtt);
+		valRil = a.getQtyPerConfezRilevata() != null ? Support.floatToString(a.getQtyPerConfezRilevata()) : "n.r.";
+		viewHolder.qtyPerConfRilevate.setText(valRil);
+		viewHolder.qtyPerConfImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
+
+		viewHolder.btnModif.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				manageClickIncDec(finalViewHolder, a, true, 1.0f);
+				Gson gSon = new Gson();
+				Articolo articolo = articoliLs.get(position);
+				articolo.setInModifica(true);
+				String gSonString = gSon.toJson(articolo);
+				Intent intentLoginFileActivity = new Intent(v.getContext(), ModificaArticoloActivity.class);
+				intentLoginFileActivity.putExtra("articolo", gSonString);
+				((Activity)vg.getContext()).startActivityForResult(intentLoginFileActivity, 3);	// 3=MainActivity.ART_MODIF_REQUEST
 			}
 		});
-		viewHolder.btnIncrementaQty.setOnLongClickListener(new View.OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View v){
-				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
-				//return true;
-				mAutoIncrement = true;
-				repeatUpdateHandler.post(new RptUpdater(finalViewHolder, a));
-				return false;
-			}
-		});
-		viewHolder.btnIncrementaQty.setOnTouchListener(new View.OnTouchListener(){
-			public boolean onTouch(View v, MotionEvent event){
-				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoIncrement){
-					mAutoIncrement = false;
-				}
-				return false;
-			}
-		});
-		viewHolder.btnDecrementaQty.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				manageClickIncDec(finalViewHolder, a, false, 1.0f);
-			}
-		});
-		viewHolder.btnDecrementaQty.setOnLongClickListener(new View.OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View v){
-				//manageClickIncDec(finalViewHolder, a, true, 5.0f);
-				//return true;
-				mAutoDecrement = true;
-				repeatUpdateHandler.post(new RptUpdater(finalViewHolder, a));
-				return false;
-			}
-		});
-		viewHolder.btnDecrementaQty.setOnTouchListener(new View.OnTouchListener(){
-			public boolean onTouch(View v, MotionEvent event){
-				if((event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) && mAutoDecrement){
-					mAutoDecrement = false;
-				}
-				return false;
-			}
-		});
-		viewHolder.btnCheck.setOnClickListener(new View.OnClickListener(){
+		/*viewHolder.btnModif.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				if(a.getStato() == 2){
@@ -309,8 +287,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					}
 				}
 			}
-		});
-		viewHolder.btnReset.setOnClickListener(new View.OnClickListener(){
+		});*/
+		/*viewHolder.btnReset.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				if(a.getStato() != 2){
@@ -344,7 +322,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					}
 				}
 			}
-		});
+		});*/
 		manageBckgRow(a, v);//, viewHolder.btnCheck);
 		return v;
 	}
@@ -357,6 +335,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		this.numeroInvetariare = numeroInvetariare;
 	}
 
+	/*
 	private void manageClickIncDec(ViewHolder vh, Articolo a, boolean incrementa, float step){
 		// devo poter modificcare solo se non e' stato confermato in precedenza
 		if(a.getStato() != 2){
@@ -379,8 +358,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			vh.art_qty.setTextColor(ContextCompat.getColor(this.context, R.color.qtyTextColor));
 		}
 	}
+	*/
 
-	private void manageBckgRow(Articolo a, View v){ // private void manageBckgRow(ViewHolder vh, Articolo a, View v){
+	/*private void manageBckgRow(Articolo a, View v){ // private void manageBckgRow(ViewHolder vh, Articolo a, View v){
 		//View daMod = (View)v.getParent().getParent().getParent();
 		if(!(a.getStato().equals(2))){
 			if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
@@ -391,153 +371,58 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		}else{
 			v.setBackgroundColor(Color.TRANSPARENT);
 		}
+	}*/
+
+	private void manageBckgRow(Articolo a, View v){
+		switch(a.getStato()){
+			case TipoStato.INVENTARIATO_OK:
+				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkOK));
+				break;
+			case TipoStato.INVENTARIATO_DIFFER:
+				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkDiffer));
+				break;
+			case TipoStato.DA_INVENTARIARE:
+				v.setBackgroundColor(Color.TRANSPARENT);
+				break;
+			default:
+				v.setBackgroundColor(Color.TRANSPARENT);
+				break;
+		}
 	}
 
 	private class ViewHolder{
 		public TextView art_codart;
-		public TextView art_bcod;
 		public TextView art_desc;
-		public TextView art_um_qty;
-		public QtyTextWatcher qtyTextWatcher;
-		public EditText art_qty;
-		public TextView art_difet_qty;
-		public Button btnIncrementaDifettosi;
-		public Button btnDecrementaDifettosi;
-		public TextView art_dataCarScar;
+		public ImageView art_descImg;
+		public TextView art_prezzo;
+		public ImageView art_prezzoImg;
+		public TextView art_dataCar;
+		public TextView art_dataScar;
 		public TextView art_dataUltimoInvent;
-
-		public TextView art_qtyScortaMin;
-		public Button btnIncrementaScortaMin;
-		public Button btnDecrementaScortaMin;
-		public TextView art_qtyScortaMax;
-		public Button btnIncrementaScortaMax;
-		public Button btnDecrementaScortaMax;
-		public SpinnerCommentoWatcher spinnerCommentoWatcher;
-		public Spinner spinnerCommneto;
-		public CommentoTextWatcher commentoTextWatcher;
-		public EditText art_commento;
-
-		public Button btnIncrementaQty;
-		public Button btnDecrementaQty;
-		public ImageButton btnCheck;
-		public ImageButton btnReset;
-	}
-
-	class QtyTextWatcher implements TextWatcher{
-		private boolean mActive;
-		private Articolo a;
-
-		void setArticolo(Articolo a){
-			this.a = a;
-		}
-
-		void setActive(boolean active) {
-			mActive = active;
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-		}
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			if(mActive){
-				Log.i("qty cambiata", a.getCodice() + " " + s.toString());
-				try{
-					Float fLetto = Float.parseFloat(StringUtils.replace(s.toString(), ",", "."));
-					a.setQtyRilevata(fLetto);
-				}catch(NumberFormatException e){
-					a.setQtyRilevata(0.0f);
-				}
-			}
-		}
-	}
-
-	class CommentoTextWatcher implements TextWatcher{
-		private boolean mActive;
-		private Articolo a;
-
-		void setArticolo(Articolo a){
-			this.a = a;
-		}
-
-		void setActive(boolean active) {
-			mActive = active;
-		}
-
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-		}
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			if(mActive){
-				a.setCommento(s.toString());
-			}
-		}
-	}
-
-	class SpinnerCommentoWatcher implements AdapterView.OnItemSelectedListener{
-		private boolean mActive;
-		private Articolo a;
-		private ViewHolder viewHolder;
-
-		void setArticolo(Articolo a){
-			this.a = a;
-		}
-
-		void setActive(boolean active) {
-			mActive = active;
-		}
-
-		void setViewHolder(ViewHolder v){
-			this.viewHolder = v;
-		}
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
-			String selSpin = parent.getSelectedItem().toString();
-			if(mActive && StringUtils.isNotEmpty(selSpin) && StringUtils.isEmpty(a.getCommento())){
-				a.setCommento(parent.getSelectedItem().toString());
-				Log.i("spinner", "onItemSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
-				viewHolder.art_commento.setText(a.getCommento());
-			}
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> parent){
-			if(mActive){
-				a.setCommento("");
-				Log.i("spinner", "onNothingSelected " + a.getCodice() + " " + parent.getSelectedItem().toString());
-				viewHolder.art_commento.setText(a.getCommento());
-			}
-		}
-	}
-
-	class RptUpdater implements Runnable{
-		ViewHolder vh;
-		Articolo a;
-
-		public RptUpdater(ViewHolder vh, Articolo a){
-			this.vh = vh;
-			this.a = a;
-		}
-
-		public void run(){
-			if(mAutoIncrement){
-				manageClickIncDec(vh, a, true, 1.0f);
-				repeatUpdateHandler.postDelayed(new RptUpdater(vh, a), REP_DELAY);
-			}else if(mAutoDecrement){
-				manageClickIncDec(vh, a, false, 1.0f);
-				repeatUpdateHandler.postDelayed(new RptUpdater(vh, a), REP_DELAY);
-			}
-		}
+		public TextView art_bcod;
+		public ImageView art_bcodImg;
+		public TextView art_commento;
+		public ImageView art_commentoImg;
+		public TextView art_um_qty;
+		public TextView qtyAttese;
+		public TextView qtyRilevate;
+		public ImageView qtyImg;
+		//public TextView qtyEsposteAttese;
+		public TextView qtyEsposteRilevate;
+		//public TextView qtyMagazzinoAttese;
+		public TextView qtyMagazzinoRilevate;
+		public TextView qtyDifettoseAttese;
+		//public TextView qtyDifettoseRilevate;
+		public TextView qtyScortaMinAttese;
+		public TextView qtyScortaMinRilevate;
+		public ImageView qtyScortaMinImg;
+		public TextView qtyScortaMaxAttese;
+		public TextView qtyScortaMaxRilevate;
+		public ImageView qtyScortaMaxImg;
+		public TextView qtyPerConfAttese;
+		public TextView qtyPerConfRilevate;
+		public ImageView qtyPerConfImg;
+		public ImageButton btnModif;
 	}
 
 	@Override
@@ -564,16 +449,21 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 					Articolo articolo = articoliOriginaleLs.get(i);
 					if(articolo.toString().toLowerCase().contains(constraint)){
 						filteredItems.add(articolo);
-						Log.i("trovato", articolo.toString());
+						//Log.i("trovato", articolo.toString());
 					}
 				}
 				result.values = filteredItems;
 				result.count = filteredItems.size();
+				numeroRisultatoFiltro = result.count;
 			}else{
 				synchronized(this){
 					result.values = articoliOriginaleLs;
 					result.count = articoliOriginaleLs.size();
+					numeroRisultatoFiltro = result.count;
 				}
+			}
+			if(modifcaNumeroRisultatoFiltro != null){
+				modifcaNumeroRisultatoFiltro.modifcaNumeroRisultatoFiltro(numeroRisultatoFiltro);
 			}
 			return result;
 		}
@@ -614,16 +504,6 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		this.articoliOriginaleLs = articoliOriginaleLs;
 	}
 
-	private String floatToString(Float f){
-		String decimalSep = ",";
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ITALY);
-		symbols.setDecimalSeparator(decimalSep.charAt(0));
-		DecimalFormat decimalFormat = new DecimalFormat("9.99", symbols);
-		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
-		String fToStr = decimalFormat.format(f);
-		return fToStr;
-	}
-
 	// gestione del callback per la modifica della textview nella main activity gui
 	public interface ModifcaQuantitaInventariati{
 		public void modifcaQtyInventariati(Integer qty);
@@ -631,6 +511,15 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	ModifcaQuantitaInventariati modifcaQuantitaInventariati;
 	public void setOnModifcaQuantitaListener(ModifcaQuantitaInventariati onDataChangeListener){
 		modifcaQuantitaInventariati = onDataChangeListener;
+	}
+
+	// gestione del callback
+	public interface ModifcaNumeroRisultatoFiltro{
+		public void modifcaNumeroRisultatoFiltro(Integer qty);
+	}
+	ModifcaNumeroRisultatoFiltro modifcaNumeroRisultatoFiltro;
+	public void setOnModifcaNumeroRisultatoFiltroListener(ModifcaNumeroRisultatoFiltro onDataChangeListener){
+		modifcaNumeroRisultatoFiltro = onDataChangeListener;
 	}
 }
 

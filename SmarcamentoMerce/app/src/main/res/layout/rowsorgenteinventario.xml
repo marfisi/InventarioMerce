@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/nomeFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="nomefile"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/statoInvent"
+        android:layout_alignEnd="@+id/statoInvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="id:"
+        android:id="@+id/textView"
+        android:layout_below="@+id/nomeFile"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/progressivo"
+        style="@style/listaFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="progressivo"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="articoli inventariati:"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView2"/>
+
+    <TextView
+        android:id="@+id/artInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="0/999"
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stato:"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/statoInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="stato"
+        android:layout_below="@+id/artInvent"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="creatore:"
+        android:id="@+id/textView4"
+        android:layout_alignTop="@+id/creatoreInvent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/creatoreInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="creatore"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/statoInvent"
+        android:layout_alignStart="@+id/statoInvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="data creazione:"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/textView4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/dataCreazioneInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="data creazione"
+        android:layout_below="@+id/textView4"
+        android:layout_alignLeft="@+id/creatoreInvent"
+        android:layout_alignStart="@+id/creatoreInvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="data modifica:"
+        android:id="@+id/textDataModifica"
+        android:layout_below="@+id/dataCreazioneInvent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/dataModificaInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="data modifica"
+        android:layout_alignBaseline="@+id/textDataModifica"
+        android:layout_alignBottom="@+id/textDataModifica"
+        android:layout_alignLeft="@+id/dataCreazioneInvent"
+        android:layout_alignStart="@+id/dataCreazioneInvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="commento:"
+        android:id="@+id/textView7"
+        android:layout_below="@+id/dataModificaInvent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/commentoInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="commento"
+        android:layout_alignBottom="@+id/textView7"
+        android:layout_alignLeft="@+id/dataModificaInvent"
+        android:layout_alignStart="@+id/dataModificaInvent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nome file sorgente:"
+        android:id="@+id/textNomeFileSorgente"
+        android:layout_alignBottom="@+id/nomeFileInDbInvent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:id="@+id/nomeFileInDbInvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:text="nome file in db"
+        android:layout_below="@+id/commentoInvent"
+        android:layout_alignLeft="@+id/commentoInvent"
+        android:layout_alignStart="@+id/commentoInvent"/>
+</RelativeLayout>

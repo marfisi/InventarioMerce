@@ -122,7 +122,6 @@
 
     </LinearLayout>
 
-
     <ListView
         android:id="@+id/articoliList"
         android:layout_width="match_parent"

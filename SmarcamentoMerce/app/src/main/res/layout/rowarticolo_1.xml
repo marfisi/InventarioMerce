@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/llrowarticolo"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:id="@+id/rlInfo"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:padding="2dp">
+
+        <TextView
+            android:id="@+id/art_codart"
+            style="@style/codart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:text="art_codart"/>
+
+        <TextView
+            android:id="@+id/art_desc"
+            style="@style/listaFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/art_codart"
+            android:text="art_desc"/>
+
+        <TextView
+            android:id="@+id/art_dataCarScar"
+            style="@style/listaFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/art_desc"
+            android:layout_below="@+id/art_desc"
+            android:layout_marginTop="7dp"
+            android:text="art_dataCarScar"/>
+
+        <TextView
+            android:id="@+id/art_dataUltimoInvent"
+            style="@style/listaFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/art_desc"
+            android:layout_below="@+id/art_dataCarScar"
+            android:text="art_dataUltimoInvent"/>
+
+        <TextView
+            android:id="@+id/art_bcod"
+            style="@style/listaFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/art_dataCarScar"
+            android:layout_below="@+id/art_dataUltimoInvent"
+            android:text="art_bcod"/>
+
+        <RelativeLayout
+            android:id="@+id/rlScorte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/art_bcod">
+
+            <TextView
+                android:id="@+id/scortaMin"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/btnDecrementaScortaMin"
+                android:layout_alignBottom="@+id/btnDecrementaScortaMin"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="scorta min"/>
+
+            <Button
+                android:id="@+id/btnDecrementaScortaMin"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:layout_alignLeft="@+id/btnDecrementaScortaMax"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/btnDecrementaScortaMax"
+                android:text="-"
+                />
+
+            <TextView
+                android:id="@+id/qtyScortaMin"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/scortaMin"
+                android:layout_alignTop="@+id/scortaMin"
+                android:layout_toEndOf="@+id/btnDecrementaScortaMin"
+                android:layout_toRightOf="@+id/btnDecrementaScortaMin"
+                android:text="scortaMin"/>
+
+            <Button
+                android:id="@+id/btnIncrementaScortaMin"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:layout_alignLeft="@+id/btnIncrementaScortaMax"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/btnIncrementaScortaMax"
+                android:text="+"/>
+
+            <TextView
+                android:id="@+id/scortaMax"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/btnDecrementaScortaMax"
+                android:layout_alignBottom="@+id/btnDecrementaScortaMax"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="scorta max"/>
+
+            <Button
+                android:id="@+id/btnDecrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:layout_below="@+id/btnDecrementaScortaMin"
+                android:layout_toEndOf="@+id/scortaMax"
+                android:layout_toRightOf="@+id/scortaMax"
+                android:text="-"/>
+
+            <TextView
+                android:id="@+id/qtyScortaMax"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/scortaMax"
+                android:layout_alignTop="@+id/scortaMax"
+                android:layout_toEndOf="@+id/btnDecrementaScortaMax"
+                android:layout_toRightOf="@+id/btnDecrementaScortaMax"
+                android:text="scortaMax"/>
+
+            <Button
+                android:id="@+id/btnIncrementaScortaMax"
+                android:layout_width="@dimen/btnScorta"
+                android:layout_height="@dimen/btnScorta"
+                android:layout_below="@+id/btnIncrementaScortaMin"
+                android:layout_toEndOf="@+id/qtyScortaMin"
+                android:layout_toRightOf="@+id/qtyScortaMax"
+                android:text="+"/>
+        </RelativeLayout>
+
+        <!--LinearLayout
+            android:id="@+id/llScortaMin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/art_bcod"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llScortaMax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llScortaMin"
+            android:orientation="horizontal">
+
+        </LinearLayout-->
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/rlScorte">
+
+            <TextView
+                android:id="@+id/commentoTxt"
+                style="@style/listaFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="comm."/>
+
+            <LinearLayout
+                android:id="@+id/llSpinCom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/commentoTxt"
+                android:layout_toRightOf="@+id/commentoTxt"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/spinnerCommento"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:entries="@array/commenti_predef"/>
+
+                <EditText
+                    android:id="@+id/commento"
+                    style="@style/listaFont"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.7"
+                    android:background="#d9d9d9"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.85"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnDecrementaQty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="#87e8fc"
+                android:text="-"
+                android:textColor="@color/qtyTextColor"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.50"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/art_qty"
+                    style="@style/qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/qty_backg"
+                    android:digits="0123456789."
+                    android:ems="13"
+                    android:inputType="numberDecimal"
+                    android:textAlignment="center"/>
+
+                <TextView
+                    android:id="@+id/art_um_qty"
+                    style="@style/um_qty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.2"
+                    android:ems="6"
+                    android:gravity="center"
+                    android:text="art_um_qty"
+                    />
+
+                <TextView
+                    style="@style/difet_qty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:gravity="center_horizontal"
+                    android:text="difet:"/>
+
+                <TextView
+                    android:id="@+id/art_difet_qty"
+                    style="@style/difet_qty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ems="9"
+                    android:gravity="center_horizontal"
+                    android:text="art_difet_qty"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnDecrementaDifettosi"
+                        android:layout_width="@dimen/btnDifet"
+                        android:layout_height="@dimen/btnDifet"
+                        android:text="-"/>
+
+                    <Button
+                        android:id="@+id/btnIncrementaDifettosi"
+                        android:layout_width="@dimen/btnDifet"
+                        android:layout_height="@dimen/btnDifet"
+                        android:text="+"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnIncrementaQty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="#5eb1ff"
+                android:text="+"
+                android:textColor="@color/qtyTextColor"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.15"
+            android:padding="2dp">
+
+            <ImageButton
+                android:id="@+id/btnReset"
+                style="@style/reset"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="30dp"
+                android:hint="bottone cancel"/>
+
+            <ImageButton
+                android:id="@+id/btnCheck"
+                style="@style/check"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@id/btnReset"
+                android:hint="bottone check"
+                android:textColor="#ff8317"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
