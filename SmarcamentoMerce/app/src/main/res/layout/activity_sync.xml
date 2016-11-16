@@ -1,63 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:weightSum="1">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="1">
 
     <Button
         android:id="@+id/aggiornaDBBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Aggiorna DB"/>
+        android:text="Aggiorna DB"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout2"
+        android:layout_below="@+id/aggiornaDBBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:text="deposito"/>
+            android:text="deposito"
+            style="@style/styleTxDefault"/>
 
         <EditText
             android:id="@+id/deposito"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:digits="0123456789"
-            android:inputType="number"/>
+            android:inputType="number"
+            style="@style/styleTxDefault"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout3">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:text="operatore"/>
+            android:text="operatore"
+            style="@style/styleTxDefault"/>
 
         <EditText
             android:id="@+id/operatore"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="@style/styleTxDefault"/>
     </LinearLayout>
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Database"
-            android:id="@+id/radioBtnDB" />
+            android:id="@+id/radioBtnDB"/>
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -72,24 +89,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="LEGGI"/>
+        android:text="LEGGI"
+        android:layout_below="@+id/radioGroup"
+        android:layout_centerHorizontal="true"/>
 
     <ListView
         android:id="@+id/fileList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="0.65"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_above="@+id/caricaButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/leggiButton">
     </ListView>
 
     <Button
         android:id="@+id/caricaButton"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.15"
         android:enabled="false"
-        android:text="CARICA"/>
+        android:text="CARICA"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 
 
-</LinearLayout>
+</RelativeLayout>

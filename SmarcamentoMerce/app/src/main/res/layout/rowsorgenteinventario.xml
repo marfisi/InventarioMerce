@@ -13,7 +13,8 @@
         android:text="nomefile"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/statoInvent"
-        android:layout_alignEnd="@+id/statoInvent"/>
+        android:layout_alignEnd="@+id/statoInvent"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,18 +23,19 @@
         android:id="@+id/textView"
         android:layout_below="@+id/nomeFile"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/progressivo"
-        style="@style/listaFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
         android:text="progressivo"
         android:layout_alignBottom="@+id/textView"
         android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"/>
+        android:layout_toEndOf="@+id/textView2"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,7 +44,8 @@
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/textView2"/>
+        android:id="@+id/textView2"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/artInvent"
@@ -53,8 +56,8 @@
         android:layout_alignBaseline="@+id/textView2"
         android:layout_alignBottom="@+id/textView2"
         android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"/>
-
+        android:layout_toEndOf="@+id/textView2"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,7 +66,8 @@
         android:id="@+id/textView3"
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/statoInvent"
@@ -73,7 +77,8 @@
         android:text="stato"
         android:layout_below="@+id/artInvent"
         android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"/>
+        android:layout_toEndOf="@+id/textView2"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -82,7 +87,8 @@
         android:id="@+id/textView4"
         android:layout_alignTop="@+id/creatoreInvent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/creatoreInvent"
@@ -92,7 +98,8 @@
         android:text="creatore"
         android:layout_below="@+id/textView3"
         android:layout_alignLeft="@+id/statoInvent"
-        android:layout_alignStart="@+id/statoInvent"/>
+        android:layout_alignStart="@+id/statoInvent"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -101,7 +108,8 @@
         android:id="@+id/textView5"
         android:layout_below="@+id/textView4"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/dataCreazioneInvent"
@@ -111,7 +119,8 @@
         android:text="data creazione"
         android:layout_below="@+id/textView4"
         android:layout_alignLeft="@+id/creatoreInvent"
-        android:layout_alignStart="@+id/creatoreInvent"/>
+        android:layout_alignStart="@+id/creatoreInvent"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -120,7 +129,8 @@
         android:id="@+id/textDataModifica"
         android:layout_below="@+id/dataCreazioneInvent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/dataModificaInvent"
@@ -131,7 +141,8 @@
         android:layout_alignBaseline="@+id/textDataModifica"
         android:layout_alignBottom="@+id/textDataModifica"
         android:layout_alignLeft="@+id/dataCreazioneInvent"
-        android:layout_alignStart="@+id/dataCreazioneInvent"/>
+        android:layout_alignStart="@+id/dataCreazioneInvent"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -140,7 +151,8 @@
         android:id="@+id/textView7"
         android:layout_below="@+id/dataModificaInvent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/commentoInvent"
@@ -159,7 +171,8 @@
         android:id="@+id/textNomeFileSorgente"
         android:layout_alignBottom="@+id/nomeFileInDbInvent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:id="@+id/nomeFileInDbInvent"
@@ -169,5 +182,6 @@
         android:text="nome file in db"
         android:layout_below="@+id/commentoInvent"
         android:layout_alignLeft="@+id/commentoInvent"
-        android:layout_alignStart="@+id/commentoInvent"/>
+        android:layout_alignStart="@+id/commentoInvent"
+        style="@style/styleTxDefault"/>
 </RelativeLayout>

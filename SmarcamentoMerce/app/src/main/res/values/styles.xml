@@ -13,96 +13,116 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="listaFont">
-        <item name="android:textColor">@color/textColor</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="styleTxDefault">
+        <item name="android:textColor">@color/colTxDefault</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="codart">
-        <item name="android:textColor">#1b22f9</item>
-        <item name="android:textStyle">bold</item>
+    <style name="styleTxQtyAttese">
+        <item name="android:textColor">@color/colTxQtyAttese</item>
+        <item name="android:textSize">@dimen/dimTxQtyAttese</item>
     </style>
 
-    <style name="qty">
-        <item name="android:textColor">@color/qtyTextColor</item>
-        <item name="android:textStyle">bold</item>
+    <style name="styleTxQtyAtteseInModifica" parent="styleTxQtyAttese">
+        <item name="android:textSize">@dimen/dimTxQtyAtteseInModifica</item>
+        <item name="android:background">@color/colBckgQtyAtteseInModifica</item>
     </style>
 
-    <style name="um_qty" parent="listaFont">
-        <item name="android:textStyle">italic</item>
+    <style name="styleTxQtyRilevate">
+        <item name="android:textColor">@color/colTxQtyRilevate</item>
+        <item name="android:textSize">@dimen/dimTxQtyRilevate</item>
     </style>
 
-    <style name="difet_qty" parent="listaFont">
-
+    <style name="styleTxArtCodice">
+        <item name="android:textColor">@color/colTxArtCodice</item>
+        <item name="android:textStyle">bold|italic</item>
     </style>
 
-    <style name="yes">
+    <style name="styleTxArtDescrizione">
+        <item name="android:textColor">@color/colTxArtDescrizione</item>
+    </style>
+
+    <style name="styleTxArtPrezzo">
+        <item name="android:textColor">@color/colTxArtPrezzo</item>
+    </style>
+
+    <style name="styleBckgInventarioOK">
+        <item name="android:background">@color/colBckgInventarioOK</item>
+    </style>
+
+    <style name="styleBckgInventarioDiffer">
+        <item name="android:background">@color/colBckgInventarioDiffer</item>
+    </style>
+
+
+    <style name="styleYes">
         <item name="android:background">@drawable/y</item>
     </style>
 
-    <style name="no">
+    <style name="styleNo">
         <item name="android:background">@drawable/n</item>
     </style>
 
-    <style name="piu">
+    <style name="stylePiu">
         <item name="android:background">@drawable/piu</item>
+        <item name="android:layout_width">@dimen/dimBtnPiu</item>
+        <item name="android:layout_height">@dimen/dimBtnPiu</item>
     </style>
 
-    <style name="meno">
+    <style name="styleMeno">
         <item name="android:background">@drawable/meno</item>
+        <item name="android:layout_width">@dimen/dimBtnMeno</item>
+        <item name="android:layout_height">@dimen/dimBtnMeno</item>
     </style>
 
-    <style name="modif">
+    <style name="styleModifica">
         <item name="android:background">@drawable/modif</item>
+        <item name="android:layout_width">@dimen/dimBtnModif</item>
+        <item name="android:layout_height">@dimen/dimBtnModif</item>
     </style>
 
-    <style name="check">
+    <style name="styleCheck">
         <item name="android:background">@drawable/check</item>
+        <item name="android:layout_width">@dimen/dimImgFeed</item>
+        <item name="android:layout_height">@dimen/dimImgFeed</item>
     </style>
 
-    <style name="warn">
+    <style name="styleWarning">
         <item name="android:background">@drawable/warn</item>
+        <item name="android:layout_width">@dimen/dimImgFeed</item>
+        <item name="android:layout_height">@dimen/dimImgFeed</item>
     </style>
 
-    <style name="reset">
+    <style name="styleReset">
         <item name="android:background">@drawable/reset</item>
+        <item name="android:layout_width">@dimen/dimImgFeed</item>
+        <item name="android:layout_height">@dimen/dimImgFeed</item>
     </style>
 
-    <style name="qtyGrigliaTestata">
-        <item name="android:textColor">#0004ff</item>
-        <item name="android:background">#9efff5</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
-    <style name="qtyGrigliaValAtteso">
-        <item name="android:textColor">#008cff</item>
-        <item name="android:background">#8de9df</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
-    <style name="qtyGrigliaValRilevato">
-        <item name="android:textColor">#d500ff</item>
-        <item name="android:background">#9ebbff</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
-    <style name="accettazioneOK">
-        <item name="android:background">#a6ff9e</item>
-    </style>
-
-    <style name="accettazioneSquadra">
-        <item name="android:background">#f2c086</item>
-    </style>
-
-    <style name="keyboard">
+    <style name="styleKeyboard">
         <item name="android:background">@drawable/keyboard</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
     </style>
 
-    <style name="keypad">
+    <style name="styleKeypad">
         <item name="android:background">@drawable/keypad</item>
     </style>
+
+    <style name="styleVociQty">
+        <item name="android:textColor">@color/colTxVociQty</item>
+        <item name="android:background">@color/colBckgVociQty</item>
+        <item name="android:layout_marginTop">@dimen/dimQtyMargineTop</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="styleSeparatoreVociQty">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
 
 </resources>

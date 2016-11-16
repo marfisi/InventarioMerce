@@ -4,12 +4,21 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="textColor">#696969</color>
+    <color name="colTxDefault">#696969</color>
 
-    <color name="qtyTextColor">#000479</color>
-    <color name="qtyTextColorNeg">#f5856a</color>
+    <color name="colTxQtyAttese">#5f64fc</color>
+    <color name="colTxQtyRilevate">#000479</color>
 
-    <color name="bckgChkOK">#92ecb5</color>
-    <color name="bckgChkDiffer">#ff331c</color>
+    <color name="colTxArtCodice">#000479</color>
+    <color name="colTxArtDescrizione">#000479</color>
+    <color name="colTxArtPrezzo">#000479</color>
+
+    <color name="colBckgInventarioOK">#c8d7ffe6</color>
+    <color name="colBckgInventarioDiffer">#c8ffd3a7</color>
+
+    <color name="colBckgQtyAtteseInModifica">#b9bcfff8</color>
+
+    <color name="colTxVociQty">#ff8726</color>
+    <color name="colBckgVociQty">#eefcbf</color>
 
 </resources>

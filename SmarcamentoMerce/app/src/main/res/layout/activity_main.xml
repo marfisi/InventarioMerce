@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            style="@style/qty"
+            style="@style/styleTxDefault"
             android:text="numeroInvetariati"/>
 
         <TextView
@@ -106,6 +106,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <EditText
             android:id="@+id/myFilter"
             android:layout_width="173dp"
@@ -115,10 +116,8 @@
         </EditText>
 
         <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
             android:id="@+id/keyboardButton"
-            style="@style/keyboard"/>
+            style="@style/styleKeyboard"/>
 
     </LinearLayout>
 

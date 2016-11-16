@@ -6,68 +6,73 @@ import org.greenrobot.greendao.annotation.*;
 
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
+
 /**
  * Entity mapped to table "INFOGENERICHE".
  */
 @Entity
-public class Infogeneriche {
+public class Infogeneriche{
 
-    @Id(autoincrement = true)
-    private Long id;
+	@Id(autoincrement = true)
+	private Long id;
 
-    @NotNull
-    private String info;
+	@NotNull
+	private String info;
 
-    @NotNull
-    private String valore;
+	@NotNull
+	private String valore;
 
-    // KEEP FIELDS - put your custom fields here
-    // KEEP FIELDS END
+	// KEEP FIELDS - put your custom fields here
+	// KEEP FIELDS END
 
-    @Generated
-    public Infogeneriche() {
-    }
+	@Generated
+	public Infogeneriche(){
+	}
 
-    public Infogeneriche(Long id) {
-        this.id = id;
-    }
+	public Infogeneriche(Long id){
+		this.id = id;
+	}
 
-    @Generated
-    public Infogeneriche(Long id, String info, String valore) {
-        this.id = id;
-        this.info = info;
-        this.valore = valore;
-    }
+	@Generated
+	public Infogeneriche(Long id, String info, String valore){
+		this.id = id;
+		this.info = info;
+		this.valore = valore;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId(){
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id){
+		this.id = id;
+	}
 
-    @NotNull
-    public String getInfo() {
-        return info;
-    }
+	@NotNull
+	public String getInfo(){
+		return info;
+	}
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setInfo(@NotNull String info) {
-        this.info = info;
-    }
+	/**
+	 * Not-null value; ensure this value is available before it is saved to the database.
+	 */
+	public void setInfo(@NotNull String info){
+		this.info = info;
+	}
 
-    @NotNull
-    public String getValore() {
-        return valore;
-    }
+	@NotNull
+	public String getValore(){
+		return valore;
+	}
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setValore(@NotNull String valore) {
-        this.valore = valore;
-    }
+	/**
+	 * Not-null value; ensure this value is available before it is saved to the database.
+	 */
+	public void setValore(@NotNull String valore){
+		this.valore = valore;
+	}
 
-    // KEEP METHODS - put your custom methods here
-    // KEEP METHODS END
+	// KEEP METHODS - put your custom methods here
+	// KEEP METHODS END
 
 }

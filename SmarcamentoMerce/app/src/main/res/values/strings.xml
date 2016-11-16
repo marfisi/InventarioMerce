@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">SmarcamentoMerce</string>
+    <string name="app_name">InventarioMerce</string>
     <string name="hint_filtro">Filtro &#8230;</string>
+
+    <string name="strSimboloValuta">\u20ac </string>
+
 </resources>

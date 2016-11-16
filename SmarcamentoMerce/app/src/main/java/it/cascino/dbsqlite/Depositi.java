@@ -6,68 +6,73 @@ import org.greenrobot.greendao.annotation.*;
 
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
+
 /**
  * Entity mapped to table "DEPOSITI".
  */
 @Entity
-public class Depositi {
+public class Depositi{
 
-    @Id(autoincrement = true)
-    private Long id;
+	@Id(autoincrement = true)
+	private Long id;
 
-    @NotNull
-    private String iddep;
+	@NotNull
+	private String iddep;
 
-    @NotNull
-    private String desc;
+	@NotNull
+	private String desc;
 
-    // KEEP FIELDS - put your custom fields here
-    // KEEP FIELDS END
+	// KEEP FIELDS - put your custom fields here
+	// KEEP FIELDS END
 
-    @Generated
-    public Depositi() {
-    }
+	@Generated
+	public Depositi(){
+	}
 
-    public Depositi(Long id) {
-        this.id = id;
-    }
+	public Depositi(Long id){
+		this.id = id;
+	}
 
-    @Generated
-    public Depositi(Long id, String iddep, String desc) {
-        this.id = id;
-        this.iddep = iddep;
-        this.desc = desc;
-    }
+	@Generated
+	public Depositi(Long id, String iddep, String desc){
+		this.id = id;
+		this.iddep = iddep;
+		this.desc = desc;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId(){
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id){
+		this.id = id;
+	}
 
-    @NotNull
-    public String getIddep() {
-        return iddep;
-    }
+	@NotNull
+	public String getIddep(){
+		return iddep;
+	}
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setIddep(@NotNull String iddep) {
-        this.iddep = iddep;
-    }
+	/**
+	 * Not-null value; ensure this value is available before it is saved to the database.
+	 */
+	public void setIddep(@NotNull String iddep){
+		this.iddep = iddep;
+	}
 
-    @NotNull
-    public String getDesc() {
-        return desc;
-    }
+	@NotNull
+	public String getDesc(){
+		return desc;
+	}
 
-    /** Not-null value; ensure this value is available before it is saved to the database. */
-    public void setDesc(@NotNull String desc) {
-        this.desc = desc;
-    }
+	/**
+	 * Not-null value; ensure this value is available before it is saved to the database.
+	 */
+	public void setDesc(@NotNull String desc){
+		this.desc = desc;
+	}
 
-    // KEEP METHODS - put your custom methods here
-    // KEEP METHODS END
+	// KEEP METHODS - put your custom methods here
+	// KEEP METHODS END
 
 }

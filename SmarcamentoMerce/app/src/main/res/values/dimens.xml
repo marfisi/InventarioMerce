@@ -4,6 +4,19 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="btnScorta">50dp</dimen>
-    <dimen name="btnDifet">30dp</dimen>
+
+    <dimen name="dimTxDefault">30dp</dimen>
+    <dimen name="dimTxQtyAttese">10dp</dimen>
+    <dimen name="dimTxQtyAtteseInModifica">30dp</dimen>
+    <dimen name="dimTxQtyRilevate">13dp</dimen>
+
+    <dimen name="dimImgFeed">15dp</dimen>
+
+    <dimen name="dimBtnModif">30dp</dimen>
+
+    <dimen name="dimQtyMargineTop">25dp</dimen>
+
+    <dimen name="dimBtnPiu">50dp</dimen>
+    <dimen name="dimBtnMeno">50dp</dimen>
+
 </resources>

@@ -35,7 +35,6 @@
 
         <TextView
             android:id="@+id/art_desc"
-            style="@style/listaFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="art_desc"/>
@@ -49,13 +48,13 @@
 
         <ImageButton
             android:id="@+id/btnN"
-            style="@style/no"
+            style="@style/styleNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <ImageButton
             android:id="@+id/btnY"
-            style="@style/yes"
+            style="@style/styleYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
