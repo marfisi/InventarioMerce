@@ -44,6 +44,8 @@ public class AggiungiArticoloDaBarcodeActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_aggiungiarticolodabarcode);
 
+		Boolean articoloTrovato = false;
+
 		helper.onUpgrade(db, 1, 2);
 		db = helper.getWritableDatabase();
 		daoMaster = new DaoMaster(db);
@@ -51,6 +53,9 @@ public class AggiungiArticoloDaBarcodeActivity extends Activity{
 
 		art_codart = (TextView)findViewById(R.id.art_codart);
 		art_desc = (TextView)findViewById(R.id.art_desc);
+
+		art_codart.setText("NON TROVATO NESSUN ARTICOLO");
+		art_desc.setText("");
 
 		Intent intentAggiungiArticoloDaBarcodeActivity = getIntent();
 		if(intentAggiungiArticoloDaBarcodeActivity != null){
@@ -70,29 +75,36 @@ public class AggiungiArticoloDaBarcodeActivity extends Activity{
 						Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Id.eq(art.getIdart())).unique();
 						art_codart.setText(articoli.getCodart());
 						art_desc.setText(articoli.getDesc());
+						articoloTrovato = true;
 					}
 				}
 			}else if(StringUtils.isNotEmpty(codArt)){
 				articoliDao = daoSession.getArticoliDao();
 				Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Codart.eq(codArt)).unique();
-				art_codart.setText(articoli.getCodart());
-				art_desc.setText(articoli.getDesc());
+				if(articoli != null){
+					art_codart.setText(articoli.getCodart());
+					art_desc.setText(articoli.getDesc());
+					articoloTrovato = true;
+				}
 			}
 		}
 
 		final Intent resultIntent = new Intent();
 
 		btnY = (ImageButton)findViewById(R.id.btnY);
-		btnY.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				resultIntent.putExtra("aggiungi", "Y");
-				resultIntent.putExtra("codiceArticolo", art_codart.getText());
-				setResult(Activity.RESULT_OK, resultIntent);
-				finish();
-			}
-		});
-
+		btnY.setVisibility(View.INVISIBLE);
+		if(articoloTrovato){
+			btnY.setVisibility(View.VISIBLE);
+			btnY.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v){
+					resultIntent.putExtra("aggiungi", "Y");
+					resultIntent.putExtra("codiceArticolo", art_codart.getText());
+					setResult(Activity.RESULT_OK, resultIntent);
+					finish();
+				}
+			});
+		}
 		btnN = (ImageButton)findViewById(R.id.btnN);
 		btnN.setOnClickListener(new View.OnClickListener(){
 			@Override

@@ -52,7 +52,7 @@ import it.cascino.inventariomerce.utils.TipoStato;
 
 public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private List<Articolo> articoliLs;
-	private List<Articolo> articoliOriginaleLs;
+	//private List<Articolo> articoliOriginaleLs;
 	private Context context;
 	private ArticoloFiltro articoloFiltro;
 	private Inventario inventario;
@@ -64,7 +64,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	public ArticoloAdapter(Context context, List<Articolo> articoliLs){
 		this.context = context;
 		this.articoliLs = articoliLs;
-		this.articoliOriginaleLs = articoliLs; //articoliOriginaleLs;
+		//this.articoliOriginaleLs = articoliLs; //articoliOriginaleLs;
 	}
 
 	@Override
@@ -452,8 +452,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 
 				constraint = constraint.toString().toLowerCase();
 				Log.i("ricerca", constraint.toString());
-				for(int i = 0; i < articoliOriginaleLs.size(); i++){
-					Articolo articolo = articoliOriginaleLs.get(i);
+				for(int i = 0; i < articoliLs.size(); i++){
+					Articolo articolo = articoliLs.get(i);
 					if(articolo.toString().toLowerCase().contains(constraint)){
 						filteredItems.add(articolo);
 						//Log.i("trovato", articolo.toString());
@@ -464,8 +464,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				numeroRisultatoFiltro = result.count;
 			}else{
 				synchronized(this){
-					result.values = articoliOriginaleLs;
-					result.count = articoliOriginaleLs.size();
+					result.values = articoliLs;
+					result.count = articoliLs.size();
 					numeroRisultatoFiltro = result.count;
 				}
 			}
@@ -503,13 +503,13 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		this.articoliLs = articoliLs;
 	} */
 
-	public List<Articolo> getArticoliOriginaleLs(){
+	/*public List<Articolo> getArticoliOriginaleLs(){
 		return articoliOriginaleLs;
 	}
 
 	public void setArticoliOriginaleLs(List<Articolo> articoliOriginaleLs){
 		this.articoliOriginaleLs = articoliOriginaleLs;
-	}
+	}*/
 
 	/*// gestione del callback per la modifica della textview nella main activity gui
 	public interface ModifcaQuantitaInventariati{

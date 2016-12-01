@@ -262,6 +262,7 @@ public class SyncActivity extends Activity{
 				ia = InetAddress.getByName(serverFtp);
 				ftpClient.connect(ia, 21);
 				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024*1024);
 				ftpClient.enterLocalPassiveMode();
 				//ftpClient.storeFile("test.txt", new FileInputStream(file));
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
@@ -387,6 +388,7 @@ public class SyncActivity extends Activity{
 				ia = InetAddress.getByName(serverFtp);
 				ftpClient.connect(ia, 21);
 				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024 * 1024);
 				ftpClient.enterLocalPassiveMode();
 				//ftpClient.storeFile("test.txt", new FileInputStream(file));
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
@@ -470,6 +472,7 @@ public class SyncActivity extends Activity{
 				ia = InetAddress.getByName(serverFtp);
 				ftpClient.connect(ia, 21);
 				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024 * 1024);
 				ftpClient.enterLocalPassiveMode();
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
 				if(!(resultFtpOper)){
@@ -569,6 +572,7 @@ public class SyncActivity extends Activity{
 				ia = InetAddress.getByName(serverFtp);
 				ftpClient.connect(ia, 21);
 				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024*1024);
 				ftpClient.enterLocalPassiveMode();
 				//ftpClient.storeFile("test.txt", new FileInputStream(file));
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
@@ -834,7 +838,6 @@ public class SyncActivity extends Activity{
 					art.setBarcodeOriginale(bcod);
 				}else{
 					art.setBarcodeOriginale(null);
-
 				}
 				art.setBarcodeRilevata((new Barcode()).stringToArray(inventariDettagli.getBarcode()));
 				art.setUm(articoli.getUm());

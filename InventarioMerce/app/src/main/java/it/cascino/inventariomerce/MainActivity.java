@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import it.cascino.dbsqlite.Articoli;
 import it.cascino.dbsqlite.ArticoliDao;
@@ -61,6 +63,7 @@ public class MainActivity extends Activity{
 	private ArticoloAdapter adapterArticoliLs;
 
 	//private Integer numeroInvetariare = 0;
+	Timer timer = new Timer();
 
 	private String SHARED_PREF = "shared_pref_inventario";
 
@@ -101,19 +104,6 @@ public class MainActivity extends Activity{
 	}
 
 	private Integer numeroRisultatoFiltro = -1;
-
-	private final int TRIGGER_SEARCH = 1;
-	private Handler handler = new Handler(){
-
-		@Override
-		public void handleMessage(Message msg){
-			if(msg.what == TRIGGER_SEARCH){
-				//triggerSearch();
-				adapterArticoliLs.getFilter().filter(stringaDaCercare);
-				Log.i("Filtro", "handleMessage");
-			}
-		}
-	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -247,24 +237,16 @@ public class MainActivity extends Activity{
 				}}*/
 				//Log.i("Filtro", "daCercare 3: " + daCercare);
 
-				setStringaDaCercare(s.toString());
 
-				if(StringUtils.length(stringaDaCercare) < 4){
+
+				/*if(StringUtils.length(stringaDaCercare) < 4){
 					return;
-				}
-				handler.removeMessages(TRIGGER_SEARCH);
-				handler.sendEmptyMessageDelayed(TRIGGER_SEARCH, 500);
-				Log.i("Filtro", "afterTextChanged");
-				Log.i("Filtro", "size numeroRisultatoFiltro " + numeroRisultatoFiltro);
-				if(numeroRisultatoFiltro == 0 && (StringUtils.length(stringaDaCercare) > 3)){
-					Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
-					if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
-						intent.putExtra("barcode", stringaDaCercare);
-					}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
-						intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
-					}
-					startActivityForResult(intent, ART_BCODE_REQUEST);
-				}
+				}*/
+				//handler.removeMessages(TRIGGER_SEARCH);
+				//handler.sendEmptyMessageDelayed(TRIGGER_SEARCH, 1000);
+				//Log.i("Filtro", "afterTextChanged");
+
+				setStringaDaCercare(s.toString());
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
@@ -273,20 +255,23 @@ public class MainActivity extends Activity{
 			public void onTextChanged(CharSequence s, int start, int before, int count){
 			}
 		});
-		myFilter.setOnClickListener(new View.OnClickListener(){
+		/*myFilter.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
+				setStringaDaCercare("");
 				myFilter.setText("");
 				keyboardHide(myFilter);
 				Log.i("Filtro", "onClick");
 			}
-		});
+		});*/
 		//myFilter.setFocusableInTouchMode(false);
 		myFilter.setOnTouchListener(new View.OnTouchListener(){
 			@Override
 			public boolean onTouch(View v, MotionEvent event){
 				//hideSoftKeyboard(MainActivity.this);
-				myFilter.setText("");
+				setStringaDaCercare("");
+				//myFilter.setText("");
+				myFilter.setSelectAllOnFocus(true);
 				keyboardHide(myFilter);
 				Log.i("Filtro", "onTouch");
 				return false;
@@ -301,6 +286,40 @@ public class MainActivity extends Activity{
 				keyboardSwitch(v);
 			}
 		});
+
+		ImageButton cercaButton = (ImageButton)findViewById(R.id.cercaButton);
+		cercaButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				adapterArticoliLs.updateArticoliLs(articoliLs);
+				adapterArticoliLs.getFilter().filter(stringaDaCercare);
+				adapterArticoliLs.notifyDataSetChanged();
+
+				timer.cancel();
+				timer = new Timer();
+				timer.schedule(new TimerTask(){
+					@Override
+					public void run(){
+						cercaStringaDaCercare();
+					}
+				}, 500);
+			}
+		});
+	}
+
+	private void cercaStringaDaCercare(){
+		Log.i("Filtro", "SSSSSSSsize numeroRisultatoFiltro " + numeroRisultatoFiltro);
+		if(numeroRisultatoFiltro == 0 && (StringUtils.length(stringaDaCercare) > 3)){
+			Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
+			if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
+				intent.putExtra("barcode", stringaDaCercare);
+			}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
+				intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
+			}else{
+				intent.putExtra("codArt", stringaDaCercare);
+			}
+			startActivityForResult(intent, ART_BCODE_REQUEST);
+		}
 	}
 
 	public void keyboardSwitch(View v){
@@ -354,12 +373,17 @@ public class MainActivity extends Activity{
 						if(StringUtils.equals(aggiungiCodiceArticolo, "Y")){
 							String codiceArticolo = data.getStringExtra("codiceArticolo");
 							Log.i("codiceArticolo", codiceArticolo);
-							//inventario = gSon.fromJson(gSonString, Inventario.class);
-							//articoliLs = inventario.getArticoliLs();
+
+							aggiungiArticoloAdInventario(codiceArticolo);
+
 							testoNumeroInvetariare.setText(String.valueOf(inventario.getNumeroArticoliTotale()));
-							testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
+							ordinaArticoliLs();
+							adapterArticoliLs.setInventario(inventario);
+							adapterArticoliLs.updateArticoliLs(articoliLs);
 						}else{
-							Log.i("codiceArticolo", "non aggiungerlo");
+							Log.i("codiceArticolo", "non aggiunto");
+							setStringaDaCercare("");
+							myFilter.setText("");
 						}
 					}
 					break;
@@ -469,5 +493,108 @@ public class MainActivity extends Activity{
 		inventariDettagli.setQty_per_confez(articoloInventariato.getQtyPerConfezRilevata());
 		inventariDettagli.setBarcode((new Barcode()).arrayToString(articoloInventariato.getBarcodeRilevata()));
 		inventariDettagli.update();
+	}
+
+	private void aggiungiArticoloAdInventario(String codiceArticolo){
+		articoliDao = daoSession.getArticoliDao();
+		Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Codart.eq(codiceArticolo)).unique();
+
+		relArticoliBarcodeDao = daoSession.getRel_articoli_barcodeDao();
+		qtyOriginaliDao = daoSession.getQty_originaliDao();
+		depositiDao = daoSession.getDepositiDao();
+
+		Depositi depositi = depositiDao.queryBuilder().where(DepositiDao.Properties.Iddep.eq(StringUtils.right("00" + inventario.getDeposito(), 2))).unique();
+		Long idDeposito = depositi.getId();
+
+		Articolo art = new Articolo();
+		art.setOrdinamento(inventario.getNumeroArticoliTotale() + 1);
+		art.setCodice(articoli.getCodart());
+		QueryBuilder qb = qtyOriginaliDao.queryBuilder();
+		Qty_originali qtyOriginali = null;
+		try{
+			qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).unique();
+		}catch(IndexOutOfBoundsException e){
+			Log.w("Art non ha qty per dep ", String.valueOf(idDeposito));
+		}
+		if(qtyOriginali != null){
+			art.setQtyOriginale(qtyOriginali.getQty());
+			art.setQtyRilevata(null);
+			art.setQtyEsposteOriginale(qtyOriginali.getQty());
+			art.setQtyMagazOriginale(0.0f);
+			art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
+			art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
+			art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
+			art.setDataCarico(qtyOriginali.getData_carico());
+			art.setDataScarico(qtyOriginali.getData_scarico());
+			art.setDataUltimoInventario(qtyOriginali.getData_inventario());
+		}
+		inventariDettagliDao = daoSession.getInventari_dettagliDao();
+		Inventari_dettagli inventariDettagli = null;
+		inventariDettagli = new Inventari_dettagli();
+		inventariDettagli.setIdtestata(inventario.getProgressivo());
+		inventariDettagli.setIdart(articoli.getId());
+
+		inventariDettagli.setQty_esposta(null);
+		inventariDettagli.setQty_magaz(null);
+		inventariDettagli.setQty_difettosi(null);
+		inventariDettagli.setQty_scorta_min(null);
+		inventariDettagli.setQty_scorta_max(null);
+		inventariDettagli.setPrezzo(null);
+		inventariDettagli.setCommento(null);
+		inventariDettagli.setStato(String.valueOf(TipoStato.DA_INVENTARIARE));
+		inventariDettagli.setTimestamp(inventario.getTimeCreazione().toString());
+		inventariDettagli.setDesc(null);
+		inventariDettagli.setPosizioneinlista(art.getOrdinamento());
+		inventariDettagli.setQty_per_confez(null);
+		List<Rel_articoli_barcode> relArticoliBarcode = null;
+		try{
+			relArticoliBarcode = relArticoliBarcodeDao.queryBuilder().where(Rel_articoli_barcodeDao.Properties.Idart.eq(articoli.getId())).list();
+		}catch(Exception e){
+			Log.w("Art non ha barcode ", Long.toString(articoli.getId()));
+		}
+		if(relArticoliBarcode != null){
+			Barcode bcod[] = new Barcode[relArticoliBarcode.size()];
+			for(int j = 0, s = relArticoliBarcode.size(); j < s; j++){
+				bcod[j] = new Barcode();
+				bcod[j].setCodice(relArticoliBarcode.get(j).getBarcode().getCodice());
+			}
+			inventariDettagli.setBarcode((new Barcode()).arrayToString(bcod));
+		}else{
+			inventariDettagli.setBarcode("");
+		}
+
+		inventariDettagliDao.insert(inventariDettagli);
+		Long idInventariDettagli = inventariDettagli.getId();
+
+		art.setQtyEsposteRilevata(inventariDettagli.getQty_esposta());
+		art.setQtyMagazRilevata(inventariDettagli.getQty_magaz());
+		art.setQtyDifettRilevata(inventariDettagli.getQty_difettosi());
+		art.setScortaMinRilevata(inventariDettagli.getQty_scorta_min());
+		art.setScortaMaxRilevata(inventariDettagli.getQty_scorta_max());
+		art.setDescOriginale(articoli.getDesc());
+		art.setDescRilevata(inventariDettagli.getDesc());
+		art.setPrezzoOriginale(articoli.getPrezzo());
+		art.setPrezzoRilevata(inventariDettagli.getPrezzo());
+		art.setCommento(inventariDettagli.getCommento());
+		art.setStato(Integer.parseInt(inventariDettagli.getStato()));
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS");
+		Date date = null;
+		try{
+			date = (Date)formatter.parse(inventariDettagli.getTimestamp());
+			art.setTimestamp(new Timestamp(date.getTime()));
+		}catch(Exception e){
+			art.setTimestamp(null);
+		}
+		art.setOrdinamento(inventariDettagli.getPosizioneinlista());
+		art.setQtyPerConfezOriginale(articoli.getQty_per_confez());
+		art.setQtyPerConfezRilevata(inventariDettagli.getQty_per_confez());
+		art.setBarcodeOriginale((new Barcode()).stringToArray(inventariDettagli.getBarcode()));
+		art.setBarcodeRilevata((new Barcode()).stringToArray(inventariDettagli.getBarcode()));
+		art.setUm(articoli.getUm());
+		art.setInModifica(false);
+
+		articoliLs.add(art);
+		inventario.setArticoliLs(articoliLs);
+		inventario.setNumeroArticoliTotale(articoliLs.size());
 	}
 }

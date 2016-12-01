@@ -28,7 +28,14 @@
 
     <style name="styleTxQtyAtteseInModifica" parent="styleTxQtyAttese">
         <item name="android:textSize">@dimen/dimTxQtyAtteseInModifica</item>
-        <item name="android:background">@color/colBckgQtyAtteseInModifica</item>
+    </style>
+
+    <style name="styleQtyAtteseSelezionabile" parent="styleTxQtyAtteseInModifica">
+        <item name="android:background">@drawable/drawable_qty_selezionabile</item>
+    </style>
+
+    <style name="styleQtyAtteseSelezionato" parent="styleTxQtyAtteseInModifica">
+        <item name="android:background">@drawable/drawable_qty_selezionato</item>
     </style>
 
     <style name="styleTxQtyRilevate">
@@ -100,6 +107,12 @@
         <item name="android:background">@drawable/reset</item>
         <item name="android:layout_width">@dimen/dimImgFeed</item>
         <item name="android:layout_height">@dimen/dimImgFeed</item>
+    </style>
+
+    <style name="styleLente">
+        <item name="android:background">@drawable/lente</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">70dp</item>
     </style>
 
     <style name="styleKeyboard">

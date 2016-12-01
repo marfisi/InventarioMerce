@@ -16,7 +16,8 @@
     <color name="colBckgInventarioOK">#c8d7ffe6</color>
     <color name="colBckgInventarioDiffer">#c8ffd3a7</color>
 
-    <color name="colBckgQtyAtteseInModifica">#b9bcfff8</color>
+    <color name="colBckgQtySelezionabile">#b1fff8</color>
+    <color name="colBckgQtySelezionato">#00d4ff</color>
 
     <color name="colTxVociQty">#ff8726</color>
     <color name="colBckgVociQty">#eefcbf</color>

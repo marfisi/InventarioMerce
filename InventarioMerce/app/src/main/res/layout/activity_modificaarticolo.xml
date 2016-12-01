@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     android:id="@+id/layRowArticolo"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:weightSum="1">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/layInfo"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -297,10 +290,13 @@
 
     <LinearLayout
         android:id="@+id/layQty"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.3"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layInfo"
+        android:layout_toLeftOf="@+id/layModif"
+        android:layout_toStartOf="@+id/layModif"
+        android:layout_marginRight="64dp"
+        android:layout_marginEnd="64dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -400,7 +396,7 @@
                 android:text="ESrilevate"
                 android:layout_alignTop="@+id/textEsposte"
                 android:layout_alignParentRight="true"
-                style="@style/styleTxQtyRilevate"/>
+                style="@style/styleQtyAtteseSelezionabile"/>
 
             <View
                 android:layout_width="130dp"
@@ -436,7 +432,7 @@
                 android:text="MArilevate"
                 android:layout_alignTop="@+id/textMagazzino"
                 android:layout_alignParentRight="true"
-                style="@style/styleTxQtyRilevate"/>
+                style="@style/styleQtyAtteseSelezionabile"/>
 
             <View
                 android:layout_width="match_parent"
@@ -507,7 +503,7 @@
                 android:text="SMIrilevate"
                 android:layout_alignTop="@+id/textScorteMin"
                 android:layout_alignParentRight="true"
-                style="@style/styleTxQtyRilevate"/>
+                style="@style/styleQtyAtteseSelezionabile"/>
 
             <ImageView
                 android:id="@+id/qtyScortaMinImg"
@@ -550,7 +546,7 @@
                 android:text="SMArilevate"
                 android:layout_alignTop="@+id/textScorteMax"
                 android:layout_alignParentRight="true"
-                style="@style/styleTxQtyRilevate"/>
+                style="@style/styleQtyAtteseSelezionabile"/>
 
             <ImageView
                 android:id="@+id/qtyScortaMaxImg"
@@ -593,7 +589,7 @@
                 android:text="PCrilevate"
                 android:layout_alignTop="@+id/textPerConf"
                 android:layout_alignParentRight="true"
-                style="@style/styleTxQtyRilevate"/>
+                style="@style/styleQtyAtteseSelezionabile"/>
 
             <ImageView
                 android:id="@+id/qtyPerConfImg"
@@ -613,11 +609,13 @@
 
     <LinearLayout
         android:id="@+id/layModif"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.3"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_below="@+id/layInfo"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -649,7 +647,7 @@
 
                 <EditText
                     android:id="@+id/qty"
-                    style="@style/styleTxQtyAtteseInModifica"
+                    style="@style/styleQtyAtteseSelezionato"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.6"
@@ -706,4 +704,4 @@
         </RelativeLayout>
 
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

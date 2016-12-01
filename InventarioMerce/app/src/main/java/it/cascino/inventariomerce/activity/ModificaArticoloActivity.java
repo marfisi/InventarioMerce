@@ -442,6 +442,39 @@ public class ModificaArticoloActivity extends Activity{
 		qtyTextWatcher.setActive(false);
 		qty.setText(Support.floatToString(qtyElab));
 		qtyTextWatcher.setActive(true);
+
+		gestioneQtyStyle();
+	}
+
+	private void gestioneQtyStyle(){
+		qtyEsposteRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionabile);
+		qtyMagazzinoRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionabile);
+		qtyScortaMinRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionabile);
+		qtyScortaMaxRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionabile);
+		qtyPerConfRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionabile);
+		switch(tipoQtySelezionata){
+			case TipoQty.ESP_E_MAG:
+				break;
+			case TipoQty.ESPOSTE:
+				qtyEsposteRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionato);
+				break;
+			case TipoQty.MAGAZZINO:
+				qtyMagazzinoRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionato);
+				break;
+			/*case TipoQty.DIFETTOSI:
+				break;*/
+			case TipoQty.SCORTE_MIN:
+				qtyScortaMinRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionato);
+				break;
+			case TipoQty.SCORTE_MAX:
+				qtyScortaMaxRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionato);
+				break;
+			case TipoQty.PER_CONFEZIONE:
+				qtyPerConfRilevate.setBackgroundResource(R.drawable.drawable_qty_selezionato);
+				break;
+			default:
+				break;
+		}
 	}
 
 	private void gestioneQtyTotDaEsposteMagazzino(){

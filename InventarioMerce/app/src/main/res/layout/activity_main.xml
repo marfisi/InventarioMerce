@@ -116,6 +116,10 @@
         </EditText>
 
         <ImageButton
+            android:id="@+id/cercaButton"
+            style="@style/styleLente"/>
+
+        <ImageButton
             android:id="@+id/keyboardButton"
             style="@style/styleKeyboard"/>
 
