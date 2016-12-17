@@ -100,7 +100,7 @@ public class MainActivity extends Activity{
 	private String stringaDaCercare = null;
 
 	private void setStringaDaCercare(String stringaDaCercare){
-		this.stringaDaCercare = StringUtils.trimToEmpty(stringaDaCercare);
+		this.stringaDaCercare = StringUtils.upperCase(StringUtils.trimToEmpty(stringaDaCercare));
 	}
 
 	private Integer numeroRisultatoFiltro = -1;
@@ -308,7 +308,7 @@ public class MainActivity extends Activity{
 	}
 
 	private void cercaStringaDaCercare(){
-		Log.i("Filtro", "SSSSSSSsize numeroRisultatoFiltro " + numeroRisultatoFiltro);
+		Log.i("Filtro", "size numeroRisultatoFiltro " + numeroRisultatoFiltro);
 		if(numeroRisultatoFiltro == 0 && (StringUtils.length(stringaDaCercare) > 3)){
 			Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
 			if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
@@ -403,6 +403,7 @@ public class MainActivity extends Activity{
 						articoliLs.remove(articoloInventariato.getOrdinamento() - 1);
 						articoliLs.add(articoloInventariato.getOrdinamento() - 1, articoloInventariato);
 						ordinaArticoliLs();
+						inventario.setArticoliLs(articoliLs);
 						adapterArticoliLs.setInventario(inventario);
 						adapterArticoliLs.updateArticoliLs(articoliLs);
 					}else if(resultCode == Activity.RESULT_CANCELED){

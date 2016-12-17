@@ -19,6 +19,9 @@ import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import it.cascino.inventariomerce.R;
 import it.cascino.inventariomerce.model.Articolo;
 import it.cascino.inventariomerce.model.Inventario;
@@ -226,6 +229,7 @@ public class ModificaArticoloActivity extends Activity{
 					inventario.setNumeroArticoliInventariati(inventario.getNumeroArticoliInventariati() + 1);
 				}
 				a.setStato();
+				a.setTimestamp(new Timestamp((new Date().getTime())));
 				Gson gSon = new Gson();
 				Intent resultIntent = new Intent();
 				String gSonString = gSon.toJson(a);
@@ -492,7 +496,7 @@ public class ModificaArticoloActivity extends Activity{
 		}
 		txtElab1 = StringUtils.replace(txtElab1, ",", ".");
 		txtElab2 = StringUtils.replace(txtElab2, ",", ".");
-		qtyElab12 = Float.parseFloat(txtElab1) + Float.parseFloat(txtElab2);
+		qtyElab12 = Float.parseFloat(txtElab1) + Float.parseFloat(txtElab2) + a.getQtyDifettOriginale();	// aggiungo pure il difettoso
 		qtyRilevate.setText(Support.floatToString(qtyElab12));
 		a.setQtyRilevata(qtyElab12);
 		qtyImg.setBackgroundResource(Support.definisciImg(qtyAttese.getText().toString(), qtyRilevate.getText().toString()));

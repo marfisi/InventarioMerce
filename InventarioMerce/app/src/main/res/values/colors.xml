@@ -9,8 +9,8 @@
     <color name="colTxQtyAttese">#5f64fc</color>
     <color name="colTxQtyRilevate">#000479</color>
 
-    <color name="colTxArtCodice">#000479</color>
-    <color name="colTxArtDescrizione">#000479</color>
+    <color name="colTxArtCodice">#e14f00</color>
+    <color name="colTxArtDescrizione">#ff7b00</color>
     <color name="colTxArtPrezzo">#000479</color>
 
     <color name="colBckgInventarioOK">#c8d7ffe6</color>

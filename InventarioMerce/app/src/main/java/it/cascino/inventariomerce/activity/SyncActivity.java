@@ -150,10 +150,13 @@ public class SyncActivity extends Activity{
 			}
 		});
 
+		final Button caricaButton = (Button)findViewById(R.id.caricaButton);
+
 		Button aggiornaDBBtn = (Button)findViewById(R.id.aggiornaDBBtn);
 		aggiornaDBBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
+				inventariLs.clear();
 				DownloadDBThread dt = new DownloadDBThread();
 				try{
 					dt.execute("").get();
@@ -162,10 +165,10 @@ public class SyncActivity extends Activity{
 				}catch(ExecutionException e){
 					e.printStackTrace();
 				}
+				syncAdapter.notifyDataSetChanged();
+				caricaButton.setEnabled(false);
 			}
 		});
-
-		final Button caricaButton = (Button)findViewById(R.id.caricaButton);
 
 		RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
 		radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
@@ -247,6 +250,8 @@ public class SyncActivity extends Activity{
 				}catch(ExecutionException e){
 					e.printStackTrace();
 				}
+				Intent resultIntent = new Intent();
+				setResult(Activity.RESULT_OK, resultIntent);
 				finish();
 			}
 		}
@@ -617,7 +622,7 @@ public class SyncActivity extends Activity{
 		inventariTestateDao = daoSession.getInventari_testateDao();
 		inventariDettagliDao = daoSession.getInventari_dettagliDao();
 		List<Inventari_testate> inventari_testateLs = null;
-		inventari_testateLs = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Iddep.eq(deposito), Inventari_testateDao.Properties.Utente_destinatario.eq(operatore), Inventari_testateDao.Properties.Stato.notEq(TipoStato.INVENTARIATO_OK)).list();
+		inventari_testateLs = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Iddep.eq(deposito), Inventari_testateDao.Properties.Utente_destinatario.eq(operatore), Inventari_testateDao.Properties.Data_conferma.isNull()).list();
 		for(int i = 0, s = inventari_testateLs.size(); i < s; i++){
 			Inventari_testate inventari_testate = inventari_testateLs.get(i);
 			Inventario invent = new Inventario();
@@ -777,7 +782,10 @@ public class SyncActivity extends Activity{
 			Articolo art = null;
 			while(iter_articoliLs.hasNext()){
 				art = iter_articoliLs.next();
+				//String s1 = art.getCodice();
+				//String s2 = articoli.getCodart();
 				if(!(StringUtils.equals(art.getCodice(), articoli.getCodart()))){
+				//if(!(StringUtils.equals(s1, s2))){
 					continue;
 				}
 				// trovato e quindi lo popolo
@@ -785,6 +793,7 @@ public class SyncActivity extends Activity{
 				Qty_originali qtyOriginali = null;
 				try{
 					qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).unique();
+					//qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).list().get(0);
 				}catch(IndexOutOfBoundsException e){
 					Log.w("Art non ha qty per dep ", String.valueOf(idDeposito));
 				}

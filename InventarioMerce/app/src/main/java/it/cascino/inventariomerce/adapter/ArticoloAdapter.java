@@ -450,11 +450,12 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			if((constraint != null) && (constraint.toString().length() > 0)){
 				ArrayList<Articolo> filteredItems = new ArrayList<Articolo>();
 
-				constraint = constraint.toString().toLowerCase();
+				constraint = StringUtils.upperCase(constraint.toString());
 				Log.i("ricerca", constraint.toString());
 				for(int i = 0; i < articoliLs.size(); i++){
 					Articolo articolo = articoliLs.get(i);
-					if(articolo.toString().toLowerCase().contains(constraint)){
+					//if(articolo.toString().toLowerCase().contains(constraint)){
+					if(StringUtils.contains(articolo.toStringPerFilter(), constraint)){
 						filteredItems.add(articolo);
 						//Log.i("trovato", articolo.toString());
 					}

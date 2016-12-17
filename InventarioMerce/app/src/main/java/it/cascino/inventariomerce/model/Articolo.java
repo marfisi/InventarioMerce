@@ -390,7 +390,6 @@ public class Articolo{
 		this.inModifica = inModifica;
 	}
 
-	// occhio a non modificarla, e' utilizzata per il filtro della listview
 	public String toString(){
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(getCodice());
@@ -400,6 +399,20 @@ public class Articolo{
 			stringBuilder.append(" ");
 		}
 		Log.i("artToString", stringBuilder.toString());
+		return stringBuilder.toString();
+	}
+
+	// occhio a non modificarla, e' utilizzata per il filtro della listview
+	public String toStringPerFilter(){
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(getCodice());
+		stringBuilder.append(" - ");
+		for(int i = 0; i < getBarcodeOriginale().length; i++){
+			stringBuilder.append(getBarcodeOriginale()[i].getCodice());
+			stringBuilder.append(" ");
+		}
+		stringBuilder.append(" - ");
+		stringBuilder.append(getDescOriginale());
 		return stringBuilder.toString();
 	}
 

@@ -6,6 +6,9 @@
 
 
     <dimen name="dimTxDefault">30dp</dimen>
+    <dimen name="dimTxArtCodice">50dp</dimen>
+    <dimen name="dimTxArtDescrizione">28dp</dimen>
+    <dimen name="dimTxArtPrezzo">25dp</dimen>
     <dimen name="dimTxQtyAttese">10dp</dimen>
     <dimen name="dimTxQtyAtteseInModifica">30dp</dimen>
     <dimen name="dimTxQtyRilevate">13dp</dimen>
@@ -15,6 +18,9 @@
     <dimen name="dimBtnModif">30dp</dimen>
 
     <dimen name="dimQtyMargineTop">25dp</dimen>
+
+    <dimen name="dimPaddingQtySxDx">15dp</dimen>
+    <dimen name="dimPaddingQtySuGiu">10dp</dimen>
 
     <dimen name="dimBtnPiu">50dp</dimen>
     <dimen name="dimBtnMeno">50dp</dimen>

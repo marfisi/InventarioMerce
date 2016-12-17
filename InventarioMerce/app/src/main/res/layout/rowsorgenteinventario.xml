@@ -162,7 +162,8 @@
         android:text="commento"
         android:layout_alignBottom="@+id/textView7"
         android:layout_alignLeft="@+id/dataModificaInvent"
-        android:layout_alignStart="@+id/dataModificaInvent"/>
+        android:layout_alignStart="@+id/dataModificaInvent"
+        style="@style/styleTxDefault"/>
 
     <TextView
         android:layout_width="wrap_content"

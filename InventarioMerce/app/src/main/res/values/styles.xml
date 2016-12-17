@@ -46,14 +46,17 @@
     <style name="styleTxArtCodice">
         <item name="android:textColor">@color/colTxArtCodice</item>
         <item name="android:textStyle">bold|italic</item>
+        <item name="android:textSize">@dimen/dimTxArtCodice</item>
     </style>
 
     <style name="styleTxArtDescrizione">
         <item name="android:textColor">@color/colTxArtDescrizione</item>
+        <item name="android:textSize">@dimen/dimTxArtDescrizione</item>
     </style>
 
     <style name="styleTxArtPrezzo">
         <item name="android:textColor">@color/colTxArtPrezzo</item>
+        <item name="android:textSize">@dimen/dimTxArtPrezzo</item>
     </style>
 
     <style name="styleBckgInventarioOK">

@@ -5,11 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:id="@+id/layBottoni"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true">
+
+        <ImageButton
+            android:id="@+id/btnReset"
+            style="@style/styleReset"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:hint="bottone cancel"/>
+
+        <ImageButton
+            android:id="@+id/btnCheck"
+            style="@style/styleCheck"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:hint="bottone check"
+            android:layout_marginLeft="35dp"/>
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/layInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_alignRight="@+id/layQty"
+        android:layout_alignEnd="@+id/layQty">
 
         <TextView
             android:id="@+id/art_codart"
@@ -19,7 +45,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:text="art_codice"
-            style="@style/styleTxArtDescrizione"/>
+            style="@style/styleTxArtCodice"/>
 
         <TextView
             android:id="@+id/art_desc"
@@ -300,7 +326,8 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -308,8 +335,10 @@
                 android:text="quantità ("
                 android:layout_gravity="center|fill"
                 android:id="@+id/textView8"
-                android:layout_alignParentTop="true"
-                style="@style/styleTxDefault"/>
+                style="@style/styleTxDefault"
+                android:layout_alignBaseline="@+id/art_um_qty"
+                android:layout_alignBottom="@+id/art_um_qty"
+                android:layout_centerHorizontal="true"/>
 
             <TextView
                 android:id="@+id/art_um_qty"
@@ -347,37 +376,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ESPOSTE"
-                android:layout_below="@+id/textView9"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textEsposte"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_alignBottom="@+id/qtyEsposteRilevate"/>
 
             <TextView
                 android:id="@+id/qtyAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Qattese"
-                android:layout_alignTop="@+id/qtyRilevate"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
-                style="@style/styleTxQtyAttese"/>
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/qtyRilevate"/>
 
             <ImageView
                 android:id="@+id/qtyImg"
-                android:layout_alignTop="@+id/view"
-                android:layout_alignLeft="@+id/textView11"
-                android:layout_alignStart="@+id/textView11"
-                style="@style/styleWarning"/>
+                style="@style/styleWarning"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/textEsposte"/>
 
             <TextView
                 android:id="@+id/qtyRilevate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Qrilevate"
+                style="@style/styleTxQtyRilevate"
                 android:layout_below="@+id/qtyImg"
-                android:layout_alignLeft="@+id/qtyPerConfRilevate"
-                android:layout_alignStart="@+id/qtyPerConfRilevate"
-                style="@style/styleTxQtyRilevate"/>
+                android:layout_toLeftOf="@+id/qtyImg"
+                android:layout_toStartOf="@+id/qtyImg"
+                android:layout_alignParentEnd="true"/>
 
             <!--TextView
                 android:id="@+id/qtyEsposteAttese"
@@ -394,26 +425,30 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="ESrilevate"
-                android:layout_alignTop="@+id/textEsposte"
                 android:layout_alignParentRight="true"
-                style="@style/styleQtyAtteseSelezionabile"/>
+                style="@style/styleQtyAtteseSelezionabile"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/textView9"/>
 
             <View
-                android:layout_width="130dp"
-                android:layout_below="@+id/textEsposte"
-                android:layout_alignRight="@+id/qtyMagazzinoRilevate"
-                android:layout_alignEnd="@+id/qtyMagazzinoRilevate"
+                android:layout_width="wrap_content"
                 android:id="@+id/view"
-                style="@style/styleSeparatoreVociQty"/>
+                style="@style/styleSeparatoreVociQty"
+                android:layout_below="@+id/qtyEsposteRilevate"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignLeft="@+id/textEsposte"
+                android:layout_alignStart="@+id/textEsposte"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="MAGAZZINO"
                 android:id="@+id/textMagazzino"
-                android:layout_below="@+id/qtyAttese"
                 android:layout_centerHorizontal="true"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_alignBottom="@+id/qtyMagazzinoRilevate"/>
 
             <!--TextView
                 android:id="@+id/qtyMagazzinoAttese"
@@ -430,14 +465,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="MArilevate"
-                android:layout_alignTop="@+id/textMagazzino"
-                android:layout_alignParentRight="true"
-                style="@style/styleQtyAtteseSelezionabile"/>
+                style="@style/styleQtyAtteseSelezionabile"
+                android:layout_alignEnd="@+id/view"
+                android:layout_below="@+id/qtyRilevate"
+                android:layout_marginTop="10dp"/>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_below="@+id/textMagazzino"
-                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/qtyMagazzinoRilevate"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
                 style="@style/styleSeparatoreVociQty"/>
 
@@ -448,17 +484,18 @@
                 android:layout_below="@+id/textMagazzino"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textDifettosi"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_marginTop="65dp"/>
 
             <TextView
                 android:id="@+id/qtyDifettoseAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DIattese"
-                android:layout_alignTop="@+id/textDifettosi"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
-                style="@style/styleTxQtyAttese"/>
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/textDifettosi"/>
 
             <!--TextView
                 android:id="@+id/qtyDifettoseRilevate"
@@ -474,26 +511,27 @@
                 android:layout_below="@+id/textDifettosi"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                style="@style/styleSeparatoreVociQty"/>
+                style="@style/styleSeparatoreVociQty"
+                android:id="@+id/view2"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Scorte MINIME"
-                android:layout_below="@+id/textDifettosi"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textScorteMin"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_alignBottom="@+id/qtyScortaMinRilevate"/>
 
             <TextView
                 android:id="@+id/qtyScortaMinAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SMIattese"
-                android:layout_alignTop="@+id/textScorteMin"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
-                style="@style/styleTxQtyAttese"/>
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/qtyScortaMinRilevate"/>
 
             <TextView
                 android:id="@+id/qtyScortaMinRilevate"
@@ -501,20 +539,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="SMIrilevate"
-                android:layout_alignTop="@+id/textScorteMin"
-                android:layout_alignParentRight="true"
-                style="@style/styleQtyAtteseSelezionabile"/>
+                style="@style/styleQtyAtteseSelezionabile"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/qtyScortaMinImg"/>
 
             <ImageView
                 android:id="@+id/qtyScortaMinImg"
-                android:layout_above="@+id/qtyScortaMinRilevate"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentRight="false"
                 android:layout_alignParentEnd="true"
-                style="@style/styleWarning"/>
+                style="@style/styleWarning"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/textDifettosi"/>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_below="@+id/textScorteMin"
+                android:layout_below="@+id/qtyScortaMinRilevate"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 style="@style/styleSeparatoreVociQty"/>
@@ -523,20 +563,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Scorte MASSIME"
-                android:layout_below="@+id/textScorteMin"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textScorteMax"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_alignBottom="@+id/qtyScortaMaxRilevate"/>
 
             <TextView
                 android:id="@+id/qtyScortaMaxAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SMAattese"
-                android:layout_alignTop="@+id/textScorteMax"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
-                style="@style/styleTxQtyAttese"/>
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/qtyScortaMaxRilevate"/>
 
             <TextView
                 android:id="@+id/qtyScortaMaxRilevate"
@@ -544,20 +584,21 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="SMArilevate"
-                android:layout_alignTop="@+id/textScorteMax"
+                style="@style/styleQtyAtteseSelezionabile"
                 android:layout_alignParentRight="true"
-                style="@style/styleQtyAtteseSelezionabile"/>
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/qtyScortaMaxImg"/>
 
             <ImageView
                 android:id="@+id/qtyScortaMaxImg"
-                android:layout_above="@+id/qtyScortaMaxRilevate"
-                android:layout_alignParentRight="true"
+                style="@style/styleWarning"
+                android:layout_below="@+id/textScorteMin"
                 android:layout_alignParentEnd="true"
-                style="@style/styleWarning"/>
+                android:layout_marginTop="15dp"/>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_below="@+id/textScorteMax"
+                android:layout_below="@+id/qtyScortaMaxRilevate"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 style="@style/styleSeparatoreVociQty"/>
@@ -566,20 +607,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CONFEZIONE"
-                android:layout_below="@+id/textScorteMax"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/textPerConf"
-                style="@style/styleVociQty"/>
+                style="@style/styleVociQty"
+                android:layout_alignBottom="@+id/qtyPerConfRilevate"
+                />
 
             <TextView
                 android:id="@+id/qtyPerConfAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="PCattese"
-                android:layout_alignTop="@+id/textPerConf"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="true"
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/qtyPerConfRilevate"/>
+
+            <ImageView
+                android:id="@+id/qtyPerConfImg"
+                style="@style/styleWarning"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/textScorteMax"
+                android:layout_marginTop="15dp"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentEnd="true"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_below="@+id/qtyPerConfRilevate"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                style="@style/styleTxQtyAttese"/>
+                style="@style/styleSeparatoreVociQty"/>
 
             <TextView
                 android:id="@+id/qtyPerConfRilevate"
@@ -587,23 +645,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="PCrilevate"
-                android:layout_alignTop="@+id/textPerConf"
+                style="@style/styleQtyAtteseSelezionabile"
+                android:layout_below="@+id/qtyPerConfImg"
                 android:layout_alignParentRight="true"
-                style="@style/styleQtyAtteseSelezionabile"/>
-
-            <ImageView
-                android:id="@+id/qtyPerConfImg"
-                android:layout_above="@+id/qtyPerConfRilevate"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                style="@style/styleWarning"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_below="@+id/textPerConf"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                style="@style/styleSeparatoreVociQty"/>
+                android:layout_alignParentEnd="true"/>
         </RelativeLayout>
     </LinearLayout>
 
@@ -675,33 +720,6 @@
         </LinearLayout>
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.15"
-            android:padding="2dp">
-
-            <ImageButton
-                android:id="@+id/btnReset"
-                style="@style/styleReset"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:hint="bottone cancel"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"/>
-
-            <ImageButton
-                android:id="@+id/btnCheck"
-                style="@style/styleCheck"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:hint="bottone check"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
-
-        </RelativeLayout>
-
     </LinearLayout>
+
 </RelativeLayout>

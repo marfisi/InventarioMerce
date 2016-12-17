@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	
+	<persistence-unit name="DB2AS400" transaction-type="RESOURCE_LOCAL">
+		<properties>
+			<property name="hibernate.connection.url" value="jdbc:as400://10.0.21.20/cas_dat;transaction isolation=none" />
+			<property name="hibernate.connection.driver_class" value="com.ibm.as400.access.AS400JDBCDriver" />
+			<property name="hibernate.connection.username" value="FERCAS" />
+			<property name="hibernate.connection.password" value="FERCAS" />
+			<property name="hibernate.connection.pool_size" value="1" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.generate_statistics" value="false" />
+			<property name="hibernate.use_sql_comments" value="false" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="Sqlite" transaction-type="RESOURCE_LOCAL">
+		<properties>
+			<property name="hibernate.connection.url" value="jdbc:sqlite:./database/cascinoinventario.db" />
+			<property name="hibernate.connection.driver_class" value="org.sqlite.JDBC" />
+			<property name="hibernate.connection.username" value="" />
+			<property name="hibernate.connection.password" value="" />
+			<property name="hibernate.connection.pool_size" value="1" />
+			<!-- property name="hibernate.dialect" value="org.hibernate.dialect.SQLiteDialect" /-->
+			<property name="hibernate.dialect" value="com.enigmabridge.hibernate.dialect.SQLiteDialect" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.generate_statistics" value="false" />
+			<property name="hibernate.use_sql_comments" value="false" />
+		</properties>
+	</persistence-unit>
+	
+</persistence>
