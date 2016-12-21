@@ -4,87 +4,128 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/textUtente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Utente: "
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/nomeUtente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nomeUtente"
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@id/textUtente"/>
+
+        <TextView
+            android:id="@+id/textDeposito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - Deposito: "
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@id/nomeUtente"/>
+
+        <TextView
+            android:id="@+id/numDeposito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="numDep"
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@id/textDeposito"/>
+
+        <TextView
+            android:id="@+id/textParentesiSxDeposito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" ("
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@id/numDeposito"/>
+
+        <TextView
+            android:id="@+id/nomeDeposito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nomeDeposito"
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@+id/textParentesiSxDeposito"/>
+
+        <TextView
+            android:id="@+id/textParentesiDxDeposito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=")"
+            android:layout_alignTop="@id/textUtente"
+            android:layout_toRightOf="@id/nomeDeposito"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:text="deposito"/>
-
-        <TextView
-            android:id="@+id/numDep"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:text="numDep"/>
+            android:text="Data creazione"
+            android:id="@+id/textView6"
+            android:layout_below="@+id/textUtente"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:text="dataSync"/>
-
-        <TextView
-            android:id="@+id/dataSync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="2dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            android:text="Database"
+            android:id="@+id/textView10"
+            android:layout_below="@+id/textView6"
+            android:layout_alignRight="@+id/textView12"
+            android:layout_alignEnd="@+id/textView12"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:text="invetariati: "/>
+            android:text="Inventario"
+            android:id="@+id/textView12"
+            android:layout_below="@+id/textView10"
+            android:layout_alignRight="@+id/textView6"
+            android:layout_alignEnd="@+id/textView6"/>
 
-        <TextView
-            android:id="@+id/numeroInvetariati"
+        <LinearLayout
+            android:id="@+id/layQtyInventariare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="2dp"
-            style="@style/styleTxDefault"
-            android:text="numeroInvetariati"/>
+            android:orientation="horizontal"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@+id/textView15"
+            android:layout_marginTop="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:text="Invetariati: "
+                android:enabled="true"
+                android:focusable="false"/>
 
-        <TextView
-            android:id="@+id/numeroInvetariare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="numeroInvetariare"/>
+            <TextView
+                android:id="@+id/numeroInvetariati"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                style="@style/styleTxDefault"
+                android:text="numeroInvetariati"/>
 
-        <!--TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" - da fare: "
-            android:padding="2dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"/>
 
-        <TextView
-            android:id="@+id/numeroInvetariatiRimanenti"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            style="@style/qty"
-            android:text="numeroInvetariatiRimanenti"/-->
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/numeroInvetariare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="numeroInvetariare"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/syncButton"
@@ -92,7 +133,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="sync"
-            android:textColor="#ff0000"/>
+            android:textColor="#ff0000"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/saveButton"
+            android:layout_toStartOf="@+id/saveButton"/>
 
         <Button
             android:id="@+id/saveButton"
@@ -100,30 +144,127 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="Salva"
-            android:visibility="invisible"/>
-    </LinearLayout>
+            android:visibility="invisible"
+            android:layout_alignParentEnd="true"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/keyboardButton"
+            style="@style/styleKeyboard"
+            android:layout_alignBottom="@+id/myFilter"
+            android:layout_toLeftOf="@+id/myFilter"/>
 
         <EditText
             android:id="@+id/myFilter"
-            android:layout_width="173dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/hint_filtro">
+            android:hint="@string/hint_filtro"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@+id/layQtyInventariare">
         </EditText>
 
         <ImageButton
             android:id="@+id/cercaButton"
-            style="@style/styleLente"/>
+            style="@style/styleLente"
+            android:layout_alignParentTop="false"
+            android:layout_toRightOf="@+id/myFilter"
+            android:layout_toEndOf="@+id/myFilter"
+            android:layout_alignBottom="@+id/myFilter"/>
 
-        <ImageButton
-            android:id="@+id/keyboardButton"
-            style="@style/styleKeyboard"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="dataCreazioneDatabase"
+            android:id="@+id/dataCreazioneDatabase"
+            android:layout_toRightOf="@+id/textView10"
+            android:layout_toEndOf="@+id/textView6"
+            android:layout_alignBottom="@+id/textView10"
+            android:layout_alignParentEnd="false"
+            android:layout_marginLeft="5dp"/>
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="dataCreazioneInventario"
+            android:id="@+id/dataCreazioneInventario"
+            android:layout_alignBottom="@+id/textView12"
+            android:layout_toRightOf="@+id/textView12"
+            android:layout_toEndOf="@+id/textView12"
+            android:layout_marginLeft="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" (id: "
+            android:id="@+id/textView13"
+            android:layout_toRightOf="@+id/dataCreazioneInventario"
+            android:layout_toEndOf="@+id/dataCreazioneInventario"
+            android:layout_alignBottom="@+id/dataCreazioneInventario"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="idInventario"
+            android:id="@+id/idInventario"
+            android:layout_alignBottom="@+id/textView13"
+            android:layout_toRightOf="@+id/textView13"
+            android:layout_toEndOf="@+id/textView13"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=") - Nome sorgente: "
+            android:id="@+id/textView14"
+            android:layout_alignBottom="@+id/idInventario"
+            android:layout_toRightOf="@+id/idInventario"
+            android:layout_toEndOf="@+id/idInventario"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nomeSorgente"
+            android:id="@+id/nomeSorgente"
+            android:layout_alignBottom="@+id/textView14"
+            android:layout_toRightOf="@+id/textView14"
+            android:layout_toEndOf="@+id/textView14"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Commento: "
+            android:id="@+id/textView15"
+            android:layout_below="@+id/dataCreazioneInventario"
+            android:layout_alignLeft="@+id/dataCreazioneInventario"
+            android:layout_alignStart="@+id/dataCreazioneInventario"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="commentoInventario"
+            android:id="@+id/commentoInventario"
+            android:layout_alignBottom="@+id/textView15"
+            android:layout_toRightOf="@+id/textView15"
+            android:layout_toEndOf="@+id/textView15"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - Utente creatore: "
+            android:id="@+id/textView16"
+            android:layout_alignBottom="@+id/nomeSorgente"
+            android:layout_toRightOf="@+id/nomeSorgente"
+            android:layout_toEndOf="@+id/nomeSorgente"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="utenteCreatore"
+            android:id="@+id/utenteCreatore"
+            android:layout_alignBottom="@+id/textView16"
+            android:layout_toRightOf="@+id/textView16"
+            android:layout_toEndOf="@+id/textView16"/>
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/articoliList"

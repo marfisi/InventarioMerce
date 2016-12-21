@@ -15,6 +15,8 @@ public interface AsArmod0fDao{
 	AsArmod0f getDaDcodaAndDcode(String dcoda, Integer dcode);
 	
 	List<String> getDaElaborare();
+	
+	void svuotaTabella();
 
 	void close();
 }

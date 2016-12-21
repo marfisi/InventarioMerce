@@ -42,6 +42,8 @@ import it.cascino.dbsqlite.DaoMaster;
 import it.cascino.dbsqlite.DaoSession;
 import it.cascino.dbsqlite.Depositi;
 import it.cascino.dbsqlite.DepositiDao;
+import it.cascino.dbsqlite.Infogeneriche;
+import it.cascino.dbsqlite.InfogenericheDao;
 import it.cascino.dbsqlite.Inventari_dettagli;
 import it.cascino.dbsqlite.Inventari_dettagliDao;
 import it.cascino.dbsqlite.Inventari_testate;
@@ -65,8 +67,6 @@ public class MainActivity extends Activity{
 	//private Integer numeroInvetariare = 0;
 	Timer timer = new Timer();
 
-	private String SHARED_PREF = "shared_pref_inventario";
-
 	private static final int SYNC_REQUEST = 1;
 	private static final int ART_BCODE_REQUEST = 2;
 	private static final int ART_MODIF_REQUEST = 3;
@@ -87,6 +87,7 @@ public class MainActivity extends Activity{
 	private Inventari_dettagliDao inventariDettagliDao;
 	private Qty_originaliDao qtyOriginaliDao;
 	private Rel_articoli_barcodeDao relArticoliBarcodeDao;
+	private InfogenericheDao infogenericheDao;
 
 	private Button saveButton;
 
@@ -105,6 +106,16 @@ public class MainActivity extends Activity{
 
 	private Integer numeroRisultatoFiltro = -1;
 
+	private TextView inventNomeUtenteDestinatario;
+	private TextView inventNomeUtenteCreatore;
+	private TextView inventNumeroDeposito;
+	private TextView inventNomeDeposito;
+	private TextView inventDatacreazioneDb;
+	private TextView inventDatacreazioneInventario;
+	private TextView inventIdInventario;
+	private TextView inventNomeSorgente;
+	private TextView inventCommento;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -116,15 +127,29 @@ public class MainActivity extends Activity{
 		daoMaster = new DaoMaster(db);
 		daoSession = daoMaster.newSession();
 
-		TextView dataSync = (TextView)findViewById(R.id.dataSync);
-		DateFormat formatter = new SimpleDateFormat("HH:mm.ss - dd/MM/yyyy");
-		String dataSyncStr = formatter.format(new Date());
-		dataSync.setText(dataSyncStr);
+		inventNomeUtenteDestinatario = (TextView)findViewById(R.id.nomeUtente);
+		inventNomeUtenteDestinatario.setText("n.d.");
+		inventNomeUtenteCreatore = (TextView)findViewById(R.id.utenteCreatore);
+		inventNomeUtenteCreatore.setText("n.d.");
+		inventNumeroDeposito = (TextView)findViewById(R.id.numDeposito);
+		inventNumeroDeposito.setText("n.d.");
+		inventNomeDeposito = (TextView)findViewById(R.id.nomeDeposito);
+		inventNomeDeposito.setText("n.d.");
+		inventDatacreazioneDb = (TextView)findViewById(R.id.dataCreazioneDatabase);
+		inventDatacreazioneDb.setText("n.d.");
+		inventDatacreazioneInventario = (TextView)findViewById(R.id.dataCreazioneInventario);
+		inventDatacreazioneInventario.setText("n.d.");
+		inventIdInventario = (TextView)findViewById(R.id.idInventario);
+		inventIdInventario.setText("n.d.");
+		inventNomeSorgente = (TextView)findViewById(R.id.nomeSorgente);
+		inventNomeSorgente.setText("n.d.");
+		inventCommento = (TextView)findViewById(R.id.commentoInventario);
+		inventCommento.setText("n.d.");
 
 		testoNumeroInventariati = (TextView)findViewById(R.id.numeroInvetariati);
-		testoNumeroInventariati.setText("0");
+		testoNumeroInventariati.setText("n.d.");
 		testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
-		testoNumeroInvetariare.setText("0");
+		testoNumeroInvetariare.setText("n.d.");
 
 		saveButton = (Button)findViewById(R.id.saveButton);
 
@@ -364,6 +389,22 @@ public class MainActivity extends Activity{
 						adapterArticoliLs.updateArticoliLs(articoliLs);
 						adapterArticoliLs.setInventario(inventario);
 						saveButton.setVisibility(View.VISIBLE);
+
+						// setto i campi di info in alto alla schermata
+						inventNomeUtenteDestinatario.setText(inventario.getUtenteDestinatario());
+						inventNomeUtenteCreatore.setText(inventario.getUtenteCreatore());
+						inventNumeroDeposito.setText(inventario.getDeposito());
+						depositiDao = daoSession.getDepositiDao();
+						Depositi depositi = depositiDao.queryBuilder().where(DepositiDao.Properties.Iddep.eq(StringUtils.right("00" + inventario.getDeposito(), 2))).unique();
+						inventNomeDeposito.setText(depositi.getDesc());
+						DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm.ss");
+						infogenericheDao = daoSession.getInfogenericheDao();
+						Infogeneriche infogeneriche = infogenericheDao.queryBuilder().where(InfogenericheDao.Properties.Info.eq("data_creazione")).unique();
+						inventDatacreazioneDb.setText(infogeneriche.getValore());
+						inventDatacreazioneInventario.setText(formatter.format(inventario.getTimeCreazione()));
+						inventIdInventario.setText(String.valueOf(inventario.getProgressivo()));
+						inventNomeSorgente.setText(inventario.getNomeFile());
+						inventCommento.setText(inventario.getCommento());
 					}
 					break;
 				case ART_BCODE_REQUEST:

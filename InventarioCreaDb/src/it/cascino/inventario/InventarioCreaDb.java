@@ -90,7 +90,7 @@ public class InventarioCreaDb{
 		asAnmag0fLs = new ArrayList<AsAnmag0f>();
 		if(!(elaboraSoloModificati)){
 			asAnmag0fLs = asAnmag0fDao.getAll();
-//			asAnmag0fLs = asAnmag0fDao.getAll().subList(40900, 41000);
+//			asAnmag0fLs = asAnmag0fDao.getAll().subList(40990, 41000);
 		}else{
 			AsArmod0f asArmod0f = new AsArmod0f();
 			asArmod0fDcodaLs =  asArmod0fDao.getDaElaborare();
@@ -226,10 +226,15 @@ public class InventarioCreaDb{
 		
 		SqliteInfogeneriche sqliteInfogeneriche = new SqliteInfogeneriche();
 		sqliteInfogeneriche = sqliteInfogenericheDao.getInfoDaNomeInfo("data_creazione");
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");	//"yyyy-MM-dd HH:mm:ss");
 		LocalDateTime dateTime = LocalDateTime.now();
 		sqliteInfogeneriche.setValore(dateTime.format(formatter));
 		sqliteInfogenericheDao.aggiorna(sqliteInfogeneriche);
+		
+		// se e' creazione totale svuoto tutta armod0f
+		if(!(elaboraSoloModificati)){
+			asArmod0fDao.svuotaTabella();
+		}
 		
 		asAnmag0fDao.close();
 		asAncab0fDao.close();

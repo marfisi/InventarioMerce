@@ -145,6 +145,24 @@ public class AsArmod0fDaoMng implements AsArmod0fDao, Serializable{
 		return o;
 	}
 	
+	public void svuotaTabella(){
+		try{
+			try{
+				utx.begin();
+//				Query query = em.createNamedQuery("AsArmod0f.svuotaTabella");
+//				query.executeUpdate();
+				//String sql = "TRUNCATE TABLE Armod0f";
+				String sql = "DELETE FROM Armod0f";
+				Query query = em.createNativeQuery(sql);
+				query.executeUpdate();//.getResultList();
+			}catch(NoResultException e){
+			}
+			utx.commit();
+		}catch(Exception e){
+			log.fatal(e.toString());
+		}
+	}
+	
 	public void close(){
 		res.close();
 		log.info("chiuso");
