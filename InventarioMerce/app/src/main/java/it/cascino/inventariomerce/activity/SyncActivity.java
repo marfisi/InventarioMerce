@@ -304,7 +304,7 @@ public class SyncActivity extends Activity{
 					InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF8");
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+					DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
 
 					Integer numRigoArt = 0;
 					String lineRead = "";
@@ -495,15 +495,15 @@ public class SyncActivity extends Activity{
 				inventari_testate.setData_conferma(formatter.format(timestamp));
 				inventari_testate.update();
 
-				String nomeFileInventariato = StringUtils.join(dataSyncStr, "_invent_", inventari_testate.getNome_file(), ".csv");
+				String nomeFileInventariato = StringUtils.join("invent_", dataSyncStr, "_", inventari_testate.getNome_file(), ".csv");
 				nomeFileInventariato = StringUtils.replace(nomeFileInventariato, ".csv.csv", ".csv");
 				StringBuilder stringBuilder = new StringBuilder();
 
 				stringBuilder.append("deposito|").append(inventari_testate.getIddep()).append("\n");
 				stringBuilder.append("userCrea|").append(inventari_testate.getUtente_creatore()).append("\n");
 				stringBuilder.append("userInven|").append(inventari_testate.getUtente_destinatario()).append("\n");
-				stringBuilder.append("creazione|").append(inventari_testate.getData_creazione()).append("\n");
-				stringBuilder.append("conferma|").append(inventari_testate.getData_conferma()).append("\n");
+				stringBuilder.append("creazione|").append(StringUtils.remove(inventari_testate.getData_creazione(), "-")).append("\n");
+				stringBuilder.append("conferma|").append(StringUtils.remove(inventari_testate.getData_conferma(), "-")).append("\n");
 				stringBuilder.append("commento|").append(inventari_testate.getCommento()).append("\n");
 				stringBuilder.append("\n");
 				stringBuilder.append("codice|barcode|desclunga|prezzo|qtyAttesa|qtyContate|qtyEsposteAttesa|qtyEsposteContate|qtyMagazAttesa|qtyMagazContate|difetAttesa|difetContate|scortaMinAttesa|scortaMinContate|scortaMaxAttesa|scortaMaxContate|perConfAttesa|perConfContate|commento|stato|timestamp").append("\n");
