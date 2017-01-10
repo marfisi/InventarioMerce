@@ -59,7 +59,7 @@ public class ModificaArticoloActivity extends Activity{
 
 	int tipoQtySelezionata = -999;
 
-	private Inventario inventario;
+	private Integer numeroArticoliInventariati;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -212,13 +212,13 @@ public class ModificaArticoloActivity extends Activity{
 		ImageButton btnKeypad = (ImageButton)findViewById(R.id.btnKeypad);
 		TextView um_qty = (TextView)findViewById(R.id.um_qty);
 
-		Intent intentLoginFileActivity = getIntent();
-		if(intentLoginFileActivity != null){
-			String gSonString = intentLoginFileActivity.getStringExtra("articolo");
+		Intent intentModificaArticoloActivity = getIntent();
+		if(intentModificaArticoloActivity != null){
+			String gSonString = intentModificaArticoloActivity.getStringExtra("articolo");
 			Gson gSon = new Gson();
 			a = gSon.fromJson(gSonString, Articolo.class);
-			gSonString = intentLoginFileActivity.getStringExtra("inventario");
-			inventario = gSon.fromJson(gSonString, Inventario.class);
+			gSonString = intentModificaArticoloActivity.getStringExtra("numeroArticoliInventariati");
+			numeroArticoliInventariati = gSon.fromJson(gSonString, Integer.class);
 		}
 
 		ImageButton btnCheck = (ImageButton)findViewById(R.id.btnCheck);
@@ -226,7 +226,7 @@ public class ModificaArticoloActivity extends Activity{
 			@Override
 			public void onClick(View v){
 				if(a.getStato() == TipoStato.DA_INVENTARIARE){
-					inventario.setNumeroArticoliInventariati(inventario.getNumeroArticoliInventariati() + 1);
+					numeroArticoliInventariati++;
 				}
 				a.setStato();
 				a.setTimestamp(new Timestamp((new Date().getTime())));
@@ -234,8 +234,8 @@ public class ModificaArticoloActivity extends Activity{
 				Intent resultIntent = new Intent();
 				String gSonString = gSon.toJson(a);
 				resultIntent.putExtra("articolo", gSonString);
-				gSonString = gSon.toJson(inventario);
-				resultIntent.putExtra("inventario", gSonString);
+				gSonString = gSon.toJson(numeroArticoliInventariati);
+				resultIntent.putExtra("numeroArticoliInventariati", gSonString);
 				setResult(Activity.RESULT_OK, resultIntent);
 				finish();
 			}

@@ -183,12 +183,36 @@ public class MainActivity extends Activity{
 		saveButton.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				saveButton.setVisibility(View.INVISIBLE);
+				DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSSS");
+				Timestamp timestamp = new Timestamp((new Date().getTime()));
+				inventario.setTimeInvio(timestamp);
+
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("deposito|").append(inventario.getDeposito()).append("\n");
+				stringBuilder.append("userCrea|").append(inventario.getUtenteCreatore()).append("\n");
+				stringBuilder.append("userInven|").append(inventario.getUtenteDestinatario()).append("\n");
+				stringBuilder.append("creazione|").append(formatter.format(inventario.getTimeCreazione())).append("\n");
+				stringBuilder.append("conferma|").append(formatter.format(inventario.getTimeInvio())).append("\n");
+				stringBuilder.append("commento|").append(inventario.getCommento()).append("\n");
+				stringBuilder.append("\n");
+				stringBuilder.append("codice|barcode|desclunga|prezzo|qtyAttesa|qtyContate|qtyEsposteAttesa|qtyEsposteContate|qtyMagazAttesa|qtyMagazContate|difetAttesa|difetContate|scortaMinAttesa|scortaMinContate|scortaMaxAttesa|scortaMaxContate|perConfAttesa|perConfContate|commento|stato|timestamp").append("\n");
+
+				List<Articolo> articoliLsDaSalv = inventario.getArticoliLs();
+				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
+				Articolo art = null;
+				while(iter_articoliLs.hasNext()){
+					art = iter_articoliLs.next();
+					stringBuilder.append(art.toStringPerFtpFile()).append("\n");
+				}
+
 				Gson gSon = new Gson();
-				String gSonString = gSon.toJson(inventario);
-				Intent intentLoginFileActivity = new Intent(getApplicationContext(), SyncActivity.class);
-				intentLoginFileActivity.putExtra("inventario", gSonString);
-				startActivityForResult(intentLoginFileActivity, SAVE_REQUEST);
+				Intent intentSyncActivity = new Intent(getApplicationContext(), SyncActivity.class);
+				String gSonString = gSon.toJson(inventario.getProgressivo());
+				intentSyncActivity.putExtra("inventarioId", gSonString);
+				gSonString = gSon.toJson(stringBuilder.toString());
+				intentSyncActivity.putExtra("inventarioUpload", gSonString);
+				startActivityForResult(intentSyncActivity, SAVE_REQUEST);
+				saveButton.setVisibility(View.INVISIBLE);
 				Log.i("saveButton", saveButton.toString());
 			}
 		});
@@ -382,6 +406,9 @@ public class MainActivity extends Activity{
 						String gSonString = data.getStringExtra("inventarioSel");
 						Gson gSon = new Gson();
 						inventario = gSon.fromJson(gSonString, Inventario.class);
+
+						popolaArticoliInvetarioSelezionato();
+
 						articoliLs = inventario.getArticoliLs();
 						testoNumeroInvetariare.setText(String.valueOf(inventario.getNumeroArticoliTotale()));
 						testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
@@ -434,8 +461,9 @@ public class MainActivity extends Activity{
 						Gson gSon = new Gson();
 						Articolo articoloInventariato = gSon.fromJson(gSonString, Articolo.class);
 						articoloInventariato.setInModifica(false);
-						gSonString = data.getStringExtra("inventario");
-						inventario = gSon.fromJson(gSonString, Inventario.class);
+						gSonString = data.getStringExtra("numeroArticoliInventariati");
+						Integer numeroArticoliInventariati = gSon.fromJson(gSonString, Integer.class);
+						inventario.setNumeroArticoliInventariati(numeroArticoliInventariati);
 						testoNumeroInvetariare.setText(String.valueOf(inventario.getNumeroArticoliTotale()));
 						testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
 
@@ -638,5 +666,99 @@ public class MainActivity extends Activity{
 		articoliLs.add(art);
 		inventario.setArticoliLs(articoliLs);
 		inventario.setNumeroArticoliTotale(articoliLs.size());
+	}
+
+	private void popolaArticoliInvetarioSelezionato(){
+		int idDeposito = Integer.parseInt(inventario.getDeposito());
+		inventariTestateDao = daoSession.getInventari_testateDao();
+		Inventari_testate inventariTestate = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Id.eq(inventario.getProgressivo())).unique();
+		inventariDettagliDao = daoSession.getInventari_dettagliDao();
+		List<Inventari_dettagli> inventariDettagliLs = null;
+		inventariDettagliLs = inventariDettagliDao.queryBuilder().where(Inventari_dettagliDao.Properties.Idtestata.eq(inventariTestate.getId())).list();
+		Inventari_dettagli inventariDettagli = null;
+		articoliDao = daoSession.getArticoliDao();
+		qtyOriginaliDao = daoSession.getQty_originaliDao();
+		relArticoliBarcodeDao = daoSession.getRel_articoli_barcodeDao();
+
+		for(int i = 0, n = inventariDettagliLs.size(); i < n; i++){
+			inventariDettagli = inventariDettagliLs.get(i);
+			Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Id.eq(inventariDettagli.getIdart())).unique();
+
+			Iterator<Articolo> iter_articoliLs = inventario.getArticoliLs().iterator();
+			Articolo art = null;
+			while(iter_articoliLs.hasNext()){
+				art = iter_articoliLs.next();
+				//String s1 = art.getCodice();
+				//String s2 = articoli.getCodart();
+				if(!(StringUtils.equals(art.getCodice(), articoli.getCodart()))){
+					//if(!(StringUtils.equals(s1, s2))){
+					continue;
+				}
+				// trovato e quindi lo popolo
+				QueryBuilder qb = qtyOriginaliDao.queryBuilder();
+				Qty_originali qtyOriginali = null;
+				try{
+					qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).unique();
+					//qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).list().get(0);
+				}catch(IndexOutOfBoundsException e){
+					Log.w("Art non ha qty per dep ", String.valueOf(idDeposito));
+				}
+				if(qtyOriginali != null){
+					art.setQtyOriginale(qtyOriginali.getQty());
+					art.setQtyRilevata(null);//qtyOriginali.getQty());
+					art.setQtyEsposteOriginale(qtyOriginali.getQty());
+					art.setQtyMagazOriginale(0.0f);
+					art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
+					art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
+					art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
+					art.setDataCarico(qtyOriginali.getData_carico());
+					art.setDataScarico(qtyOriginali.getData_scarico());
+					art.setDataUltimoInventario(qtyOriginali.getData_inventario());
+				}
+				art.setQtyEsposteRilevata(inventariDettagli.getQty_esposta());
+				art.setQtyMagazRilevata(inventariDettagli.getQty_magaz());
+				art.setQtyDifettRilevata(inventariDettagli.getQty_difettosi());
+				art.setScortaMinRilevata(inventariDettagli.getQty_scorta_min());
+				art.setScortaMaxRilevata(inventariDettagli.getQty_scorta_max());
+				art.setDescOriginale(articoli.getDesc());
+				art.setDescRilevata(inventariDettagli.getDesc());
+				art.setPrezzoOriginale(articoli.getPrezzo());
+				art.setPrezzoRilevata(inventariDettagli.getPrezzo());
+				art.setCommento(inventariDettagli.getCommento());
+				art.setStato(Integer.parseInt(inventariDettagli.getStato()));
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS");
+				Date date = null;
+				try{
+					date = (Date)formatter.parse(inventariDettagli.getTimestamp());
+					art.setTimestamp(new Timestamp(date.getTime()));
+				}catch(Exception e){
+					art.setTimestamp(null);
+				}
+				art.setOrdinamento(inventariDettagli.getPosizioneinlista());
+				art.setQtyPerConfezOriginale(articoli.getQty_per_confez());
+				art.setQtyPerConfezRilevata(inventariDettagli.getQty_per_confez());
+
+				List<Rel_articoli_barcode> relArticoliBarcode = null;
+				try{
+					relArticoliBarcode = relArticoliBarcodeDao.queryBuilder().where(Rel_articoli_barcodeDao.Properties.Idart.eq(articoli.getId())).list();
+				}catch(Exception e){
+					Log.w("Art non ha barcode ", Long.toString(articoli.getId()));
+				}
+				if(relArticoliBarcode != null){
+					Barcode bcod[] = new Barcode[relArticoliBarcode.size()];
+					for(int j = 0, s = relArticoliBarcode.size(); j < s; j++){
+						bcod[j] = new Barcode();
+						bcod[j].setCodice(relArticoliBarcode.get(j).getBarcode().getCodice());
+					}
+					art.setBarcodeOriginale(bcod);
+				}else{
+					art.setBarcodeOriginale(null);
+				}
+				art.setBarcodeRilevata((new Barcode()).stringToArray(inventariDettagli.getBarcode()));
+				art.setUm(articoli.getUm());
+
+				art.setInModifica(false);
+			}
+		}
 	}
 }

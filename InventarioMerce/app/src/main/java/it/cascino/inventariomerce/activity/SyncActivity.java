@@ -225,7 +225,7 @@ public class SyncActivity extends Activity{
 					rinominaFileSorgenteFtpThread(inventarioSel.getNomeFile());
 				}
 
-				popolaArticoliInvetarioSelezionato();
+				//popolaArticoliInvetarioSelezionato();
 
 				Intent resultIntent = new Intent();
 				Gson gSon = new Gson();
@@ -238,11 +238,14 @@ public class SyncActivity extends Activity{
 
 		Intent intentFtpUpload = getIntent();
 		if(intentFtpUpload != null){
-			String gSonString = intentFtpUpload.getStringExtra("inventario");
+			String gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
 			if(StringUtils.isNotEmpty(gSonString)){
 				Gson gSon = new Gson();
-				Inventario inventario = gSon.fromJson(gSonString, Inventario.class);
-				UploadThread ut = new UploadThread(inventario);
+				gSonString = intentFtpUpload.getStringExtra("inventarioId");
+				Integer inventarioId = gSon.fromJson(gSonString, Integer.class);
+				gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
+				String inventarioUpload = gSon.fromJson(gSonString, String.class);
+				UploadThread ut = new UploadThread(inventarioId, inventarioUpload);
 				try{
 					ut.execute("").get();
 				}catch(InterruptedException e){
@@ -464,10 +467,12 @@ public class SyncActivity extends Activity{
 	}
 
 	private class UploadThread extends AsyncTask<String, Void, String>{
-		private Inventario inventario;
+		private Integer inventarioId;
+		private String inventarioUpload;
 
-		public UploadThread(Inventario inventario){
-			this.inventario = inventario;
+		public UploadThread(Integer inventarioId, String inventarioUpload){
+			this.inventarioId = inventarioId;
+			this.inventarioUpload = inventarioUpload;
 		}
 
 		@Override
@@ -488,7 +493,7 @@ public class SyncActivity extends Activity{
 				String dataSyncStr = formatter.format(new Date());
 
 				inventariTestateDao = daoSession.getInventari_testateDao();
-				Inventari_testate inventari_testate = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Id.eq(inventario.getProgressivo())).unique();
+				Inventari_testate inventari_testate = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Id.eq(inventarioId)).unique();
 
 				formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS");
 				Timestamp timestamp = new Timestamp((new Date().getTime()));
@@ -497,7 +502,7 @@ public class SyncActivity extends Activity{
 
 				String nomeFileInventariato = StringUtils.join("invent_", dataSyncStr, "_", inventari_testate.getNome_file(), ".csv");
 				nomeFileInventariato = StringUtils.replace(nomeFileInventariato, ".csv.csv", ".csv");
-				StringBuilder stringBuilder = new StringBuilder();
+				/*StringBuilder stringBuilder = new StringBuilder();
 
 				stringBuilder.append("deposito|").append(inventari_testate.getIddep()).append("\n");
 				stringBuilder.append("userCrea|").append(inventari_testate.getUtente_creatore()).append("\n");
@@ -508,16 +513,19 @@ public class SyncActivity extends Activity{
 				stringBuilder.append("\n");
 				stringBuilder.append("codice|barcode|desclunga|prezzo|qtyAttesa|qtyContate|qtyEsposteAttesa|qtyEsposteContate|qtyMagazAttesa|qtyMagazContate|difetAttesa|difetContate|scortaMinAttesa|scortaMinContate|scortaMaxAttesa|scortaMaxContate|perConfAttesa|perConfContate|commento|stato|timestamp").append("\n");
 
+
+
+				StringBuilder stringBuilder = new StringBuilder();
 				List<Articolo> articoliLsDaSalv = inventario.getArticoliLs();
 				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
 				Articolo art = null;
 				while(iter_articoliLs.hasNext()){
 					art = iter_articoliLs.next();
 					stringBuilder.append(art.toStringPerFtpFile()).append("\n");
-				}
+				}*/
 
 				ftpClient.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
-				InputStream inputStream = new ByteArrayInputStream(stringBuilder.toString().getBytes());
+				InputStream inputStream = new ByteArrayInputStream(inventarioUpload.getBytes());
 				ftpClient.storeFile(nomeFileInventariato, inputStream);
 				inputStream.close();
 
@@ -759,100 +767,6 @@ public class SyncActivity extends Activity{
 			inventariDettagliDao.insert(inventariDettagli);
 			Long idInventariDettagli = inventariDettagli.getId();
 			// Log.i("Aggiunto inventDettagli", Long.toString(idInventariDettagli));
-		}
-	}
-
-	private void popolaArticoliInvetarioSelezionato(){
-		int idDeposito = Integer.parseInt(inventarioSel.getDeposito());
-		inventariTestateDao = daoSession.getInventari_testateDao();
-		Inventari_testate inventariTestate = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Id.eq(inventarioSel.getProgressivo())).unique();
-		inventariDettagliDao = daoSession.getInventari_dettagliDao();
-		List<Inventari_dettagli> inventariDettagliLs = null;
-		inventariDettagliLs = inventariDettagliDao.queryBuilder().where(Inventari_dettagliDao.Properties.Idtestata.eq(inventariTestate.getId())).list();
-		Inventari_dettagli inventariDettagli = null;
-		articoliDao = daoSession.getArticoliDao();
-		qtyOriginaliDao = daoSession.getQty_originaliDao();
-		relArticoliBarcodeDao = daoSession.getRel_articoli_barcodeDao();
-
-		for(int i = 0, n = inventariDettagliLs.size(); i < n; i++){
-			inventariDettagli = inventariDettagliLs.get(i);
-			Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Id.eq(inventariDettagli.getIdart())).unique();
-
-			Iterator<Articolo> iter_articoliLs = inventarioSel.getArticoliLs().iterator();
-			Articolo art = null;
-			while(iter_articoliLs.hasNext()){
-				art = iter_articoliLs.next();
-				//String s1 = art.getCodice();
-				//String s2 = articoli.getCodart();
-				if(!(StringUtils.equals(art.getCodice(), articoli.getCodart()))){
-				//if(!(StringUtils.equals(s1, s2))){
-					continue;
-				}
-				// trovato e quindi lo popolo
-				QueryBuilder qb = qtyOriginaliDao.queryBuilder();
-				Qty_originali qtyOriginali = null;
-				try{
-					qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).unique();
-					//qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).list().get(0);
-				}catch(IndexOutOfBoundsException e){
-					Log.w("Art non ha qty per dep ", String.valueOf(idDeposito));
-				}
-				if(qtyOriginali != null){
-					art.setQtyOriginale(qtyOriginali.getQty());
-					art.setQtyRilevata(null);//qtyOriginali.getQty());
-					art.setQtyEsposteOriginale(qtyOriginali.getQty());
-					art.setQtyMagazOriginale(0.0f);
-					art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
-					art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
-					art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
-					art.setDataCarico(qtyOriginali.getData_carico());
-					art.setDataScarico(qtyOriginali.getData_scarico());
-					art.setDataUltimoInventario(qtyOriginali.getData_inventario());
-				}
-				art.setQtyEsposteRilevata(inventariDettagli.getQty_esposta());
-				art.setQtyMagazRilevata(inventariDettagli.getQty_magaz());
-				art.setQtyDifettRilevata(inventariDettagli.getQty_difettosi());
-				art.setScortaMinRilevata(inventariDettagli.getQty_scorta_min());
-				art.setScortaMaxRilevata(inventariDettagli.getQty_scorta_max());
-				art.setDescOriginale(articoli.getDesc());
-				art.setDescRilevata(inventariDettagli.getDesc());
-				art.setPrezzoOriginale(articoli.getPrezzo());
-				art.setPrezzoRilevata(inventariDettagli.getPrezzo());
-				art.setCommento(inventariDettagli.getCommento());
-				art.setStato(Integer.parseInt(inventariDettagli.getStato()));
-				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS");
-				Date date = null;
-				try{
-					date = (Date)formatter.parse(inventariDettagli.getTimestamp());
-					art.setTimestamp(new Timestamp(date.getTime()));
-				}catch(Exception e){
-					art.setTimestamp(null);
-				}
-				art.setOrdinamento(inventariDettagli.getPosizioneinlista());
-				art.setQtyPerConfezOriginale(articoli.getQty_per_confez());
-				art.setQtyPerConfezRilevata(inventariDettagli.getQty_per_confez());
-
-				List<Rel_articoli_barcode> relArticoliBarcode = null;
-				try{
-					relArticoliBarcode = relArticoliBarcodeDao.queryBuilder().where(Rel_articoli_barcodeDao.Properties.Idart.eq(articoli.getId())).list();
-				}catch(Exception e){
-					Log.w("Art non ha barcode ", Long.toString(articoli.getId()));
-				}
-				if(relArticoliBarcode != null){
-					Barcode bcod[] = new Barcode[relArticoliBarcode.size()];
-					for(int j = 0, s = relArticoliBarcode.size(); j < s; j++){
-						bcod[j] = new Barcode();
-						bcod[j].setCodice(relArticoliBarcode.get(j).getBarcode().getCodice());
-					}
-					art.setBarcodeOriginale(bcod);
-				}else{
-					art.setBarcodeOriginale(null);
-				}
-				art.setBarcodeRilevata((new Barcode()).stringToArray(inventariDettagli.getBarcode()));
-				art.setUm(articoli.getUm());
-
-				art.setInModifica(false);
-			}
 		}
 	}
 

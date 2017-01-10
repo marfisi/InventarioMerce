@@ -222,8 +222,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				String gSonString = gSon.toJson(articolo);
 				Intent intentLoginFileActivity = new Intent(v.getContext(), ModificaArticoloActivity.class);
 				intentLoginFileActivity.putExtra("articolo", gSonString);
-				gSonString = gSon.toJson(inventario);
-				intentLoginFileActivity.putExtra("inventario", gSonString);
+				gSonString = gSon.toJson(inventario.getNumeroArticoliInventariati());
+				intentLoginFileActivity.putExtra("numeroArticoliInventariati", gSonString);
 				((Activity)vg.getContext()).startActivityForResult(intentLoginFileActivity, 3);    // 3=MainActivity.ART_MODIF_REQUEST
 			}
 		});
