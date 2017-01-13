@@ -445,6 +445,7 @@ public class ModificaArticoloActivity extends Activity{
 		}
 		qtyTextWatcher.setActive(false);
 		qty.setText(Support.floatToString(qtyElab));
+		qty.setSelection(qty.getText().length() - 3);
 		qtyTextWatcher.setActive(true);
 
 		gestioneQtyStyle();

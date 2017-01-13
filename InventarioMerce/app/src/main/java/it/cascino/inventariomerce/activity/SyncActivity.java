@@ -20,13 +20,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -37,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.sql.Timestamp;
@@ -48,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import it.cascino.dbsqlite.Articoli;
@@ -84,6 +83,8 @@ public class SyncActivity extends Activity{
 	private SharedPreferences sharedPreferences;
 	private EditText depositoEditText;
 	private EditText operatoreEditText;
+	//private View loadingPanel;
+	//private Timer timer = new Timer();
 
 	private String deposito = "";
 	private String operatore = "";
@@ -152,11 +153,29 @@ public class SyncActivity extends Activity{
 
 		final Button caricaButton = (Button)findViewById(R.id.caricaButton);
 
+		//loadingPanel = findViewById(R.id.loadingPanel);
 		Button aggiornaDBBtn = (Button)findViewById(R.id.aggiornaDBBtn);
 		aggiornaDBBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				inventariLs.clear();
+				/*LoadingThread lt = new LoadingThread();
+				try{
+					lt.execute("start").get();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}catch(ExecutionException e){
+					e.printStackTrace();
+				}*/
+				/*timer.cancel();
+				timer = new Timer();
+				timer.schedule(new TimerTask(){
+					@Override
+					public void run(){
+						loadingPanel.setVisibility(View.VISIBLE);
+					}
+				}, 10);*/
+			//	loadingPanel.setVisibility(View.VISIBLE);
 				DownloadDBThread dt = new DownloadDBThread();
 				try{
 					dt.execute("").get();
@@ -165,6 +184,7 @@ public class SyncActivity extends Activity{
 				}catch(ExecutionException e){
 					e.printStackTrace();
 				}
+				//loadingPanel.setVisibility(View.GONE);
 				syncAdapter.notifyDataSetChanged();
 				caricaButton.setEnabled(false);
 			}
@@ -174,6 +194,7 @@ public class SyncActivity extends Activity{
 		radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId){
+				//loadingPanel.setVisibility(View.GONE);
 				inventariLs.clear();
 				caricaButton.setEnabled(false);
 				syncAdapter.notifyDataSetChanged();
@@ -450,6 +471,7 @@ public class SyncActivity extends Activity{
 		@Override
 		protected void onPostExecute(String result){
 			super.onPostExecute(result);
+			//loadingPanel.setVisibility(View.GONE);
 			//Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
 			//fileDaAsAdapter.notifyDataSetChanged();
 		}
@@ -457,6 +479,7 @@ public class SyncActivity extends Activity{
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
+			//loadingPanel.setVisibility(View.VISIBLE);
 			//Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
 		}
 
@@ -465,6 +488,32 @@ public class SyncActivity extends Activity{
 			//Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
 		}
 	}
+
+	/*private class LoadingThread extends AsyncTask<String, Void, String>{
+		@Override
+		protected String doInBackground(String... params){
+			if(params[1].toString() == "start"){
+				loadingPanel.setVisibility(View.VISIBLE);
+			}else{
+				loadingPanel.setVisibility(View.GONE);
+			}
+			return "Thread terminato";
+		}
+
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values){
+		}
+	}*/
 
 	private class UploadThread extends AsyncTask<String, Void, String>{
 		private Integer inventarioId;
@@ -502,34 +551,11 @@ public class SyncActivity extends Activity{
 
 				String nomeFileInventariato = StringUtils.join("invent_", dataSyncStr, "_", inventari_testate.getNome_file(), ".csv");
 				nomeFileInventariato = StringUtils.replace(nomeFileInventariato, ".csv.csv", ".csv");
-				/*StringBuilder stringBuilder = new StringBuilder();
-
-				stringBuilder.append("deposito|").append(inventari_testate.getIddep()).append("\n");
-				stringBuilder.append("userCrea|").append(inventari_testate.getUtente_creatore()).append("\n");
-				stringBuilder.append("userInven|").append(inventari_testate.getUtente_destinatario()).append("\n");
-				stringBuilder.append("creazione|").append(StringUtils.remove(inventari_testate.getData_creazione(), "-")).append("\n");
-				stringBuilder.append("conferma|").append(StringUtils.remove(inventari_testate.getData_conferma(), "-")).append("\n");
-				stringBuilder.append("commento|").append(inventari_testate.getCommento()).append("\n");
-				stringBuilder.append("\n");
-				stringBuilder.append("codice|barcode|desclunga|prezzo|qtyAttesa|qtyContate|qtyEsposteAttesa|qtyEsposteContate|qtyMagazAttesa|qtyMagazContate|difetAttesa|difetContate|scortaMinAttesa|scortaMinContate|scortaMaxAttesa|scortaMaxContate|perConfAttesa|perConfContate|commento|stato|timestamp").append("\n");
-
-
-
-				StringBuilder stringBuilder = new StringBuilder();
-				List<Articolo> articoliLsDaSalv = inventario.getArticoliLs();
-				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
-				Articolo art = null;
-				while(iter_articoliLs.hasNext()){
-					art = iter_articoliLs.next();
-					stringBuilder.append(art.toStringPerFtpFile()).append("\n");
-				}*/
 
 				ftpClient.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
 				InputStream inputStream = new ByteArrayInputStream(inventarioUpload.getBytes());
 				ftpClient.storeFile(nomeFileInventariato, inputStream);
 				inputStream.close();
-
-				//ftpClient.completePendingCommand();
 
 				ftpClient.logout();
 				ftpClient.disconnect();

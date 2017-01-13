@@ -338,17 +338,18 @@
                 style="@style/styleTxDefault"
                 android:layout_alignBaseline="@+id/art_um_qty"
                 android:layout_alignBottom="@+id/art_um_qty"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true"
+                android:layout_toLeftOf="@+id/art_um_qty"/>
 
             <TextView
                 android:id="@+id/art_um_qty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="um"
+                style="@style/styleTxDefault"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/textView8"
-                android:layout_toEndOf="@+id/textView8"
-                style="@style/styleTxDefault"/>
+                android:layout_alignRight="@+id/textMagazzino"
+                android:layout_alignEnd="@+id/textMagazzino"/>
 
             <TextView
                 android:layout_width="wrap_content"

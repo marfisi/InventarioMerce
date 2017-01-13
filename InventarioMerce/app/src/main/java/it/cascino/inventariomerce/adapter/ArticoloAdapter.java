@@ -52,24 +52,19 @@ import it.cascino.inventariomerce.utils.TipoStato;
 
 public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	private List<Articolo> articoliLs;
-	//private List<Articolo> articoliOriginaleLs;
 	private Context context;
 	private ArticoloFiltro articoloFiltro;
 	private Inventario inventario;
-
-	//private Integer numeroInvetariare = 0;
 
 	private Integer numeroRisultatoFiltro = 0;
 
 	public ArticoloAdapter(Context context, List<Articolo> articoliLs){
 		this.context = context;
 		this.articoliLs = articoliLs;
-		//this.articoliOriginaleLs = articoliLs; //articoliOriginaleLs;
 	}
 
 	@Override
 	public Filter getFilter(){
-		// Log.i("getFilter", "articoloFiltro: " + articoloFiltro);
 		if(articoloFiltro == null){
 			articoloFiltro = new ArticoloFiltro();
 		}
@@ -134,6 +129,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.qtyPerConfAttese = (TextView)v.findViewById(R.id.qtyPerConfAttese);
 			viewHolder.qtyPerConfRilevate = (TextView)v.findViewById(R.id.qtyPerConfRilevate);
 			viewHolder.qtyPerConfImg = (ImageView)v.findViewById(R.id.qtyPerConfImg);
+			viewHolder.layAccettaSoloEsposte = (View)v.findViewById(R.id.layAccettaSoloEsposte);
+			viewHolder.txtQtyAccettaSoloEsposte = (TextView)v.findViewById(R.id.txtQtyAccettaSoloEsposte);
+			viewHolder.btnAccettaSoloEsposte = (ImageButton)v.findViewById(R.id.btnAccettaSoloEsposte);
 			viewHolder.btnModif = (ImageButton)v.findViewById(R.id.btnModif);
 			v.setTag(viewHolder);
 		}else{
@@ -213,6 +211,32 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.qtyPerConfRilevate.setText(valRil);
 		viewHolder.qtyPerConfImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
 
+		if(a.getStato() == TipoStato.DA_INVENTARIARE){
+			viewHolder.layAccettaSoloEsposte.setVisibility(View.VISIBLE);
+			Float qtyAccettaSoloEsposte = 0.0f;
+			if((a.getQtyOriginale() != null) && (a.getQtyDifettOriginale() != null)){
+				qtyAccettaSoloEsposte = a.getQtyOriginale() - a.getQtyDifettOriginale();
+				valAtt = Support.floatToString(qtyAccettaSoloEsposte);
+			}
+			viewHolder.txtQtyAccettaSoloEsposte.setText(valAtt);
+
+			final Float finalQtyAccettaSoloEsposte = qtyAccettaSoloEsposte;
+			viewHolder.btnAccettaSoloEsposte.setOnLongClickListener(new View.OnLongClickListener(){
+				@Override
+				public boolean onLongClick(View v){
+					a.setTimestamp(new Timestamp((new Date().getTime())));
+					a.setQtyEsposteRilevata(finalQtyAccettaSoloEsposte);
+					a.setQtyRilevata(finalQtyAccettaSoloEsposte);
+					a.setStato();
+					if(accettaSoloEsposte != null){
+						accettaSoloEsposte.accettaSoloEsposte(a.getOrdinamento() - 1);	// il numero ordine e' parte da 1 e non da 0
+					}
+					return true;
+				}
+			});
+		}else{
+			viewHolder.layAccettaSoloEsposte.setVisibility(View.INVISIBLE);
+		}
 		viewHolder.btnModif.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -220,165 +244,17 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				Articolo articolo = articoliLs.get(position);
 				articolo.setInModifica(true);
 				String gSonString = gSon.toJson(articolo);
-				Intent intentLoginFileActivity = new Intent(v.getContext(), ModificaArticoloActivity.class);
-				intentLoginFileActivity.putExtra("articolo", gSonString);
+				Intent intentModifActivity = new Intent(v.getContext(), ModificaArticoloActivity.class);
+				intentModifActivity.putExtra("articolo", gSonString);
 				gSonString = gSon.toJson(inventario.getNumeroArticoliInventariati());
-				intentLoginFileActivity.putExtra("numeroArticoliInventariati", gSonString);
-				((Activity)vg.getContext()).startActivityForResult(intentLoginFileActivity, 3);    // 3=MainActivity.ART_MODIF_REQUEST
+				intentModifActivity.putExtra("numeroArticoliInventariati", gSonString);
+				((Activity)vg.getContext()).startActivityForResult(intentModifActivity, 3);    // 3=MainActivity.ART_MODIF_REQUEST
 			}
 		});
-		/*viewHolder.btnModif.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				if(a.getStato() == 2){
-					Boolean qtyRilUgualeOrig = false;
-					if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
-						a.setStato(0);
-						qtyRilUgualeOrig = true;
-					}else{
-						a.setStato(1);
-						qtyRilUgualeOrig = false;
-					}
-					a.setTimestamp(new Timestamp((new Date().getTime())));
-					//manageBckgRow(finalViewHolder, a, v);
 
-					Integer ordinamento = 0;
-					Integer ordinamentoDestinazione = 0;
-					if(!articoliOriginaleLs.isEmpty()){
-						Iterator<Articolo> iter_articoliLs = articoliOriginaleLs.iterator();
-						Articolo art = null;
-						while(iter_articoliLs.hasNext()){
-							art = iter_articoliLs.next();
-							if(StringUtils.equals(art.getCodice(), a.getCodice())){
-								iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
-
-								Iterator<Articolo> iter_articoliDestinazioneLs = articoliOriginaleLs.iterator();    // .listIterator(ordinamento);
-								Articolo artDestinazione = null;
-								Articolo artDestinazionePrecedente = new Articolo();
-								artDestinazionePrecedente.setStato(999);
-								while(iter_articoliDestinazioneLs.hasNext()){
-									artDestinazione = iter_articoliDestinazioneLs.next();
-
-									if((artDestinazione.getStato() == 1) && (!(qtyRilUgualeOrig))){
-										break;
-									}
-									if((artDestinazione.getStato() == 0) && (qtyRilUgualeOrig)){
-										break;
-									}
-									// gestione del rosso sempre sopra il verde
-									if((artDestinazione.getStato() == 0) && (artDestinazionePrecedente.getStato() == 2) && (!(qtyRilUgualeOrig))){
-										//ordinamentoDestinazione = ordinamentoDestinazione - 2;
-										break;
-									}
-									ordinamentoDestinazione++;
-									artDestinazionePrecedente = artDestinazione;
-								}
-								articoliOriginaleLs.add(ordinamentoDestinazione, a);
-								break;
-							}
-							ordinamento++;
-						}
-					}
-
-					Animation animation = new ScaleAnimation(1, 1, 1, 0);
-					animation.setDuration(400);
-					//v.getParent().getParent().startAnimation(animation);
-					View daMod = (View)v.getParent().getParent().getParent();
-					daMod.startAnimation(animation);
-
-					notifyDataSetChanged();
-
-					numeroInvetariare++;
-					if(modifcaQuantitaInventariati != null){
-						modifcaQuantitaInventariati.modifcaQtyInventariati(numeroInvetariare);
-					}
-				}
-			}
-		});*/
-		/*viewHolder.btnReset.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				if(a.getStato() != 2){
-					a.setStato(2);
-					a.setQtyRilevata(a.getQtyOriginale());
-					a.setQtyDifettRilevata(a.getQtyDifettOriginale());
-					a.setScortaMinRilevata(a.getScortaMinOriginale());
-					a.setScortaMaxRilevata(a.getScortaMaxOriginale());
-					a.setCommento("");
-
-					Integer ordinamento = 0;
-					if(!articoliOriginaleLs.isEmpty()){
-						Iterator<Articolo> iter_articoliLs = articoliOriginaleLs.iterator();
-						Articolo art = null;
-						while(iter_articoliLs.hasNext()){
-							art = iter_articoliLs.next();
-							if(StringUtils.equals(art.getCodice(), a.getCodice())){
-								iter_articoliLs.remove();    // articoliLs.remove(ordinamento);
-								break;
-							}
-							ordinamento++;
-						}
-					}
-					articoliOriginaleLs.add(0, a);
-
-					notifyDataSetChanged();
-
-					numeroInvetariare--;
-					if(modifcaQuantitaInventariati != null){
-						modifcaQuantitaInventariati.modifcaQtyInventariati(numeroInvetariare);
-					}
-				}
-			}
-		});*/
 		manageBckgRow(a, v);//, viewHolder.btnCheck);
 		return v;
 	}
-
-	/*public Integer getNumeroInvetariare(){
-		return numeroInvetariare;
-	}
-
-	public void setNumeroInvetariare(Integer numeroInvetariare){
-		this.numeroInvetariare = numeroInvetariare;
-	}*/
-
-	/*
-	private void manageClickIncDec(ViewHolder vh, Articolo a, boolean incrementa, float step){
-		// devo poter modificcare solo se non e' stato confermato in precedenza
-		if(a.getStato() != 2){
-			return;
-		}
-		if(incrementa){
-			a.setQtyRilevata(a.getQtyRilevata() + step);
-		}else{
-			a.setQtyRilevata(a.getQtyRilevata() - step);
-		}
-		vh.art_qty.setText(floatToString(a.getQtyRilevata()));
-
-		manageQtyTextColor(vh, a);
-	}
-
-	private void manageQtyTextColor(ViewHolder vh, Articolo a){
-		if(a.getQtyRilevata() < 0.0f){
-			vh.art_qty.setTextColor(ContextCompat.getColor(this.context, R.color.qtyTextColorNeg));
-		}else{
-			vh.art_qty.setTextColor(ContextCompat.getColor(this.context, R.color.qtyTextColor));
-		}
-	}
-	*/
-
-	/*private void manageBckgRow(Articolo a, View v){ // private void manageBckgRow(ViewHolder vh, Articolo a, View v){
-		//View daMod = (View)v.getParent().getParent().getParent();
-		if(!(a.getStato().equals(2))){
-			if(Float.compare(a.getQtyRilevata(), a.getQtyOriginale()) == 0){
-				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkOK));
-			}else{
-				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.bckgChkDiffer));
-			}
-		}else{
-			v.setBackgroundColor(Color.TRANSPARENT);
-		}
-	}*/
 
 	private void manageBckgRow(Articolo a, View v){
 		switch(a.getStato()){
@@ -429,6 +305,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView qtyPerConfAttese;
 		public TextView qtyPerConfRilevate;
 		public ImageView qtyPerConfImg;
+		public View layAccettaSoloEsposte;
+		public TextView txtQtyAccettaSoloEsposte;
+		public ImageButton btnAccettaSoloEsposte;
 		public ImageButton btnModif;
 	}
 
@@ -454,10 +333,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				Log.i("ricerca", constraint.toString());
 				for(int i = 0; i < articoliLs.size(); i++){
 					Articolo articolo = articoliLs.get(i);
-					//if(articolo.toString().toLowerCase().contains(constraint)){
 					if(StringUtils.contains(articolo.toStringPerFilter(), constraint)){
 						filteredItems.add(articolo);
-						//Log.i("trovato", articolo.toString());
 					}
 				}
 				result.values = filteredItems;
@@ -479,47 +356,10 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		@SuppressWarnings("unchecked")
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results){
-			/*if(results.count == 0){
-				notifyDataSetInvalidated();
-			}else{*/
 			articoliLs = (ArrayList)results.values;
 			notifyDataSetChanged();
-			//}
-
-			/* articoliLs = (ArrayList<Articolo>)results.values;
-			notifyDataSetChanged();
-			articoliLs.clear();
-			for(int i = 0; i < articoliLs.size(); i++) {
-				articoliLs.add(articoliLs.get(i));
-			}
-			notifyDataSetInvalidated(); */
 		}
 	}
-
-	/* public List<Articolo> getArticoliLs(){
-		return articoliLs;
-	}
-
-	public void setArticoliLs(List<Articolo> articoliLs){
-		this.articoliLs = articoliLs;
-	} */
-
-	/*public List<Articolo> getArticoliOriginaleLs(){
-		return articoliOriginaleLs;
-	}
-
-	public void setArticoliOriginaleLs(List<Articolo> articoliOriginaleLs){
-		this.articoliOriginaleLs = articoliOriginaleLs;
-	}*/
-
-	/*// gestione del callback per la modifica della textview nella main activity gui
-	public interface ModifcaQuantitaInventariati{
-		public void modifcaQtyInventariati(Integer qty);
-	}
-	ModifcaQuantitaInventariati modifcaQuantitaInventariati;
-	public void setOnModifcaQuantitaListener(ModifcaQuantitaInventariati onDataChangeListener){
-		modifcaQuantitaInventariati = onDataChangeListener;
-	}*/
 
 	// gestione del callback
 	public interface ModifcaNumeroRisultatoFiltro{
@@ -531,6 +371,17 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 	public void setOnModifcaNumeroRisultatoFiltroListener(ModifcaNumeroRisultatoFiltro onDataChangeListener){
 		modifcaNumeroRisultatoFiltro = onDataChangeListener;
 	}
+
+	public interface GestioneBtnAccettaSoloEsposte{
+		public void accettaSoloEsposte(Integer position);
+	}
+
+	GestioneBtnAccettaSoloEsposte accettaSoloEsposte;
+
+	public void setOnAccettaSoloEsposteListener(GestioneBtnAccettaSoloEsposte onDataChangeListener){
+		accettaSoloEsposte = onDataChangeListener;
+	}
+
 
 	public void setInventario(Inventario inventario){
 		this.inventario = inventario;

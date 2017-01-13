@@ -9,13 +9,15 @@
     <dimen name="dimTxArtCodice">50dp</dimen>
     <dimen name="dimTxArtDescrizione">28dp</dimen>
     <dimen name="dimTxArtPrezzo">25dp</dimen>
-    <dimen name="dimTxQtyAttese">10dp</dimen>
-    <dimen name="dimTxQtyAtteseInModifica">30dp</dimen>
-    <dimen name="dimTxQtyRilevate">13dp</dimen>
+    <dimen name="dimTxQtyAttese">20dp</dimen>
+    <dimen name="dimTxQtyAtteseInModifica">35dp</dimen>
+    <dimen name="dimTxQtyRilevate">25dp</dimen>
 
     <dimen name="dimImgFeed">15dp</dimen>
 
-    <dimen name="dimBtnModif">30dp</dimen>
+    <dimen name="dimBtnModif">95dp</dimen>
+
+    <dimen name="dimImgBtnAccettaSoloEsposte">100dp</dimen>
 
     <dimen name="dimQtyMargineTop">25dp</dimen>
 

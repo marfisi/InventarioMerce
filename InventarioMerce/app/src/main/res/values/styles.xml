@@ -128,6 +128,12 @@
         <item name="android:background">@drawable/keypad</item>
     </style>
 
+    <style name="styleAccettaSoloEsposte">
+        <item name="android:background">@drawable/esposte_ok</item>
+        <item name="android:layout_width">@dimen/dimImgBtnAccettaSoloEsposte</item>
+        <item name="android:layout_height">@dimen/dimImgBtnAccettaSoloEsposte</item>
+    </style>
+
     <style name="styleVociQty">
         <item name="android:textColor">@color/colTxVociQty</item>
         <item name="android:background">@color/colBckgVociQty</item>

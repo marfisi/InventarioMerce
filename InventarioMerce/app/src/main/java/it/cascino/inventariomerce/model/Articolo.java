@@ -478,6 +478,18 @@ public class Articolo{
 		return ret;
 	}
 
+	public String toStringPerClipboard(){
+		String campiSep = ", ";
+		String insideCampSep = ",";
+
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(getCodice()).append(campiSep);
+		stringBuilder.append(StringUtils.replace(getDescOriginale(), ",", "_")).append(campiSep);
+		stringBuilder.append(getQtyOriginale()).append(campiSep);
+		stringBuilder.append(getQtyRilevata());
+		return stringBuilder.toString();
+	}
+
 	/*public String toStringPerFtpFileOLD(){
 		String campiSep = "|";
 		String insideCampSep = ",";

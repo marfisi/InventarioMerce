@@ -1,6 +1,9 @@
 package it.cascino.inventariomerce;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -91,6 +94,8 @@ public class MainActivity extends Activity{
 
 	private Button saveButton;
 
+	//private View loadingPanel;
+
 	private Inventario inventario;
 
 	private Boolean keyboardVisible;
@@ -151,8 +156,6 @@ public class MainActivity extends Activity{
 		testoNumeroInvetariare = (TextView)findViewById(R.id.numeroInvetariare);
 		testoNumeroInvetariare.setText("n.d.");
 
-		saveButton = (Button)findViewById(R.id.saveButton);
-
 		Button syncButton = (Button)findViewById(R.id.syncButton);
 		syncButton.setOnClickListener(new View.OnClickListener(){
 			/*@Override
@@ -180,9 +183,10 @@ public class MainActivity extends Activity{
 			}
 		});
 
-		saveButton.setOnClickListener(new View.OnClickListener(){
+		saveButton = (Button)findViewById(R.id.saveButton);
+		saveButton.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
-			public void onClick(View v){
+			public boolean onLongClick(View v){
 				DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSSS");
 				Timestamp timestamp = new Timestamp((new Date().getTime()));
 				inventario.setTimeInvio(timestamp);
@@ -214,6 +218,28 @@ public class MainActivity extends Activity{
 				startActivityForResult(intentSyncActivity, SAVE_REQUEST);
 				saveButton.setVisibility(View.INVISIBLE);
 				Log.i("saveButton", saveButton.toString());
+				return true;
+			}
+		});
+
+		Button copyToClipboardButton = (Button)findViewById(R.id.copyToClipboard);
+		copyToClipboardButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("CODART, DESC, QTY RISULTANTE, QTY RILEVATA").append("\n");
+				List<Articolo> articoliLsDaSalv = inventario.getArticoliLs();
+				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
+				Articolo art = null;
+				while(iter_articoliLs.hasNext()){
+					art = iter_articoliLs.next();
+					if(art.getStato() != TipoStato.DA_INVENTARIARE){
+						stringBuilder.append(art.toStringPerClipboard()).append("\n");
+					}
+				}
+				ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+				ClipData clip = ClipData.newPlainText("Copied", stringBuilder.toString());
+				clipboard.setPrimaryClip(clip);
 			}
 		});
 
@@ -336,10 +362,14 @@ public class MainActivity extends Activity{
 			}
 		});
 
+		//loadingPanel = findViewById(R.id.loadingPanel);
+		//loadingPanel.setVisibility(View.INVISIBLE);
+
 		ImageButton cercaButton = (ImageButton)findViewById(R.id.cercaButton);
 		cercaButton.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
+				//loadingPanel.setVisibility(View.VISIBLE);
 				adapterArticoliLs.updateArticoliLs(articoliLs);
 				adapterArticoliLs.getFilter().filter(stringaDaCercare);
 				adapterArticoliLs.notifyDataSetChanged();
@@ -352,8 +382,20 @@ public class MainActivity extends Activity{
 						cercaStringaDaCercare();
 					}
 				}, 500);
+				//loadingPanel.setVisibility(View.INVISIBLE);
 			}
 		});
+
+		adapterArticoliLs.setOnAccettaSoloEsposteListener(new ArticoloAdapter.GestioneBtnAccettaSoloEsposte(){
+			@Override
+			public void accettaSoloEsposte(Integer position){
+				Articolo art = articoliLs.get(position);
+				gestisciListaDopoModificaArticolo(art, inventario.getNumeroArticoliInventariati() + 1);
+				Log.i("accettaSoloEsposte", "articolo " + position);
+			}
+		});
+
+
 	}
 
 	private void cercaStringaDaCercare(){
@@ -460,21 +502,9 @@ public class MainActivity extends Activity{
 						String gSonString = data.getStringExtra("articolo");
 						Gson gSon = new Gson();
 						Articolo articoloInventariato = gSon.fromJson(gSonString, Articolo.class);
-						articoloInventariato.setInModifica(false);
 						gSonString = data.getStringExtra("numeroArticoliInventariati");
 						Integer numeroArticoliInventariati = gSon.fromJson(gSonString, Integer.class);
-						inventario.setNumeroArticoliInventariati(numeroArticoliInventariati);
-						testoNumeroInvetariare.setText(String.valueOf(inventario.getNumeroArticoliTotale()));
-						testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
-
-						aggiornaArticoloInventariatoInDB(articoloInventariato);
-
-						articoliLs.remove(articoloInventariato.getOrdinamento() - 1);
-						articoliLs.add(articoloInventariato.getOrdinamento() - 1, articoloInventariato);
-						ordinaArticoliLs();
-						inventario.setArticoliLs(articoliLs);
-						adapterArticoliLs.setInventario(inventario);
-						adapterArticoliLs.updateArticoliLs(articoliLs);
+						gestisciListaDopoModificaArticolo(articoloInventariato, numeroArticoliInventariati);
 					}else if(resultCode == Activity.RESULT_CANCELED){
 						Log.i("modifica", "indietro da modifica");
 					}
@@ -495,7 +525,22 @@ public class MainActivity extends Activity{
 					break;
 			}
 		}
+	}
 
+	private void gestisciListaDopoModificaArticolo(Articolo articoloInventariato, Integer numeroArticoliInventariati){
+		articoloInventariato.setInModifica(false);
+		inventario.setNumeroArticoliInventariati(numeroArticoliInventariati);
+		testoNumeroInvetariare.setText(String.valueOf(inventario.getNumeroArticoliTotale()));
+		testoNumeroInventariati.setText(String.valueOf(inventario.getNumeroArticoliInventariati()));
+
+		aggiornaArticoloInventariatoInDB(articoloInventariato);
+
+		articoliLs.remove(articoloInventariato.getOrdinamento() - 1);
+		articoliLs.add(articoloInventariato.getOrdinamento() - 1, articoloInventariato);
+		ordinaArticoliLs();
+		inventario.setArticoliLs(articoliLs);
+		adapterArticoliLs.setInventario(inventario);
+		adapterArticoliLs.updateArticoliLs(articoliLs);
 	}
 
 	private void ordinaArticoliLs(){
@@ -588,7 +633,6 @@ public class MainActivity extends Activity{
 		}
 		if(qtyOriginali != null){
 			art.setQtyOriginale(qtyOriginali.getQty());
-			art.setQtyRilevata(null);
 			art.setQtyEsposteOriginale(qtyOriginali.getQty());
 			art.setQtyMagazOriginale(0.0f);
 			art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
@@ -597,6 +641,16 @@ public class MainActivity extends Activity{
 			art.setDataCarico(qtyOriginali.getData_carico());
 			art.setDataScarico(qtyOriginali.getData_scarico());
 			art.setDataUltimoInventario(qtyOriginali.getData_inventario());
+		}else{
+			art.setQtyOriginale(0.0f);
+			art.setQtyEsposteOriginale(0.0f);
+			art.setQtyMagazOriginale(0.0f);
+			art.setQtyDifettOriginale(0.0f);
+			art.setScortaMinOriginale(0.0f);
+			art.setScortaMaxOriginale(0.0f);
+			art.setDataCarico("");
+			art.setDataScarico("");
+			art.setDataUltimoInventario("");
 		}
 		inventariDettagliDao = daoSession.getInventari_dettagliDao();
 		Inventari_dettagli inventariDettagli = null;
@@ -701,11 +755,11 @@ public class MainActivity extends Activity{
 					qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).unique();
 					//qtyOriginali = (Qty_originali)qb.where(qb.and(Qty_originaliDao.Properties.Idart.eq(articoli.getId()), Qty_originaliDao.Properties.Iddep.eq(idDeposito))).list().get(0);
 				}catch(IndexOutOfBoundsException e){
+					qtyOriginali = null;
 					Log.w("Art non ha qty per dep ", String.valueOf(idDeposito));
 				}
 				if(qtyOriginali != null){
 					art.setQtyOriginale(qtyOriginali.getQty());
-					art.setQtyRilevata(null);//qtyOriginali.getQty());
 					art.setQtyEsposteOriginale(qtyOriginali.getQty());
 					art.setQtyMagazOriginale(0.0f);
 					art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
@@ -714,9 +768,30 @@ public class MainActivity extends Activity{
 					art.setDataCarico(qtyOriginali.getData_carico());
 					art.setDataScarico(qtyOriginali.getData_scarico());
 					art.setDataUltimoInventario(qtyOriginali.getData_inventario());
+				}else{
+					art.setQtyOriginale(0.0f);
+					art.setQtyEsposteOriginale(0.0f);
+					art.setQtyMagazOriginale(0.0f);
+					art.setQtyDifettOriginale(0.0f);
+					art.setScortaMinOriginale(0.0f);
+					art.setScortaMaxOriginale(0.0f);
+					art.setDataCarico("");
+					art.setDataScarico("");
+					art.setDataUltimoInventario("");
 				}
-				art.setQtyEsposteRilevata(inventariDettagli.getQty_esposta());
-				art.setQtyMagazRilevata(inventariDettagli.getQty_magaz());
+				Float qtyRilevata = null;
+				Float qtyEsposteRilevata = inventariDettagli.getQty_esposta();
+				Float qtyMagazRilevata = inventariDettagli.getQty_magaz();
+				if(qtyEsposteRilevata != null){
+					qtyRilevata = qtyEsposteRilevata;
+				}
+				if(qtyMagazRilevata != null){
+					qtyRilevata = qtyRilevata + qtyMagazRilevata;
+				}
+				art.setQtyRilevata(qtyRilevata);
+
+				art.setQtyEsposteRilevata(qtyEsposteRilevata);
+				art.setQtyMagazRilevata(qtyMagazRilevata);
 				art.setQtyDifettRilevata(inventariDettagli.getQty_difettosi());
 				art.setScortaMinRilevata(inventariDettagli.getQty_scorta_min());
 				art.setScortaMaxRilevata(inventariDettagli.getQty_scorta_max());

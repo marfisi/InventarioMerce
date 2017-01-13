@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -7,7 +7,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/testataInventario"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/textUtente"
@@ -135,15 +139,14 @@
             android:text="sync"
             android:textColor="#ff0000"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/saveButton"
-            android:layout_toStartOf="@+id/saveButton"/>
+            android:layout_alignParentEnd="true"/>
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/saveButtonOLD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Salva"
+            android:text="Conferma\nInvia"
             android:visibility="invisible"
             android:layout_alignParentEnd="true"/>
 
@@ -270,6 +273,52 @@
         android:id="@+id/articoliList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_below="@+id/testataInventario"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/buttonbar">
     </ListView>
-</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/buttonbar"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conferma\nInvia"
+            android:visibility="invisible"
+            android:id="@+id/saveButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copia Codici Inventariati"
+            android:id="@+id/copyToClipboard"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/saveButton"
+            android:layout_toEndOf="@+id/saveButton"/>
+    </RelativeLayout>
+
+
+    <!--RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout-->
+</RelativeLayout>
