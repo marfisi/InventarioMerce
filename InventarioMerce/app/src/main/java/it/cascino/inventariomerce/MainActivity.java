@@ -106,7 +106,10 @@ public class MainActivity extends Activity{
 	private String stringaDaCercare = null;
 
 	private void setStringaDaCercare(String stringaDaCercare){
-		this.stringaDaCercare = StringUtils.upperCase(StringUtils.trimToEmpty(stringaDaCercare));
+		String strCercare = StringUtils.upperCase(StringUtils.trimToEmpty(stringaDaCercare));
+		strCercare = StringUtils.stripStart(strCercare, "0");	// per quei barcode che iniziano con 0 ma che in as400 non sono presenti
+		strCercare = StringUtils.removeStart(strCercare, "%");   // gestisco se inizia con %
+		this.stringaDaCercare = strCercare;
 	}
 
 	private Integer numeroRisultatoFiltro = -1;
@@ -404,8 +407,8 @@ public class MainActivity extends Activity{
 			Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
 			if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
 				intent.putExtra("barcode", stringaDaCercare);
-			}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
-				intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
+			//}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
+			//	intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
 			}else{
 				intent.putExtra("codArt", stringaDaCercare);
 			}
@@ -782,11 +785,14 @@ public class MainActivity extends Activity{
 				Float qtyRilevata = null;
 				Float qtyEsposteRilevata = inventariDettagli.getQty_esposta();
 				Float qtyMagazRilevata = inventariDettagli.getQty_magaz();
-				if(qtyEsposteRilevata != null){
-					qtyRilevata = qtyEsposteRilevata;
-				}
-				if(qtyMagazRilevata != null){
-					qtyRilevata = qtyRilevata + qtyMagazRilevata;
+				if((qtyEsposteRilevata != null) || (qtyMagazRilevata != null)){
+					qtyRilevata = 0.0f;
+					if(qtyEsposteRilevata != null){
+						qtyRilevata = qtyRilevata + qtyEsposteRilevata;
+					}
+					if(qtyMagazRilevata != null){
+						qtyRilevata = qtyRilevata + qtyMagazRilevata;
+					}
 				}
 				art.setQtyRilevata(qtyRilevata);
 
