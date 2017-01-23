@@ -266,7 +266,7 @@ public class SyncActivity extends Activity{
 				Integer inventarioId = gSon.fromJson(gSonString, Integer.class);
 				gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
 				String inventarioUpload = gSon.fromJson(gSonString, String.class);
-				UploadFileThread ut = new UploadFileThread(inventarioId, inventarioUpload);
+				UploadThread ut = new UploadThread(inventarioId, inventarioUpload);
 				try{
 					ut.execute("").get();
 				}catch(InterruptedException e){
@@ -489,66 +489,6 @@ public class SyncActivity extends Activity{
 		}
 	}
 
-	private class UploadDBThread extends AsyncTask<String, Void, String>{
-		@Override
-		protected String doInBackground(String... params){
-			try{
-				Boolean resultFtpOper = false;
-				ia = InetAddress.getByName(serverFtp);
-				ftpClient.connect(ia, 21);
-				ftpClient.login(userFtp, passwordFtp);
-				ftpClient.setBufferSize(1024 * 1024);
-				ftpClient.enterLocalPassiveMode();
-				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
-				if(!(resultFtpOper)){
-					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
-				}
-
-				String DB_PATH = "/data/data/it.cascino.inventariomerce/";
-				final String MYDATABASE_NAME = "cascinoinventario.db";
-
-				File f = new File(DB_PATH + "databases/");
-				if(!(f.exists())){
-					f.mkdir();
-				}
-				f = new File(DB_PATH + "databases/" + MYDATABASE_NAME);
-
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-				InputStream inputStream = new FileInputStream(f.getPath());
-				ftpClient.storeFile(MYDATABASE_NAME + ".tab", inputStream);
-				inputStream.close();
-
-				ftpClient.logout();
-				ftpClient.disconnect();
-			}catch(MalformedURLException e){
-				e.printStackTrace();
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-			return "Thread Upload DB terminato";
-		}
-
-		@Override
-		protected void onPostExecute(String result){
-			super.onPostExecute(result);
-			//loadingPanel.setVisibility(View.GONE);
-			//Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
-			//fileDaAsAdapter.notifyDataSetChanged();
-		}
-
-		@Override
-		protected void onPreExecute(){
-			super.onPreExecute();
-			//loadingPanel.setVisibility(View.VISIBLE);
-			//Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		protected void onProgressUpdate(Void... values){
-			//Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
-		}
-	}
-
 	/*private class LoadingThread extends AsyncTask<String, Void, String>{
 		@Override
 		protected String doInBackground(String... params){
@@ -575,11 +515,11 @@ public class SyncActivity extends Activity{
 		}
 	}*/
 
-	private class UploadFileThread extends AsyncTask<String, Void, String>{
+	private class UploadThread extends AsyncTask<String, Void, String>{
 		private Integer inventarioId;
 		private String inventarioUpload;
 
-		public UploadFileThread(Integer inventarioId, String inventarioUpload){
+		public UploadThread(Integer inventarioId, String inventarioUpload){
 			this.inventarioId = inventarioId;
 			this.inventarioUpload = inventarioUpload;
 		}
@@ -595,7 +535,7 @@ public class SyncActivity extends Activity{
 				ftpClient.enterLocalPassiveMode();
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
 				if(!(resultFtpOper)){
-					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
+					Log.e("ftp cambio direc fallit", Boolean.toString(resultFtpOper));
 				}
 
 				DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -612,7 +552,7 @@ public class SyncActivity extends Activity{
 				String nomeFileInventariato = StringUtils.join("invent_", dataSyncStr, "_", inventari_testate.getNome_file(), ".csv");
 				nomeFileInventariato = StringUtils.replace(nomeFileInventariato, ".csv.csv", ".csv");
 
-				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+				ftpClient.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
 				InputStream inputStream = new ByteArrayInputStream(inventarioUpload.getBytes());
 				ftpClient.storeFile(nomeFileInventariato, inputStream);
 				inputStream.close();
