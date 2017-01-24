@@ -31,6 +31,7 @@ import it.cascino.inventariomerce.utils.TipoStato;
 
 public class ModificaArticoloActivity extends Activity{
 	private Articolo a = null;
+	private ImageButton btnCheck;
 	private TextView qtyAttese;
 	private TextView qtyRilevate;
 	private ImageView qtyImg;
@@ -221,7 +222,7 @@ public class ModificaArticoloActivity extends Activity{
 			numeroArticoliInventariati = gSon.fromJson(gSonString, Integer.class);
 		}
 
-		ImageButton btnCheck = (ImageButton)findViewById(R.id.btnCheck);
+		btnCheck = (ImageButton)findViewById(R.id.btnCheck);
 		btnCheck.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -447,6 +448,8 @@ public class ModificaArticoloActivity extends Activity{
 		qty.setText(Support.floatToString(qtyElab));
 		qty.setSelection(qty.getText().length() - 3);
 		qtyTextWatcher.setActive(true);
+
+		btnCheck.setVisibility(View.VISIBLE);
 
 		gestioneQtyStyle();
 	}

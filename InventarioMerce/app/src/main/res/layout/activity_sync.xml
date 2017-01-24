@@ -5,21 +5,11 @@
                 android:orientation="vertical"
                 android:weightSum="1">
 
-    <Button
-        android:id="@+id/aggiornaDBBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Aggiorna DB"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:id="@+id/linearLayout2"
-        android:layout_below="@+id/aggiornaDBBtn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
@@ -73,19 +63,20 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Database"
-            android:id="@+id/radioBtnDB"/>
+            android:text="Continua Esistente"
+            android:id="@+id/radioBtnDB"
+            android:checked="true"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="File"
+            android:text="Nuovo"
             android:id="@+id/radioBtnFile"
-            android:checked="true"/>
+            android:checked="false"/>
     </RadioGroup>
 
     <Button
-        android:id="@+id/leggiButton"
+        android:id="@+id/leggiBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -99,24 +90,35 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.65"
         android:orientation="vertical"
-        android:layout_above="@+id/caricaButton"
+        android:layout_above="@+id/caricaBtn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/leggiButton">
+        android:layout_below="@+id/leggiBtn">
     </ListView>
 
     <Button
-        android:id="@+id/caricaButton"
+        android:id="@+id/caricaBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.15"
         android:enabled="false"
         android:text="CARICA"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/inviaDBBtn"/>
 
-    <!--RelativeLayout
+    <Button
+        android:id="@+id/inviaDBBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EMERGENZA\nInvia database"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="#ff0000"
+        android:background="#ffb450"/>
+
+    <RelativeLayout
         android:id="@+id/loadingPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -127,6 +129,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true" />
-    </RelativeLayout-->
+    </RelativeLayout>
 
 </RelativeLayout>

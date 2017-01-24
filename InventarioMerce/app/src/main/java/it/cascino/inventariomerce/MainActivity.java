@@ -29,6 +29,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,7 +107,10 @@ public class MainActivity extends Activity{
 	private String stringaDaCercare = null;
 
 	private void setStringaDaCercare(String stringaDaCercare){
-		this.stringaDaCercare = StringUtils.upperCase(StringUtils.trimToEmpty(stringaDaCercare));
+		String strCercare = StringUtils.upperCase(StringUtils.trimToEmpty(stringaDaCercare));
+		strCercare = StringUtils.stripStart(strCercare, "0");	// per quei barcode che iniziano con 0 ma che in as400 non sono presenti
+		strCercare = StringUtils.removeStart(strCercare, "%");   // gestisco se inizia con %
+		this.stringaDaCercare = strCercare;
 	}
 
 	private Integer numeroRisultatoFiltro = -1;
@@ -187,7 +191,13 @@ public class MainActivity extends Activity{
 		saveButton.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
-				DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSSS");
+				helper.onUpgrade(db, 1, 2);
+				db = helper.getWritableDatabase();
+				daoMaster = new DaoMaster(db);
+				daoSession = daoMaster.newSession(); // TODO: 21/01/2017 aggiungendo che succede? 
+				
+				
+				DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 				Timestamp timestamp = new Timestamp((new Date().getTime()));
 				inventario.setTimeInvio(timestamp);
 
@@ -196,6 +206,18 @@ public class MainActivity extends Activity{
 				stringBuilder.append("userCrea|").append(inventario.getUtenteCreatore()).append("\n");
 				stringBuilder.append("userInven|").append(inventario.getUtenteDestinatario()).append("\n");
 				stringBuilder.append("creazione|").append(formatter.format(inventario.getTimeCreazione())).append("\n");
+
+				DateFormat formatterTesto = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+				infogenericheDao = daoSession.getInfogenericheDao();
+				Infogeneriche infogeneriche = infogenericheDao.queryBuilder().where(InfogenericheDao.Properties.Info.eq("data_creazione")).unique();
+				Timestamp timestampCreazioneDb = null;
+				try{
+					Date date = (Date)formatterTesto.parse(infogeneriche.getValore());
+					timestampCreazioneDb = new Timestamp(date.getTime());
+				}catch(ParseException e){
+					e.printStackTrace();
+				}
+				stringBuilder.append("database|").append(formatter.format(timestampCreazioneDb)).append("\n");
 				stringBuilder.append("conferma|").append(formatter.format(inventario.getTimeInvio())).append("\n");
 				stringBuilder.append("commento|").append(inventario.getCommento()).append("\n");
 				stringBuilder.append("\n");
@@ -404,8 +426,8 @@ public class MainActivity extends Activity{
 			Intent intent = new Intent(getApplicationContext(), AggiungiArticoloDaBarcodeActivity.class);
 			if(StringUtils.containsOnly(stringaDaCercare, "0123456789")){
 				intent.putExtra("barcode", stringaDaCercare);
-			}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
-				intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
+			//}else if(StringUtils.startsWith(stringaDaCercare, "%")){    // gestisco se inizia con %
+			//	intent.putExtra("codArt", StringUtils.removeStart(stringaDaCercare, "%"));
 			}else{
 				intent.putExtra("codArt", stringaDaCercare);
 			}
@@ -449,6 +471,13 @@ public class MainActivity extends Activity{
 						Gson gSon = new Gson();
 						inventario = gSon.fromJson(gSonString, Inventario.class);
 
+						// ricarico il DB appena scaricato
+						helper = new CascinoOpenHandler(MainActivity.this, MYDATABASE_NAME, null);
+						helper.onUpgrade(db, 1, 2);
+						db = helper.getWritableDatabase();
+						daoMaster = new DaoMaster(db);
+						daoSession = daoMaster.newSession();
+
 						popolaArticoliInvetarioSelezionato();
 
 						articoliLs = inventario.getArticoliLs();
@@ -466,7 +495,7 @@ public class MainActivity extends Activity{
 						depositiDao = daoSession.getDepositiDao();
 						Depositi depositi = depositiDao.queryBuilder().where(DepositiDao.Properties.Iddep.eq(StringUtils.right("00" + inventario.getDeposito(), 2))).unique();
 						inventNomeDeposito.setText(depositi.getDesc());
-						DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm.ss");
+						DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 						infogenericheDao = daoSession.getInfogenericheDao();
 						Infogeneriche infogeneriche = infogenericheDao.queryBuilder().where(InfogenericheDao.Properties.Info.eq("data_creazione")).unique();
 						inventDatacreazioneDb.setText(infogeneriche.getValore());
@@ -782,11 +811,14 @@ public class MainActivity extends Activity{
 				Float qtyRilevata = null;
 				Float qtyEsposteRilevata = inventariDettagli.getQty_esposta();
 				Float qtyMagazRilevata = inventariDettagli.getQty_magaz();
-				if(qtyEsposteRilevata != null){
-					qtyRilevata = qtyEsposteRilevata;
-				}
-				if(qtyMagazRilevata != null){
-					qtyRilevata = qtyRilevata + qtyMagazRilevata;
+				if((qtyEsposteRilevata != null) || (qtyMagazRilevata != null)){
+					qtyRilevata = 0.0f;
+					if(qtyEsposteRilevata != null){
+						qtyRilevata = qtyRilevata + qtyEsposteRilevata;
+					}
+					if(qtyMagazRilevata != null){
+						qtyRilevata = qtyRilevata + qtyMagazRilevata;
+					}
 				}
 				art.setQtyRilevata(qtyRilevata);
 

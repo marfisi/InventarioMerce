@@ -26,7 +26,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:hint="bottone check"
-            android:layout_marginLeft="35dp"/>
+            android:layout_marginLeft="35dp"
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <RelativeLayout

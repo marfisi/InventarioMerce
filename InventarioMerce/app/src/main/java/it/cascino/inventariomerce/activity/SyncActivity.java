@@ -61,7 +61,6 @@ import it.cascino.dbsqlite.Inventari_dettagli;
 import it.cascino.dbsqlite.Inventari_dettagliDao;
 import it.cascino.dbsqlite.Inventari_testate;
 import it.cascino.dbsqlite.Inventari_testateDao;
-import it.cascino.dbsqlite.Qty_originali;
 import it.cascino.dbsqlite.Qty_originaliDao;
 import it.cascino.dbsqlite.Rel_articoli_barcode;
 import it.cascino.dbsqlite.Rel_articoli_barcodeDao;
@@ -83,8 +82,8 @@ public class SyncActivity extends Activity{
 	private SharedPreferences sharedPreferences;
 	private EditText depositoEditText;
 	private EditText operatoreEditText;
-	//private View loadingPanel;
-	//private Timer timer = new Timer();
+	private View loadingPanel;
+	private Timer timer = new Timer();
 
 	private String deposito = "";
 	private String operatore = "";
@@ -108,6 +107,8 @@ public class SyncActivity extends Activity{
 	private Inventari_dettagliDao inventariDettagliDao;
 	private Qty_originaliDao qtyOriginaliDao;
 	private Rel_articoli_barcodeDao relArticoliBarcodeDao;
+
+	private Boolean fileSemaforoPresente;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -140,8 +141,6 @@ public class SyncActivity extends Activity{
 		operatoreEditText.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s){
 				savePreferencesData();
-				/*depositoEditText.setText(deposito);
-				operatoreEditText.setText(operatore);*/
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count, int after){
@@ -151,10 +150,10 @@ public class SyncActivity extends Activity{
 			}
 		});
 
-		final Button caricaButton = (Button)findViewById(R.id.caricaButton);
+		final Button caricaBtn = (Button)findViewById(R.id.caricaBtn);
 
-		//loadingPanel = findViewById(R.id.loadingPanel);
-		Button aggiornaDBBtn = (Button)findViewById(R.id.aggiornaDBBtn);
+		loadingPanel = findViewById(R.id.loadingPanel);
+		/*Button aggiornaDBBtn = (Button)findViewById(R.id.aggiornaDBBtn);
 		aggiornaDBBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
@@ -174,8 +173,8 @@ public class SyncActivity extends Activity{
 					public void run(){
 						loadingPanel.setVisibility(View.VISIBLE);
 					}
-				}, 10);*/
-			//	loadingPanel.setVisibility(View.VISIBLE);
+				}, 10);/
+				//	loadingPanel.setVisibility(View.VISIBLE);
 				DownloadDBThread dt = new DownloadDBThread();
 				try{
 					dt.execute("").get();
@@ -186,7 +185,29 @@ public class SyncActivity extends Activity{
 				}
 				//loadingPanel.setVisibility(View.GONE);
 				syncAdapter.notifyDataSetChanged();
-				caricaButton.setEnabled(false);
+				caricaBtn.setEnabled(false);
+			}
+		});
+		*/
+
+		Button inviaDBBtn = (Button)findViewById(R.id.inviaDBBtn);
+		inviaDBBtn.setOnLongClickListener(new View.OnLongClickListener(){
+			@Override
+			public boolean onLongClick(View v){
+				//inventariLs.clear();
+				//	loadingPanel.setVisibility(View.VISIBLE);
+				UploadDBThread dt = new UploadDBThread();
+				try{
+					dt.execute("").get();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}catch(ExecutionException e){
+					e.printStackTrace();
+				}
+				//loadingPanel.setVisibility(View.GONE);
+				//syncAdapter.notifyDataSetChanged();
+				//caricaBtn.setEnabled(false);
+				return true;
 			}
 		});
 
@@ -196,15 +217,15 @@ public class SyncActivity extends Activity{
 			public void onCheckedChanged(RadioGroup group, int checkedId){
 				//loadingPanel.setVisibility(View.GONE);
 				inventariLs.clear();
-				caricaButton.setEnabled(false);
+				caricaBtn.setEnabled(false);
 				syncAdapter.notifyDataSetChanged();
 			}
 
 		});
 		final RadioButton radioBtnFile = (RadioButton)findViewById(R.id.radioBtnFile);
 
-		Button leggiButton = (Button)findViewById(R.id.leggiButton);
-		leggiButton.setOnClickListener(new View.OnClickListener(){
+		Button leggiBtn = (Button)findViewById(R.id.leggiBtn);
+		leggiBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				inventariLs.clear();
@@ -221,7 +242,7 @@ public class SyncActivity extends Activity{
 					leggiInvetariDaDB();
 				}
 				syncAdapter.notifyDataSetChanged();
-				caricaButton.setEnabled(true);
+				//caricaBtn.setEnabled(true);
 			}
 		});
 
@@ -231,20 +252,91 @@ public class SyncActivity extends Activity{
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 				inventarioSel = inventariLs.get(position);
 				Toast.makeText(getApplicationContext(), "Sel: " + inventarioSel.getProgressivo() + " " + inventarioSel.getNomeFile(), Toast.LENGTH_SHORT).show();
-				caricaButton.setEnabled(true);    // e' false da xml
+
+				if(radioBtnFile.isChecked()){
+					// per abilitare il caricamento da file devo controllare che non ci siano inventari aperti
+					inventariTestateDao = daoSession.getInventari_testateDao();
+					Long numeroInventariAperti = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Iddep.eq(deposito), Inventari_testateDao.Properties.Utente_destinatario.eq(operatore), Inventari_testateDao.Properties.Data_conferma.isNull()).count();
+					if(Long.compare(numeroInventariAperti, 0) == 0 ){
+						caricaBtn.setEnabled(true);
+					}else{
+						Toast.makeText(getApplicationContext(), "Inventari gia' caricati", Toast.LENGTH_LONG).show();
+					}
+				}else{    // check del radio button Database
+					caricaBtn.setEnabled(true);
+				}
+
 			}
 		});
 		syncAdapter = new SyncAdapter(getApplicationContext(), inventariLs);
 		listViewInventarioLs.setAdapter(syncAdapter);
 
-		caricaButton.setOnClickListener(new View.OnClickListener(){
+		caricaBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				// se e' file devo aggiungere nel DB l'invetario
 				if(inventarioSel.getSorgenteFile()){
+					loadingPanel.setVisibility(View.VISIBLE);
+
+					ScriviFileSemaforoFtpThread sst = new ScriviFileSemaforoFtpThread();
+					try{
+						sst.execute("").get();
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}catch(ExecutionException e){
+						e.printStackTrace();
+					}
+					fileSemaforoPresente = true;
+
+					while(fileSemaforoPresente){
+						LeggiFileSemaforoFtpThread slt = new LeggiFileSemaforoFtpThread();
+						try{
+							slt.execute("").get();
+						}catch(InterruptedException e){
+							e.printStackTrace();
+						}catch(ExecutionException e){
+							e.printStackTrace();
+						}
+						try{
+							Thread.sleep(30000);	// 30 secondi
+						}catch(InterruptedException e){
+						}
+					}
+
+					/*
+					timer.cancel();
+					timer = new Timer();
+					timer.schedule(new TimerTask(){
+						@Override
+						public void run(){
+
+
+							if(!(fileSemaforoPresente)){
+								timer.cancel();
+							}
+						}
+					}, 10000);*/
+
+					DownloadDBThread dt = new DownloadDBThread();
+					try{
+						dt.execute("").get();
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}catch(ExecutionException e){
+						e.printStackTrace();
+					}
+
+					// ricarico il DB appena scaricato
+					helper = new CascinoOpenHandler(SyncActivity.this, MYDATABASE_NAME, null);
+					helper.onUpgrade(db, 1, 2);
+					db = helper.getWritableDatabase();
+					daoMaster = new DaoMaster(db);
+					daoSession = daoMaster.newSession();
+
+					// se e' file devo aggiungere nel DB l'invetario
 					inserisciInvetarioInDB();
 					rinominaFileSorgenteFtpThread(inventarioSel.getNomeFile());
 				}
+				//loadingPanel.setVisibility(View.GONE);
 
 				//popolaArticoliInvetarioSelezionato();
 
@@ -266,7 +358,7 @@ public class SyncActivity extends Activity{
 				Integer inventarioId = gSon.fromJson(gSonString, Integer.class);
 				gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
 				String inventarioUpload = gSon.fromJson(gSonString, String.class);
-				UploadThread ut = new UploadThread(inventarioId, inventarioUpload);
+				UploadFileThread ut = new UploadFileThread(inventarioId, inventarioUpload);
 				try{
 					ut.execute("").get();
 				}catch(InterruptedException e){
@@ -456,6 +548,8 @@ public class SyncActivity extends Activity{
 						dbOut.flush();
 						dbOut.close();
 						assetsDB.close();
+						f = new File(DB_PATH + MYDATABASE_NAME);
+						f.delete();
 					}
 				}
 				ftpClient.logout();
@@ -466,6 +560,71 @@ public class SyncActivity extends Activity{
 				e.printStackTrace();
 			}
 			return "Thread Download DB terminato";
+		}
+
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+			//loadingPanel.setVisibility(View.GONE);
+			//Toast.makeText(LoginFileActivity.this, "post", Toast.LENGTH_LONG).show();
+			//fileDaAsAdapter.notifyDataSetChanged();
+		}
+
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+			//loadingPanel.setVisibility(View.VISIBLE);
+			//Toast.makeText(LoginFileActivity.this, "pre", Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values){
+			//Toast.makeText(LoginFileActivity.this, "progress", Toast.LENGTH_LONG).show();
+		}
+	}
+
+	private class UploadDBThread extends AsyncTask<String, Void, String>{
+		@Override
+		protected String doInBackground(String... params){
+			try{
+				Boolean resultFtpOper = false;
+				ia = InetAddress.getByName(serverFtp);
+				ftpClient.connect(ia, 21);
+				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024 * 1024);
+				ftpClient.enterLocalPassiveMode();
+				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
+				if(!(resultFtpOper)){
+					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
+				}
+
+				DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+				String dataSyncStr = formatter.format(new Date());
+
+				String DB_PATH = "/data/data/it.cascino.inventariomerce/";
+				final String MYDATABASE_NAME = "cascinoinventario.db";
+
+				File f = new File(DB_PATH + "databases/");
+				if(!(f.exists())){
+					f.mkdir();
+				}
+				f = new File(DB_PATH + "databases/" + MYDATABASE_NAME);
+
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+				InputStream inputStream = new FileInputStream(f.getPath());
+				String nomeFileDb = StringUtils.join(dataSyncStr, "_", MYDATABASE_NAME, "_", "dep", deposito, "_", operatore, ".db");
+				nomeFileDb = StringUtils.replace(nomeFileDb, ".db_", "_");
+				ftpClient.storeFile(nomeFileDb, inputStream);
+				inputStream.close();
+
+				ftpClient.logout();
+				ftpClient.disconnect();
+			}catch(MalformedURLException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+			return "Thread Upload DB terminato";
 		}
 
 		@Override
@@ -515,11 +674,11 @@ public class SyncActivity extends Activity{
 		}
 	}*/
 
-	private class UploadThread extends AsyncTask<String, Void, String>{
+	private class UploadFileThread extends AsyncTask<String, Void, String>{
 		private Integer inventarioId;
 		private String inventarioUpload;
 
-		public UploadThread(Integer inventarioId, String inventarioUpload){
+		public UploadFileThread(Integer inventarioId, String inventarioUpload){
 			this.inventarioId = inventarioId;
 			this.inventarioUpload = inventarioUpload;
 		}
@@ -535,7 +694,7 @@ public class SyncActivity extends Activity{
 				ftpClient.enterLocalPassiveMode();
 				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
 				if(!(resultFtpOper)){
-					Log.e("ftp cambio direc fallit", Boolean.toString(resultFtpOper));
+					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
 				}
 
 				DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
@@ -552,7 +711,7 @@ public class SyncActivity extends Activity{
 				String nomeFileInventariato = StringUtils.join("invent_", dataSyncStr, "_", inventari_testate.getNome_file(), ".csv");
 				nomeFileInventariato = StringUtils.replace(nomeFileInventariato, ".csv.csv", ".csv");
 
-				ftpClient.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 				InputStream inputStream = new ByteArrayInputStream(inventarioUpload.getBytes());
 				ftpClient.storeFile(nomeFileInventariato, inputStream);
 				inputStream.close();
@@ -652,6 +811,102 @@ public class SyncActivity extends Activity{
 		}
 	}
 
+	private class ScriviFileSemaforoFtpThread extends AsyncTask<String, Void, String>{
+		@Override
+		protected String doInBackground(String... params){
+			try{
+				Boolean resultFtpOper = false;
+				ia = InetAddress.getByName(serverFtp);
+				ftpClient.connect(ia, 21);
+				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024*1024);
+				ftpClient.enterLocalPassiveMode();
+				//ftpClient.storeFile("test.txt", new FileInputStream(file));
+				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
+				if(!(resultFtpOper)){
+					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
+				}
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+				ftpClient.storeFile("semaforo_database", new ByteArrayInputStream(new byte[0]));
+
+				ftpClient.logout();
+				ftpClient.disconnect();
+			}catch(MalformedURLException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+			return "Thread ScriviFileSemaforoFtpThread";
+		}
+
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values){
+		}
+	}
+
+	private class LeggiFileSemaforoFtpThread extends AsyncTask<String, Void, String>{
+		@Override
+		protected String doInBackground(String... params){
+			try{
+				Boolean resultFtpOper = false;
+				ia = InetAddress.getByName(serverFtp);
+				ftpClient.connect(ia, 21);
+				ftpClient.login(userFtp, passwordFtp);
+				ftpClient.setBufferSize(1024*1024);
+				ftpClient.enterLocalPassiveMode();
+				//ftpClient.storeFile("test.txt", new FileInputStream(file));
+				resultFtpOper = ftpClient.changeWorkingDirectory(directoryFtp);
+				if(!(resultFtpOper)){
+					Log.e("ftp cambio dire fallito", Boolean.toString(resultFtpOper));
+				}
+				String fileSemaforo = "/data/data/it.cascino.inventariomerce/semaforo_database";
+				OutputStream output;
+				output = new FileOutputStream(fileSemaforo);
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+				File f = new File(fileSemaforo);
+				f.delete();
+				resultFtpOper = ftpClient.retrieveFile("semaforo_database", output);
+				if(resultFtpOper){
+					fileSemaforoPresente = true;
+				}else{
+					fileSemaforoPresente = false;
+				}
+
+				ftpClient.logout();
+				ftpClient.disconnect();
+			}catch(MalformedURLException e){
+				e.printStackTrace();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+			return "Thread LeggiFileSemaforoFtpThread";
+		}
+
+		@Override
+		protected void onPostExecute(String result){
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values){
+		}
+	}
+
 	private void leggiInvetariDaDB(){
 		inventariTestateDao = daoSession.getInventari_testateDao();
 		inventariDettagliDao = daoSession.getInventari_dettagliDao();
@@ -732,6 +987,7 @@ public class SyncActivity extends Activity{
 		inventariTestate.setDepositi(depositi);
 		inventariTestateDao.insert(inventariTestate);
 		Long idTestata = inventariTestate.getId();
+		Log.i("ins id testata", Long.toString(idTestata));
 
 		relArticoliBarcodeDao = daoSession.getRel_articoli_barcodeDao();
 
@@ -792,7 +1048,7 @@ public class SyncActivity extends Activity{
 
 			inventariDettagliDao.insert(inventariDettagli);
 			Long idInventariDettagli = inventariDettagli.getId();
-			// Log.i("Aggiunto inventDettagli", Long.toString(idInventariDettagli));
+			Log.i("ins id inventDettagli", Long.toString(idInventariDettagli));
 		}
 	}
 
