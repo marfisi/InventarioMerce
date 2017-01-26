@@ -191,12 +191,6 @@ public class MainActivity extends Activity{
 		saveButton.setOnLongClickListener(new View.OnLongClickListener(){
 			@Override
 			public boolean onLongClick(View v){
-				helper.onUpgrade(db, 1, 2);
-				db = helper.getWritableDatabase();
-				daoMaster = new DaoMaster(db);
-				daoSession = daoMaster.newSession(); // TODO: 21/01/2017 aggiungendo che succede? 
-				
-				
 				DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 				Timestamp timestamp = new Timestamp((new Date().getTime()));
 				inventario.setTimeInvio(timestamp);
@@ -643,6 +637,14 @@ public class MainActivity extends Activity{
 		articoliDao = daoSession.getArticoliDao();
 		Articoli articoli = articoliDao.queryBuilder().where(ArticoliDao.Properties.Codart.eq(codiceArticolo)).unique();
 
+		inventariDettagliDao = daoSession.getInventari_dettagliDao();
+		Inventari_dettagli inventariDettagli = null;
+		inventariDettagli = inventariDettagliDao.queryBuilder().where(Inventari_dettagliDao.Properties.Idtestata.eq(inventario.getProgressivo()), Inventari_dettagliDao.Properties.Idart.eq(articoli.getId())).unique();
+		if(inventariDettagli != null){
+			// significa che gia' c'e' l'articolo nell'invnetario quindi salto e non l'aggiungo
+			return;
+		}
+
 		relArticoliBarcodeDao = daoSession.getRel_articoli_barcodeDao();
 		qtyOriginaliDao = daoSession.getQty_originaliDao();
 		depositiDao = daoSession.getDepositiDao();
@@ -681,8 +683,6 @@ public class MainActivity extends Activity{
 			art.setDataScarico("");
 			art.setDataUltimoInventario("");
 		}
-		inventariDettagliDao = daoSession.getInventari_dettagliDao();
-		Inventari_dettagli inventariDettagli = null;
 		inventariDettagli = new Inventari_dettagli();
 		inventariDettagli.setIdtestata(inventario.getProgressivo());
 		inventariDettagli.setIdart(articoli.getId());
@@ -818,6 +818,9 @@ public class MainActivity extends Activity{
 					}
 					if(qtyMagazRilevata != null){
 						qtyRilevata = qtyRilevata + qtyMagazRilevata;
+					}
+					if(art.getQtyDifettOriginale() != null){
+						qtyRilevata = qtyRilevata + art.getQtyDifettOriginale();
 					}
 				}
 				art.setQtyRilevata(qtyRilevata);

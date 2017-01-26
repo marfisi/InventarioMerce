@@ -226,7 +226,7 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 				public boolean onLongClick(View v){
 					a.setTimestamp(new Timestamp((new Date().getTime())));
 					a.setQtyEsposteRilevata(finalQtyAccettaSoloEsposte);
-					a.setQtyRilevata(finalQtyAccettaSoloEsposte);
+					a.setQtyRilevata(finalQtyAccettaSoloEsposte + a.getQtyDifettOriginale());
 					a.setStato();
 					if(accettaSoloEsposte != null){
 						accettaSoloEsposte.accettaSoloEsposte(a.getOrdinamento() - 1);	// il numero ordine e' parte da 1 e non da 0

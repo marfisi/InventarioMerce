@@ -153,42 +153,6 @@ public class SyncActivity extends Activity{
 		final Button caricaBtn = (Button)findViewById(R.id.caricaBtn);
 
 		loadingPanel = findViewById(R.id.loadingPanel);
-		/*Button aggiornaDBBtn = (Button)findViewById(R.id.aggiornaDBBtn);
-		aggiornaDBBtn.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				inventariLs.clear();
-				/*LoadingThread lt = new LoadingThread();
-				try{
-					lt.execute("start").get();
-				}catch(InterruptedException e){
-					e.printStackTrace();
-				}catch(ExecutionException e){
-					e.printStackTrace();
-				}*/
-				/*timer.cancel();
-				timer = new Timer();
-				timer.schedule(new TimerTask(){
-					@Override
-					public void run(){
-						loadingPanel.setVisibility(View.VISIBLE);
-					}
-				}, 10);/
-				//	loadingPanel.setVisibility(View.VISIBLE);
-				DownloadDBThread dt = new DownloadDBThread();
-				try{
-					dt.execute("").get();
-				}catch(InterruptedException e){
-					e.printStackTrace();
-				}catch(ExecutionException e){
-					e.printStackTrace();
-				}
-				//loadingPanel.setVisibility(View.GONE);
-				syncAdapter.notifyDataSetChanged();
-				caricaBtn.setEnabled(false);
-			}
-		});
-		*/
 
 		Button inviaDBBtn = (Button)findViewById(R.id.inviaDBBtn);
 		inviaDBBtn.setOnLongClickListener(new View.OnLongClickListener(){
@@ -211,6 +175,27 @@ public class SyncActivity extends Activity{
 			}
 		});
 
+		final Button eliminaInventBtn = (Button)findViewById(R.id.eliminaInventBtn);
+
+		eliminaInventBtn.setOnLongClickListener(new View.OnLongClickListener(){
+			@Override
+			public boolean onLongClick(View v){
+				if(inventarioSel != null){
+					// per simulare la cancellazione scrivo la data di conferma, cosi' non risulta ancora aperto e mi consnete di caricare un nuovo invnetario
+					inventariTestateDao = daoSession.getInventari_testateDao();
+					Inventari_testate inventari_testate = inventariTestateDao.queryBuilder().where(Inventari_testateDao.Properties.Id.eq(inventarioSel.getProgressivo())).unique();
+
+					DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS");
+					Timestamp timestamp = new Timestamp((new Date().getTime()));
+					inventari_testate.setData_conferma(formatter.format(timestamp));
+					inventari_testate.update();
+					inventariLs.remove(inventarioSel);
+					syncAdapter.notifyDataSetChanged();
+				}
+				return false;
+			}
+		});
+
 		RadioGroup radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
 		radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
 			@Override
@@ -218,6 +203,7 @@ public class SyncActivity extends Activity{
 				//loadingPanel.setVisibility(View.GONE);
 				inventariLs.clear();
 				caricaBtn.setEnabled(false);
+				eliminaInventBtn.setVisibility(View.INVISIBLE);
 				syncAdapter.notifyDataSetChanged();
 			}
 
@@ -264,6 +250,7 @@ public class SyncActivity extends Activity{
 					}
 				}else{    // check del radio button Database
 					caricaBtn.setEnabled(true);
+					eliminaInventBtn.setVisibility(View.VISIBLE);
 				}
 
 			}
@@ -274,9 +261,8 @@ public class SyncActivity extends Activity{
 		caricaBtn.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v){
+				loadingPanel.setVisibility(View.VISIBLE);
 				if(inventarioSel.getSorgenteFile()){
-					loadingPanel.setVisibility(View.VISIBLE);
-
 					ScriviFileSemaforoFtpThread sst = new ScriviFileSemaforoFtpThread();
 					try{
 						sst.execute("").get();

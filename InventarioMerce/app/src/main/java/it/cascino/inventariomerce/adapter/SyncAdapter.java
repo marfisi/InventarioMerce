@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -65,27 +66,22 @@ public class SyncAdapter extends BaseAdapter{
 		final Inventario f = (Inventario)getItem(position);
 		if(f.getSorgenteFile()){
 			viewHolder.nomeFile.setText(f.getNomeFile());
+			viewHolder.textDataModifica.setVisibility(View.INVISIBLE);
+			viewHolder.dataModificaInvent.setVisibility(View.INVISIBLE);
+			viewHolder.nomeFileInDbInvent.setVisibility(View.INVISIBLE);
+			viewHolder.textNomeFileSorgente.setVisibility(View.INVISIBLE);
 		}else{
 			viewHolder.nomeFile.setText("Database");
+			viewHolder.dataModificaInvent.setText((f.getTimeModifica() == null) ? "" : f.getTimeModifica().toString());
+			viewHolder.nomeFileInDbInvent.setText(f.getNomeFile());
 		}
 		viewHolder.progressivo.setText(String.valueOf(f.getProgressivo()));
 		viewHolder.artInvent.setText(String.valueOf(f.getNumeroArticoliInventariati()) + "/" + String.valueOf(f.getNumeroArticoliTotale()));
 		viewHolder.statoInvent.setText(TipoStato.getStatoDescrizione(Integer.parseInt(f.getStato())));
 		viewHolder.creatoreInvent.setText(f.getUtenteCreatore());
 		viewHolder.dataCreazioneInvent.setText(f.getTimeCreazione().toString());
-		if(f.getSorgenteFile()){
-			viewHolder.textDataModifica.setVisibility(View.INVISIBLE);
-			viewHolder.dataModificaInvent.setVisibility(View.INVISIBLE);
-		}else{
-			viewHolder.dataModificaInvent.setText((f.getTimeModifica() == null) ? "" : f.getTimeModifica().toString());
-		}
 		viewHolder.commentoInvent.setText(f.getCommento());
-		if(f.getSorgenteFile()){
-			viewHolder.nomeFileInDbInvent.setVisibility(View.INVISIBLE);
-			viewHolder.textNomeFileSorgente.setVisibility(View.INVISIBLE);
-		}else{
-			viewHolder.nomeFileInDbInvent.setText(f.getNomeFile());
-		}
+
 		return v;
 	}
 

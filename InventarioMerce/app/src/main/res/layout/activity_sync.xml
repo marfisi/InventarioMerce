@@ -98,12 +98,33 @@
 
     <Button
         android:id="@+id/caricaBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
         android:enabled="false"
         android:text="CARICA"
         android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/eliminaInventBtn"/>
+
+    <!--Button
+        android:id="@+id/saveInventBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Conferma\nInvia"
+        android:visibility="invisible"
+        android:layout_above="@+id/inviaDBBtn"
+        android:layout_toLeftOf="@+id/caricaBtn"
+        android:layout_toStartOf="@+id/caricaBtn"/-->
+
+    <Button
+        android:id="@+id/eliminaInventBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Elimina Inventario"
+        android:textColor="#ff0000"
+        android:background="#ffb450"
+        android:visibility="invisible"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/inviaDBBtn"/>
 
@@ -116,7 +137,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:textColor="#ff0000"
-        android:background="#ffb450"/>
+        android:background="#ffb450"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="3dp"/>
 
     <RelativeLayout
         android:id="@+id/loadingPanel"
@@ -126,8 +149,8 @@
         android:visibility="gone">
 
         <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:indeterminate="true" />
     </RelativeLayout>
 

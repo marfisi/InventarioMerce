@@ -185,4 +185,5 @@
         android:layout_alignLeft="@+id/commentoInvent"
         android:layout_alignStart="@+id/commentoInvent"
         style="@style/styleTxDefault"/>
+
 </RelativeLayout>
