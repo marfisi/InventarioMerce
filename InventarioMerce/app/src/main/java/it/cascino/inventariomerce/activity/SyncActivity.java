@@ -318,7 +318,7 @@ public class SyncActivity extends Activity{
 					daoMaster = new DaoMaster(db);
 					daoSession = daoMaster.newSession();
 
-					// se e' file devo aggiungere nel DB l'invetario
+					// se e' file devo aggiungere nel DB l'inveNtario
 					inserisciInvetarioInDB();
 					rinominaFileSorgenteFtpThread(inventarioSel.getNomeFile());
 				}
@@ -995,6 +995,7 @@ public class SyncActivity extends Activity{
 				iter_articoliLs.remove();
 			}
 			if(articoli == null){
+				iter_articoliLs.remove();
 				continue;
 			}
 			// Log.i("Articolo in DB", articoli.getCodart() + " " + articoli.getDesc());

@@ -36,7 +36,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignRight="@+id/layQty"
-        android:layout_alignEnd="@+id/layQty">
+        android:layout_alignEnd="@+id/layQty"
+        android:layout_marginLeft="5dp">
 
         <TextView
             android:id="@+id/art_codart"
@@ -328,7 +329,8 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="25dp">
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -513,8 +515,35 @@
                 android:layout_below="@+id/textDifettosi"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                style="@style/styleSeparatoreVociQty"
-                android:id="@+id/view2"/>
+                style="@style/styleSeparatoreVociQty"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN TRASFERIMENTO"
+                android:layout_below="@+id/textDifettosi"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/textInTrasferimento"
+                style="@style/styleVociQty"
+                android:layout_marginTop="65dp"/>
+
+            <TextView
+                android:id="@+id/qtyInTrasferimentoAttese"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TRattese"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="true"
+                style="@style/styleTxQtyAttese"
+                android:layout_alignBottom="@+id/textInTrasferimento"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_below="@+id/textInTrasferimento"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                style="@style/styleSeparatoreVociQty"/>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -552,7 +581,7 @@
                 android:layout_alignParentEnd="true"
                 style="@style/styleWarning"
                 android:layout_marginTop="15dp"
-                android:layout_below="@+id/textDifettosi"/>
+                android:layout_below="@+id/textInTrasferimento"/>
 
             <View
                 android:layout_width="match_parent"
@@ -660,9 +689,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:weightSum="1"
-        android:layout_below="@+id/layInfo"
+        android:layout_below="@+id/layBottoni"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"

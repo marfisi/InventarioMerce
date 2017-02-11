@@ -30,116 +30,117 @@ import it.cascino.dbsqlite.InfogenericheDao;
 
 /**
  * {@inheritDoc}
- *
+ * 
  * @see org.greenrobot.greendao.AbstractDaoSession
  */
-public class DaoSession extends AbstractDaoSession{
+public class DaoSession extends AbstractDaoSession {
 
-	private final DaoConfig articoliDaoConfig;
-	private final DaoConfig barcodeDaoConfig;
-	private final DaoConfig rel_articoli_barcodeDaoConfig;
-	private final DaoConfig depositiDaoConfig;
-	private final DaoConfig qty_originaliDaoConfig;
-	private final DaoConfig inventari_testateDaoConfig;
-	private final DaoConfig inventari_dettagliDaoConfig;
-	private final DaoConfig infogenericheDaoConfig;
+    private final DaoConfig articoliDaoConfig;
+    private final DaoConfig barcodeDaoConfig;
+    private final DaoConfig rel_articoli_barcodeDaoConfig;
+    private final DaoConfig depositiDaoConfig;
+    private final DaoConfig qty_originaliDaoConfig;
+    private final DaoConfig inventari_testateDaoConfig;
+    private final DaoConfig inventari_dettagliDaoConfig;
+    private final DaoConfig infogenericheDaoConfig;
 
-	private final ArticoliDao articoliDao;
-	private final BarcodeDao barcodeDao;
-	private final Rel_articoli_barcodeDao rel_articoli_barcodeDao;
-	private final DepositiDao depositiDao;
-	private final Qty_originaliDao qty_originaliDao;
-	private final Inventari_testateDao inventari_testateDao;
-	private final Inventari_dettagliDao inventari_dettagliDao;
-	private final InfogenericheDao infogenericheDao;
+    private final ArticoliDao articoliDao;
+    private final BarcodeDao barcodeDao;
+    private final Rel_articoli_barcodeDao rel_articoli_barcodeDao;
+    private final DepositiDao depositiDao;
+    private final Qty_originaliDao qty_originaliDao;
+    private final Inventari_testateDao inventari_testateDao;
+    private final Inventari_dettagliDao inventari_dettagliDao;
+    private final InfogenericheDao infogenericheDao;
 
-	public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig> daoConfigMap){
-		super(db);
+    public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
+            daoConfigMap) {
+        super(db);
 
-		articoliDaoConfig = daoConfigMap.get(ArticoliDao.class).clone();
-		articoliDaoConfig.initIdentityScope(type);
+        articoliDaoConfig = daoConfigMap.get(ArticoliDao.class).clone();
+        articoliDaoConfig.initIdentityScope(type);
 
-		barcodeDaoConfig = daoConfigMap.get(BarcodeDao.class).clone();
-		barcodeDaoConfig.initIdentityScope(type);
+        barcodeDaoConfig = daoConfigMap.get(BarcodeDao.class).clone();
+        barcodeDaoConfig.initIdentityScope(type);
 
-		rel_articoli_barcodeDaoConfig = daoConfigMap.get(Rel_articoli_barcodeDao.class).clone();
-		rel_articoli_barcodeDaoConfig.initIdentityScope(type);
+        rel_articoli_barcodeDaoConfig = daoConfigMap.get(Rel_articoli_barcodeDao.class).clone();
+        rel_articoli_barcodeDaoConfig.initIdentityScope(type);
 
-		depositiDaoConfig = daoConfigMap.get(DepositiDao.class).clone();
-		depositiDaoConfig.initIdentityScope(type);
+        depositiDaoConfig = daoConfigMap.get(DepositiDao.class).clone();
+        depositiDaoConfig.initIdentityScope(type);
 
-		qty_originaliDaoConfig = daoConfigMap.get(Qty_originaliDao.class).clone();
-		qty_originaliDaoConfig.initIdentityScope(type);
+        qty_originaliDaoConfig = daoConfigMap.get(Qty_originaliDao.class).clone();
+        qty_originaliDaoConfig.initIdentityScope(type);
 
-		inventari_testateDaoConfig = daoConfigMap.get(Inventari_testateDao.class).clone();
-		inventari_testateDaoConfig.initIdentityScope(type);
+        inventari_testateDaoConfig = daoConfigMap.get(Inventari_testateDao.class).clone();
+        inventari_testateDaoConfig.initIdentityScope(type);
 
-		inventari_dettagliDaoConfig = daoConfigMap.get(Inventari_dettagliDao.class).clone();
-		inventari_dettagliDaoConfig.initIdentityScope(type);
+        inventari_dettagliDaoConfig = daoConfigMap.get(Inventari_dettagliDao.class).clone();
+        inventari_dettagliDaoConfig.initIdentityScope(type);
 
-		infogenericheDaoConfig = daoConfigMap.get(InfogenericheDao.class).clone();
-		infogenericheDaoConfig.initIdentityScope(type);
+        infogenericheDaoConfig = daoConfigMap.get(InfogenericheDao.class).clone();
+        infogenericheDaoConfig.initIdentityScope(type);
 
-		articoliDao = new ArticoliDao(articoliDaoConfig, this);
-		barcodeDao = new BarcodeDao(barcodeDaoConfig, this);
-		rel_articoli_barcodeDao = new Rel_articoli_barcodeDao(rel_articoli_barcodeDaoConfig, this);
-		depositiDao = new DepositiDao(depositiDaoConfig, this);
-		qty_originaliDao = new Qty_originaliDao(qty_originaliDaoConfig, this);
-		inventari_testateDao = new Inventari_testateDao(inventari_testateDaoConfig, this);
-		inventari_dettagliDao = new Inventari_dettagliDao(inventari_dettagliDaoConfig, this);
-		infogenericheDao = new InfogenericheDao(infogenericheDaoConfig, this);
+        articoliDao = new ArticoliDao(articoliDaoConfig, this);
+        barcodeDao = new BarcodeDao(barcodeDaoConfig, this);
+        rel_articoli_barcodeDao = new Rel_articoli_barcodeDao(rel_articoli_barcodeDaoConfig, this);
+        depositiDao = new DepositiDao(depositiDaoConfig, this);
+        qty_originaliDao = new Qty_originaliDao(qty_originaliDaoConfig, this);
+        inventari_testateDao = new Inventari_testateDao(inventari_testateDaoConfig, this);
+        inventari_dettagliDao = new Inventari_dettagliDao(inventari_dettagliDaoConfig, this);
+        infogenericheDao = new InfogenericheDao(infogenericheDaoConfig, this);
 
-		registerDao(Articoli.class, articoliDao);
-		registerDao(Barcode.class, barcodeDao);
-		registerDao(Rel_articoli_barcode.class, rel_articoli_barcodeDao);
-		registerDao(Depositi.class, depositiDao);
-		registerDao(Qty_originali.class, qty_originaliDao);
-		registerDao(Inventari_testate.class, inventari_testateDao);
-		registerDao(Inventari_dettagli.class, inventari_dettagliDao);
-		registerDao(Infogeneriche.class, infogenericheDao);
-	}
+        registerDao(Articoli.class, articoliDao);
+        registerDao(Barcode.class, barcodeDao);
+        registerDao(Rel_articoli_barcode.class, rel_articoli_barcodeDao);
+        registerDao(Depositi.class, depositiDao);
+        registerDao(Qty_originali.class, qty_originaliDao);
+        registerDao(Inventari_testate.class, inventari_testateDao);
+        registerDao(Inventari_dettagli.class, inventari_dettagliDao);
+        registerDao(Infogeneriche.class, infogenericheDao);
+    }
+    
+    public void clear() {
+        articoliDaoConfig.clearIdentityScope();
+        barcodeDaoConfig.clearIdentityScope();
+        rel_articoli_barcodeDaoConfig.clearIdentityScope();
+        depositiDaoConfig.clearIdentityScope();
+        qty_originaliDaoConfig.clearIdentityScope();
+        inventari_testateDaoConfig.clearIdentityScope();
+        inventari_dettagliDaoConfig.clearIdentityScope();
+        infogenericheDaoConfig.clearIdentityScope();
+    }
 
-	public void clear(){
-		articoliDaoConfig.clearIdentityScope();
-		barcodeDaoConfig.clearIdentityScope();
-		rel_articoli_barcodeDaoConfig.clearIdentityScope();
-		depositiDaoConfig.clearIdentityScope();
-		qty_originaliDaoConfig.clearIdentityScope();
-		inventari_testateDaoConfig.clearIdentityScope();
-		inventari_dettagliDaoConfig.clearIdentityScope();
-		infogenericheDaoConfig.clearIdentityScope();
-	}
+    public ArticoliDao getArticoliDao() {
+        return articoliDao;
+    }
 
-	public ArticoliDao getArticoliDao(){
-		return articoliDao;
-	}
+    public BarcodeDao getBarcodeDao() {
+        return barcodeDao;
+    }
 
-	public BarcodeDao getBarcodeDao(){
-		return barcodeDao;
-	}
+    public Rel_articoli_barcodeDao getRel_articoli_barcodeDao() {
+        return rel_articoli_barcodeDao;
+    }
 
-	public Rel_articoli_barcodeDao getRel_articoli_barcodeDao(){
-		return rel_articoli_barcodeDao;
-	}
+    public DepositiDao getDepositiDao() {
+        return depositiDao;
+    }
 
-	public DepositiDao getDepositiDao(){
-		return depositiDao;
-	}
+    public Qty_originaliDao getQty_originaliDao() {
+        return qty_originaliDao;
+    }
 
-	public Qty_originaliDao getQty_originaliDao(){
-		return qty_originaliDao;
-	}
+    public Inventari_testateDao getInventari_testateDao() {
+        return inventari_testateDao;
+    }
 
-	public Inventari_testateDao getInventari_testateDao(){
-		return inventari_testateDao;
-	}
+    public Inventari_dettagliDao getInventari_dettagliDao() {
+        return inventari_dettagliDao;
+    }
 
-	public Inventari_dettagliDao getInventari_dettagliDao(){
-		return inventari_dettagliDao;
-	}
-
-	public InfogenericheDao getInfogenericheDao(){
-		return infogenericheDao;
-	}
+    public InfogenericheDao getInfogenericheDao() {
+        return infogenericheDao;
+    }
 
 }

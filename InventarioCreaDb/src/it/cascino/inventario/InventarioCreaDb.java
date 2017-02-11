@@ -12,10 +12,12 @@ import it.cascino.inventario.dbas.dao.AsAncab0fDao;
 import it.cascino.inventario.dbas.dao.AsAnmag0fDao;
 import it.cascino.inventario.dbas.dao.AsArdep0fDao;
 import it.cascino.inventario.dbas.dao.AsArmod0fDao;
+import it.cascino.inventario.dbas.dao.AsNativeQueryDao;
 import it.cascino.inventario.dbas.managmentbean.AsAncab0fDaoMng;
 import it.cascino.inventario.dbas.managmentbean.AsAnmag0fDaoMng;
 import it.cascino.inventario.dbas.managmentbean.AsArdep0fDaoMng;
 import it.cascino.inventario.dbas.managmentbean.AsArmod0fDaoMng;
+import it.cascino.inventario.dbas.managmentbean.AsNativeQueryDaoMng;
 import it.cascino.inventario.dbas.model.AsAncab0f;
 import it.cascino.inventario.dbas.model.AsAnmag0f;
 import it.cascino.inventario.dbas.model.AsArdep0f;
@@ -57,6 +59,8 @@ public class InventarioCreaDb{
 	private List<AsArmod0f> asArmod0fLs;
 	private List<String> asArmod0fDcodaLs;
 
+	private AsNativeQueryDao asNativeQueryDao = new AsNativeQueryDaoMng();
+	
 	private SqliteArticoliDao sqliteArticoliDao = new SqliteArticoliDaoMng();
 	private SqliteBarcodeDao sqliteBarcodeDao = new SqliteBarcodeDaoMng();
 	private SqliteRelArticoliBarcodeDao sqliteRelArticoliBarcodeDao = new SqliteRelArticoliBarcodeDaoMng();
@@ -90,9 +94,8 @@ public class InventarioCreaDb{
 		asAnmag0fLs = new ArrayList<AsAnmag0f>();
 		if(!(elaboraSoloModificati)){
 			asAnmag0fLs = asAnmag0fDao.getAll();
-//			asAnmag0fLs = asAnmag0fDao.getAll().subList(40990, 41000);
+//			asAnmag0fLs = asAnmag0fDao.getAll().subList(100, 200);
 		}else{
-			AsArmod0f asArmod0f = new AsArmod0f();
 			asArmod0fDcodaLs =  asArmod0fDao.getDaElaborare();
 			Iterator<String> iter_asArmod0fDcodaLs = asArmod0fDcodaLs.iterator();
 			iter_asArmod0fDcodaLs = asArmod0fDcodaLs.iterator();
@@ -205,6 +208,14 @@ public class InventarioCreaDb{
 				bdModelVal = new BigDecimal(asArdep0f.getDscma());
 				bdDisplayVal = bdModelVal.setScale(4,  BigDecimal.ROUND_HALF_UP);
 				sqliteQtyOriginali.setQty_scorta_max(bdDisplayVal);
+				BigDecimal mtqua =  asNativeQueryDao.getDaMovtr0f_MtquaDaMtcodAndMtdpa(sqliteArticoli.getCodart(), asArdep0f.getId().getDcode());
+				if(mtqua != null){
+					bdModelVal = mtqua; //new BigDecimal(mtqua);
+				}else{
+					bdModelVal = new BigDecimal(0);
+				}
+				bdDisplayVal = bdModelVal.setScale(2,  BigDecimal.ROUND_HALF_UP);
+				sqliteQtyOriginali.setQty_trasf(bdDisplayVal);
 					
 				if(!(elaboraSoloModificati)){
 					idQtyOriginaliElaborato = sqliteQtyOriginaliDao.salva(sqliteQtyOriginali);
@@ -226,9 +237,14 @@ public class InventarioCreaDb{
 		
 		SqliteInfogeneriche sqliteInfogeneriche = new SqliteInfogeneriche();
 		sqliteInfogeneriche = sqliteInfogenericheDao.getInfoDaNomeInfo("data_creazione");
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");	//"yyyy-MM-dd HH:mm:ss");
-		LocalDateTime dateTime = LocalDateTime.now();
-		sqliteInfogeneriche.setValore(dateTime.format(formatter));
+		DateTimeFormatter formatter = null;
+		String strTtimestampAs400 =  asNativeQueryDao.getDaSysdummy1_TimestampAs400().toString();
+		// e' in formato "yyyy-MM-dd HH:mm:ss.SSSSSS"
+		strTtimestampAs400 = StringUtils.substringBefore(strTtimestampAs400, ".");
+		formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");	
+		LocalDateTime timestampAs400 = LocalDateTime.parse(strTtimestampAs400, formatter);
+		formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");	
+		sqliteInfogeneriche.setValore(timestampAs400.format(formatter));
 		sqliteInfogenericheDao.aggiorna(sqliteInfogeneriche);
 		
 		// se e' creazione totale svuoto tutta armod0f
@@ -240,6 +256,7 @@ public class InventarioCreaDb{
 		asAncab0fDao.close();
 		asArdep0fDao.close();
 		asArmod0fDao.close();
+		asNativeQueryDao.close();
 		
 		sqliteArticoliDao.close();
 		sqliteBarcodeDao.close();

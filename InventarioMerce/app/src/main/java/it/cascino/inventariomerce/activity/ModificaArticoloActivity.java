@@ -41,6 +41,7 @@ public class ModificaArticoloActivity extends Activity{
 	private TextView qtyMagazzinoRilevate;
 	private TextView qtyDifettoseAttese;
 	// private TextView qtyDifettoseRilevate;
+	private TextView qtyInTrasferimentoAttese;
 	private TextView qtyScortaMinAttese;
 	private TextView qtyScortaMinRilevate;
 	private ImageView qtyScortaMinImg;
@@ -127,6 +128,8 @@ public class ModificaArticoloActivity extends Activity{
 				gestioneQty(0f);
 			}
 		}); */
+		qtyInTrasferimentoAttese = (TextView)findViewById(R.id.qtyInTrasferimentoAttese);
+
 		qtyScortaMinAttese = (TextView)findViewById(R.id.qtyScortaMinAttese);
 		qtyScortaMinRilevate = (TextView)findViewById(R.id.qtyScortaMinRilevate);
 		qtyScortaMinRilevate.setOnClickListener(new View.OnClickListener(){
@@ -306,6 +309,8 @@ public class ModificaArticoloActivity extends Activity{
 		qtyMagazzinoRilevate.setText(a.getQtyMagazRilevata() != null ? Support.floatToString(a.getQtyMagazRilevata()) : "n.r.");
 
 		qtyDifettoseAttese.setText(a.getQtyDifettOriginale() != null ? Support.floatToString(a.getQtyDifettOriginale()) : "n.d.");
+
+		qtyInTrasferimentoAttese.setText(a.getQtyInTrasferimentoOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoOriginale()) : "n.d.");
 
 		valAtt = a.getScortaMinOriginale() != null ? Support.floatToString(a.getScortaMinOriginale()) : "n.d.";
 		qtyScortaMinAttese.setText(valAtt);

@@ -6,67 +6,64 @@ import org.greenrobot.greendao.annotation.*;
 
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
-
 /**
  * Entity mapped to table "BARCODE".
  */
 @Entity
-public class Barcode{
+public class Barcode {
 
-	@Id(autoincrement = true)
-	private Long id;
+    @Id(autoincrement = true)
+    private Long id;
 
-	@NotNull
-	private String codice;
-	private Float tipo;
+    @NotNull
+    private String codice;
+    private Float tipo;
 
-	// KEEP FIELDS - put your custom fields here
-	// KEEP FIELDS END
+    // KEEP FIELDS - put your custom fields here
+    // KEEP FIELDS END
 
-	@Generated
-	public Barcode(){
-	}
+    @Generated
+    public Barcode() {
+    }
 
-	public Barcode(Long id){
-		this.id = id;
-	}
+    public Barcode(Long id) {
+        this.id = id;
+    }
 
-	@Generated
-	public Barcode(Long id, String codice, Float tipo){
-		this.id = id;
-		this.codice = codice;
-		this.tipo = tipo;
-	}
+    @Generated
+    public Barcode(Long id, String codice, Float tipo) {
+        this.id = id;
+        this.codice = codice;
+        this.tipo = tipo;
+    }
 
-	public Long getId(){
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id){
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@NotNull
-	public String getCodice(){
-		return codice;
-	}
+    @NotNull
+    public String getCodice() {
+        return codice;
+    }
 
-	/**
-	 * Not-null value; ensure this value is available before it is saved to the database.
-	 */
-	public void setCodice(@NotNull String codice){
-		this.codice = codice;
-	}
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setCodice(@NotNull String codice) {
+        this.codice = codice;
+    }
 
-	public Float getTipo(){
-		return tipo;
-	}
+    public Float getTipo() {
+        return tipo;
+    }
 
-	public void setTipo(Float tipo){
-		this.tipo = tipo;
-	}
+    public void setTipo(Float tipo) {
+        this.tipo = tipo;
+    }
 
-	// KEEP METHODS - put your custom methods here
-	// KEEP METHODS END
+    // KEEP METHODS - put your custom methods here
+    // KEEP METHODS END
 
 }

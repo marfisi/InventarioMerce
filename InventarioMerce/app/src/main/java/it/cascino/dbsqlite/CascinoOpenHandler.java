@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /*
-Dopo la rigenerazione delle classi con GreenDao, devo modificare la classe DaoMaster.OpneHelper.onCreate
+Dopo la rigenerazione delle classi con GreenDao, devo modificare la classe DaoMaster.OpneHelper.onCreate (rigo #95)
 
             // createAllTables(db, false);
             createAllTables(db, true);

@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -27,6 +29,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -124,6 +127,8 @@ public class MainActivity extends Activity{
 	private TextView inventIdInventario;
 	private TextView inventNomeSorgente;
 	private TextView inventCommento;
+
+	private MediaPlayer mp;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -356,15 +361,47 @@ public class MainActivity extends Activity{
 			}
 		});*/
 		//myFilter.setFocusableInTouchMode(false);
+
+		mp = MediaPlayer.create(getApplicationContext(), R.raw.click_filter);
+
+
 		myFilter.setOnTouchListener(new View.OnTouchListener(){
 			@Override
 			public boolean onTouch(View v, MotionEvent event){
-				//hideSoftKeyboard(MainActivity.this);
-				setStringaDaCercare("");
-				//myFilter.setText("");
-				myFilter.setSelectAllOnFocus(true);
-				keyboardHide(myFilter);
-				Log.i("Filtro", "onTouch");
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					//hideSoftKeyboard(MainActivity.this);
+					setStringaDaCercare("");
+					myFilter.setText("");
+					myFilter.setSelectAllOnFocus(true);
+					keyboardHide(myFilter);
+					Log.i("Filtro", "onTouch");
+
+					try{
+						if(mp != null && mp.isPlaying()){
+							mp.stop();
+							mp.reset(); // release();
+							mp = null;
+							mp = MediaPlayer.create(getApplicationContext(), R.raw.click_filter);
+							mp.start();
+						}else{
+							mp = MediaPlayer.create(getApplicationContext(), R.raw.click_filter);
+							mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
+								@Override
+								public void onPrepared(MediaPlayer arg0){
+									mp.start();
+								}
+							});
+							mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
+								@Override
+								public void onCompletion(MediaPlayer mp){
+									mp.reset(); // release();
+								}
+							});
+						}
+					}catch(Exception e){
+						e.getMessage();
+					}
+				}
 				return false;
 			}
 		});
@@ -399,6 +436,12 @@ public class MainActivity extends Activity{
 					}
 				}, 500);
 				//loadingPanel.setVisibility(View.INVISIBLE);
+
+				/*if(mp != null && mp.isPlaying()){
+					mp.stop();
+					mp.reset(); // mp.release();
+					mp = null;
+				}*/
 			}
 		});
 
@@ -667,6 +710,7 @@ public class MainActivity extends Activity{
 			art.setQtyEsposteOriginale(qtyOriginali.getQty());
 			art.setQtyMagazOriginale(0.0f);
 			art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
+			art.setQtyInTrasferimentoOriginale(qtyOriginali.getQty_trasf());
 			art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
 			art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
 			art.setDataCarico(qtyOriginali.getData_carico());
@@ -677,6 +721,7 @@ public class MainActivity extends Activity{
 			art.setQtyEsposteOriginale(0.0f);
 			art.setQtyMagazOriginale(0.0f);
 			art.setQtyDifettOriginale(0.0f);
+			art.setQtyInTrasferimentoOriginale(0.0f);
 			art.setScortaMinOriginale(0.0f);
 			art.setScortaMaxOriginale(0.0f);
 			art.setDataCarico("");
@@ -792,6 +837,7 @@ public class MainActivity extends Activity{
 					art.setQtyEsposteOriginale(qtyOriginali.getQty());
 					art.setQtyMagazOriginale(0.0f);
 					art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
+					art.setQtyInTrasferimentoOriginale(qtyOriginali.getQty_trasf());
 					art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
 					art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
 					art.setDataCarico(qtyOriginali.getData_carico());
@@ -802,6 +848,7 @@ public class MainActivity extends Activity{
 					art.setQtyEsposteOriginale(0.0f);
 					art.setQtyMagazOriginale(0.0f);
 					art.setQtyDifettOriginale(0.0f);
+					art.setQtyInTrasferimentoOriginale(0.0f);
 					art.setScortaMinOriginale(0.0f);
 					art.setScortaMaxOriginale(0.0f);
 					art.setDataCarico("");

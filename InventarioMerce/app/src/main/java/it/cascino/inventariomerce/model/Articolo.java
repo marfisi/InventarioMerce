@@ -31,6 +31,7 @@ public class Articolo{
 	private Float qtyMagazRilevata;
 	private Float qtyDifettOriginale;
 	private Float qtyDifettRilevata;
+	private Float qtyInTrasferimentoOriginale;
 	private Float qtyPerConfezOriginale;
 	private Float qtyPerConfezRilevata;
 	private String dataCarico;
@@ -63,6 +64,7 @@ public class Articolo{
 		this.qtyMagazRilevata = null;
 		this.qtyDifettOriginale = null;
 		this.qtyDifettRilevata = null;
+		this.qtyInTrasferimentoOriginale = null;
 		this.qtyPerConfezOriginale = null;
 		this.qtyPerConfezRilevata = null;
 		this.dataCarico = null;
@@ -111,7 +113,7 @@ public class Articolo{
 		this.inModifica = false;
 	}*/
 
-	public Articolo(String codice, Barcode[] barcodeOriginale, Barcode[] barcodeRilevata, String descOriginale, String descRilevata, Float prezzoOriginale, Float prezzoRilevata, String um, Float qtyOriginale, Float qtyRilevata, Float qtyEsposteOriginale, Float qtyEsposteRilevata, Float qtyMagazOriginale, Float qtyMagazRilevata, Float qtyDifettOriginale, Float qtyDifettRilevata, Float qtyPerConfezOriginale, Float qtyPerConfezRilevata, String dataCarico, String dataScarico, String dataUltimoInventario, Float scortaMinOriginale, Float scortaMinRilevata, Float scortaMaxOriginale, Float scortaMaxRilevata, String commento, Integer stato, Timestamp timestamp, Integer ordinamento, Boolean inModifica){
+	public Articolo(String codice, Barcode[] barcodeOriginale, Barcode[] barcodeRilevata, String descOriginale, String descRilevata, Float prezzoOriginale, Float prezzoRilevata, String um, Float qtyOriginale, Float qtyRilevata, Float qtyEsposteOriginale, Float qtyEsposteRilevata, Float qtyMagazOriginale, Float qtyMagazRilevata, Float qtyDifettOriginale, Float qtyDifettRilevata, Float qtyInTrasferimentoOriginale, Float qtyPerConfezOriginale, Float qtyPerConfezRilevata, String dataCarico, String dataScarico, String dataUltimoInventario, Float scortaMinOriginale, Float scortaMinRilevata, Float scortaMaxOriginale, Float scortaMaxRilevata, String commento, Integer stato, Timestamp timestamp, Integer ordinamento, Boolean inModifica){
 		this.codice = codice;
 		this.barcodeOriginale = barcodeOriginale;
 		this.barcodeRilevata = barcodeRilevata;
@@ -128,6 +130,7 @@ public class Articolo{
 		this.qtyMagazRilevata = qtyMagazRilevata;
 		this.qtyDifettOriginale = qtyDifettOriginale;
 		this.qtyDifettRilevata = qtyDifettRilevata;
+		this.qtyInTrasferimentoOriginale = qtyInTrasferimentoOriginale;
 		this.qtyPerConfezOriginale = qtyPerConfezOriginale;
 		this.qtyPerConfezRilevata = qtyPerConfezRilevata;
 		this.dataCarico = dataCarico;
@@ -286,6 +289,14 @@ public class Articolo{
 
 	public void setQtyDifettRilevata(Float qtyDifettRilevata){
 		this.qtyDifettRilevata = qtyDifettRilevata;
+	}
+
+	public Float getQtyInTrasferimentoOriginale(){
+		return qtyInTrasferimentoOriginale;
+	}
+
+	public void setQtyInTrasferimentoOriginale(Float qtyInTrasferimentoOriginale){
+		this.qtyInTrasferimentoOriginale = qtyInTrasferimentoOriginale;
 	}
 
 	public String getDataCarico(){

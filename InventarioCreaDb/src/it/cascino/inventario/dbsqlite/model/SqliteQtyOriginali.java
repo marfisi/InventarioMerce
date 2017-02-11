@@ -34,6 +34,7 @@ public class SqliteQtyOriginali implements Serializable{
 	private String data_inventario;
     private BigDecimal qty_scorta_min;
     private BigDecimal  qty_scorta_max;
+    private BigDecimal  qty_trasf;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -116,6 +117,14 @@ public class SqliteQtyOriginali implements Serializable{
 	public void setQty_scorta_max(BigDecimal qty_scorta_max){
 		this.qty_scorta_max = qty_scorta_max;
 	}
+	
+	public BigDecimal getQty_trasf(){
+		return qty_trasf;
+	}
+
+	public void setQty_trasf(BigDecimal qty_trasf){
+		this.qty_trasf = qty_trasf;
+	}
 
 	@Override
 	public int hashCode(){
@@ -131,6 +140,7 @@ public class SqliteQtyOriginali implements Serializable{
 		result = prime * result + ((qty_difettosi == null) ? 0 : qty_difettosi.hashCode());
 		result = prime * result + ((qty_scorta_max == null) ? 0 : qty_scorta_max.hashCode());
 		result = prime * result + ((qty_scorta_min == null) ? 0 : qty_scorta_min.hashCode());
+		result = prime * result + ((qty_trasf == null) ? 0 : qty_trasf.hashCode());
 		return result;
 	}
 
@@ -148,6 +158,6 @@ public class SqliteQtyOriginali implements Serializable{
 
 	@Override
 	public String toString(){
-		return "SqliteQtyOriginali [_id=" + _id + ", idart=" + idart + ", iddep=" + iddep + ", qty=" + qty + ", qty_difettosi=" + qty_difettosi + ", data_carico=" + data_carico + ", data_scarico=" + data_scarico + ", data_inventario=" + data_inventario + ", qty_scorta_min=" + qty_scorta_min + ", qty_scorta_max=" + qty_scorta_max + "]";
+		return "SqliteQtyOriginali [_id=" + _id + ", idart=" + idart + ", iddep=" + iddep + ", qty=" + qty + ", qty_difettosi=" + qty_difettosi + ", data_carico=" + data_carico + ", data_scarico=" + data_scarico + ", data_inventario=" + data_inventario + ", qty_scorta_min=" + qty_scorta_min + ", qty_scorta_max=" + qty_scorta_max + ", qty_trasf=" + qty_trasf + "]";
 	}
 }
