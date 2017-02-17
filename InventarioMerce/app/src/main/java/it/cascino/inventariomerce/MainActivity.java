@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,8 @@ import it.cascino.inventariomerce.adapter.ArticoloAdapter;
 import it.cascino.inventariomerce.model.Articolo;
 import it.cascino.inventariomerce.model.Barcode;
 import it.cascino.inventariomerce.model.Inventario;
+import it.cascino.inventariomerce.utils.DatiStatici;
+import it.cascino.inventariomerce.utils.ScambioDatiIntent;
 import it.cascino.inventariomerce.utils.TipoStato;
 
 public class MainActivity extends Activity{
@@ -234,8 +238,9 @@ public class MainActivity extends Activity{
 				Intent intentSyncActivity = new Intent(getApplicationContext(), SyncActivity.class);
 				String gSonString = gSon.toJson(inventario.getProgressivo());
 				intentSyncActivity.putExtra("inventarioId", gSonString);
-				gSonString = gSon.toJson(stringBuilder.toString());
-				intentSyncActivity.putExtra("inventarioUpload", gSonString);
+				//gSonString = gSon.toJson(stringBuilder.toString());
+				//intentSyncActivity.putExtra("inventarioUpload", gSonString);
+				ScambioDatiIntent.getInstance().setData(stringBuilder.toString());
 				startActivityForResult(intentSyncActivity, SAVE_REQUEST);
 				saveButton.setVisibility(View.INVISIBLE);
 				Log.i("saveButton", saveButton.toString());
@@ -454,7 +459,23 @@ public class MainActivity extends Activity{
 			}
 		});
 
-
+		RadioGroup radioGroupPreselezione = (RadioGroup)findViewById(R.id.radioGroupPreselezione);
+		final RadioButton radioBtnPreselezioneEsposte = (RadioButton)findViewById(R.id.radioBtnPreselezioneEsposte);
+		final RadioButton radioBtnPreselezioneMagazzino = (RadioButton)findViewById(R.id.radioBtnPreselezioneMagazzino);
+		final RadioButton radioBtnPreselezioneNessuna = (RadioButton)findViewById(R.id.radioBtnPreselezioneNessuna);
+		DatiStatici.getInstance().setTipoPreselezione(0);
+		radioGroupPreselezione.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId){
+				if(radioBtnPreselezioneEsposte.isChecked()){
+					DatiStatici.getInstance().setTipoPreselezione(1);
+				}else if(radioBtnPreselezioneMagazzino.isChecked()){
+					DatiStatici.getInstance().setTipoPreselezione(2);
+				}else{	// radioBtnPreselezioneNessuna
+					DatiStatici.getInstance().setTipoPreselezione(0);
+				}
+			}
+		});
 	}
 
 	private void cercaStringaDaCercare(){

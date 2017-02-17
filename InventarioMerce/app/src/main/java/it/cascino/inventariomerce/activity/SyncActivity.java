@@ -70,6 +70,7 @@ import it.cascino.inventariomerce.adapter.SyncAdapter;
 import it.cascino.inventariomerce.model.Articolo;
 import it.cascino.inventariomerce.model.Barcode;
 import it.cascino.inventariomerce.model.Inventario;
+import it.cascino.inventariomerce.utils.ScambioDatiIntent;
 import it.cascino.inventariomerce.utils.TipoStato;
 
 public class SyncActivity extends Activity{
@@ -338,12 +339,13 @@ public class SyncActivity extends Activity{
 		Intent intentFtpUpload = getIntent();
 		if(intentFtpUpload != null){
 			String gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
-			if(StringUtils.isNotEmpty(gSonString)){
+			String inventarioUpload = ScambioDatiIntent.getInstance().getData();
+			if(StringUtils.isNotEmpty(inventarioUpload)){
 				Gson gSon = new Gson();
 				gSonString = intentFtpUpload.getStringExtra("inventarioId");
 				Integer inventarioId = gSon.fromJson(gSonString, Integer.class);
-				gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
-				String inventarioUpload = gSon.fromJson(gSonString, String.class);
+				//gSonString = intentFtpUpload.getStringExtra("inventarioUpload");
+				//String inventarioUpload = gSon.fromJson(gSonString, String.class);
 				UploadFileThread ut = new UploadFileThread(inventarioId, inventarioUpload);
 				try{
 					ut.execute("").get();

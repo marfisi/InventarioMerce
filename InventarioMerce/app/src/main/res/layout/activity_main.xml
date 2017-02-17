@@ -267,6 +267,52 @@
             android:layout_alignBottom="@+id/textView16"
             android:layout_toRightOf="@+id/textView16"
             android:layout_toEndOf="@+id/textView16"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/cercaButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preselezione"
+                android:id="@+id/textView17"/>
+
+            <RadioGroup
+                android:id="@+id/radioGroupPreselezione"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView17"
+                >
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Esposte"
+                    android:id="@+id/radioBtnPreselezioneEsposte"
+                    android:checked="false"
+                    />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Magazzino"
+                    android:id="@+id/radioBtnPreselezioneMagazzino"
+                    android:checked="false"
+                    />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nessuna"
+                    android:id="@+id/radioBtnPreselezioneNessuna"
+                    android:checked="true"/>
+            </RadioGroup>
+        </RelativeLayout>
     </RelativeLayout>
 
     <ListView

@@ -25,6 +25,7 @@ import java.util.Date;
 import it.cascino.inventariomerce.R;
 import it.cascino.inventariomerce.model.Articolo;
 import it.cascino.inventariomerce.model.Inventario;
+import it.cascino.inventariomerce.utils.DatiStatici;
 import it.cascino.inventariomerce.utils.Support;
 import it.cascino.inventariomerce.utils.TipoQty;
 import it.cascino.inventariomerce.utils.TipoStato;
@@ -331,6 +332,18 @@ public class ModificaArticoloActivity extends Activity{
 		qtyPerConfImg.setBackgroundResource(Support.definisciImg(valAtt, valRil));
 
 		um_qty.setText(a.getUm());
+
+		Integer tipoPreselezione = DatiStatici.getInstance().getTipoPreselezione();
+		switch(tipoPreselezione){
+			case 1:
+				qtyEsposteRilevate.performClick();
+				break;
+			case 2:
+				qtyMagazzinoRilevate.performClick();
+				break;
+			default:
+				break;
+		}
 	}
 
 	private void gestioneQty(Float qtyStep){
