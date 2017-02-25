@@ -731,7 +731,8 @@ public class MainActivity extends Activity{
 			art.setQtyEsposteOriginale(qtyOriginali.getQty());
 			art.setQtyMagazOriginale(0.0f);
 			art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
-			art.setQtyInTrasferimentoOriginale(qtyOriginali.getQty_trasf());
+			art.setQtyInTrasferimentoArrivoOriginale(qtyOriginali.getQty_trasf_arrivo());
+			art.setQtyInTrasferimentoPartenzaOriginale(qtyOriginali.getQty_trasf_partenza());
 			art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
 			art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
 			art.setDataCarico(qtyOriginali.getData_carico());
@@ -742,7 +743,8 @@ public class MainActivity extends Activity{
 			art.setQtyEsposteOriginale(0.0f);
 			art.setQtyMagazOriginale(0.0f);
 			art.setQtyDifettOriginale(0.0f);
-			art.setQtyInTrasferimentoOriginale(0.0f);
+			art.setQtyInTrasferimentoArrivoOriginale(0.0f);
+			art.setQtyInTrasferimentoPartenzaOriginale(0.0f);
 			art.setScortaMinOriginale(0.0f);
 			art.setScortaMaxOriginale(0.0f);
 			art.setDataCarico("");
@@ -858,7 +860,8 @@ public class MainActivity extends Activity{
 					art.setQtyEsposteOriginale(qtyOriginali.getQty());
 					art.setQtyMagazOriginale(0.0f);
 					art.setQtyDifettOriginale(qtyOriginali.getQty_difettosi());
-					art.setQtyInTrasferimentoOriginale(qtyOriginali.getQty_trasf());
+					art.setQtyInTrasferimentoArrivoOriginale(qtyOriginali.getQty_trasf_arrivo());
+					art.setQtyInTrasferimentoPartenzaOriginale(qtyOriginali.getQty_trasf_partenza());
 					art.setScortaMinOriginale(qtyOriginali.getQty_scorta_min());
 					art.setScortaMaxOriginale(qtyOriginali.getQty_scorta_max());
 					art.setDataCarico(qtyOriginali.getData_carico());
@@ -869,7 +872,8 @@ public class MainActivity extends Activity{
 					art.setQtyEsposteOriginale(0.0f);
 					art.setQtyMagazOriginale(0.0f);
 					art.setQtyDifettOriginale(0.0f);
-					art.setQtyInTrasferimentoOriginale(0.0f);
+					art.setQtyInTrasferimentoArrivoOriginale(0.0f);
+					art.setQtyInTrasferimentoPartenzaOriginale(0.0f);
 					art.setScortaMinOriginale(0.0f);
 					art.setScortaMaxOriginale(0.0f);
 					art.setDataCarico("");

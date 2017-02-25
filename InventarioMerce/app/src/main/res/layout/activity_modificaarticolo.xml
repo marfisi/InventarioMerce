@@ -528,12 +528,22 @@
                 android:layout_marginTop="65dp"/>
 
             <TextView
-                android:id="@+id/qtyInTrasferimentoAttese"
+                android:id="@+id/qtyInTrasferimentoArrivoAttese"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TRattese"
+                android:text="TrArAttese"
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
+                style="@style/styleTxQtyAttese"
+                android:layout_above="@+id/qtyInTrasferimentoPartenzaAttese"/>
+
+            <TextView
+                android:id="@+id/qtyInTrasferimentoPartenzaAttese"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TrPaAttese"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="false"
                 style="@style/styleTxQtyAttese"
                 android:layout_alignBottom="@+id/textInTrasferimento"/>
 

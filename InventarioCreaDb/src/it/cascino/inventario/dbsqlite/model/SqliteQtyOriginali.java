@@ -34,7 +34,8 @@ public class SqliteQtyOriginali implements Serializable{
 	private String data_inventario;
     private BigDecimal qty_scorta_min;
     private BigDecimal  qty_scorta_max;
-    private BigDecimal  qty_trasf;
+    private BigDecimal  qty_trasf_arrivo;
+    private BigDecimal  qty_trasf_partenza;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -118,12 +119,20 @@ public class SqliteQtyOriginali implements Serializable{
 		this.qty_scorta_max = qty_scorta_max;
 	}
 	
-	public BigDecimal getQty_trasf(){
-		return qty_trasf;
+	public BigDecimal getQty_trasf_arrivo(){
+		return qty_trasf_arrivo;
 	}
 
-	public void setQty_trasf(BigDecimal qty_trasf){
-		this.qty_trasf = qty_trasf;
+	public void setQty_trasf_arrivo(BigDecimal qty_trasf_arrivo){
+		this.qty_trasf_arrivo = qty_trasf_arrivo;
+	}
+	
+	public BigDecimal getQty_trasf_partenza(){
+		return qty_trasf_partenza;
+	}
+
+	public void setQty_trasf_partenza(BigDecimal qty_trasf_partenza){
+		this.qty_trasf_partenza = qty_trasf_partenza;
 	}
 
 	@Override
@@ -140,7 +149,8 @@ public class SqliteQtyOriginali implements Serializable{
 		result = prime * result + ((qty_difettosi == null) ? 0 : qty_difettosi.hashCode());
 		result = prime * result + ((qty_scorta_max == null) ? 0 : qty_scorta_max.hashCode());
 		result = prime * result + ((qty_scorta_min == null) ? 0 : qty_scorta_min.hashCode());
-		result = prime * result + ((qty_trasf == null) ? 0 : qty_trasf.hashCode());
+		result = prime * result + ((qty_trasf_arrivo == null) ? 0 : qty_trasf_arrivo.hashCode());
+		result = prime * result + ((qty_trasf_partenza == null) ? 0 : qty_trasf_partenza.hashCode());
 		return result;
 	}
 
@@ -158,6 +168,6 @@ public class SqliteQtyOriginali implements Serializable{
 
 	@Override
 	public String toString(){
-		return "SqliteQtyOriginali [_id=" + _id + ", idart=" + idart + ", iddep=" + iddep + ", qty=" + qty + ", qty_difettosi=" + qty_difettosi + ", data_carico=" + data_carico + ", data_scarico=" + data_scarico + ", data_inventario=" + data_inventario + ", qty_scorta_min=" + qty_scorta_min + ", qty_scorta_max=" + qty_scorta_max + ", qty_trasf=" + qty_trasf + "]";
+		return "SqliteQtyOriginali [_id=" + _id + ", idart=" + idart + ", iddep=" + iddep + ", qty=" + qty + ", qty_difettosi=" + qty_difettosi + ", data_carico=" + data_carico + ", data_scarico=" + data_scarico + ", data_inventario=" + data_inventario + ", qty_scorta_min=" + qty_scorta_min + ", qty_scorta_max=" + qty_scorta_max + ", qty_trasf_arrivo=" + qty_trasf_arrivo + ", qty_trasf_partenza=" + qty_trasf_partenza + "]";
 	}
 }

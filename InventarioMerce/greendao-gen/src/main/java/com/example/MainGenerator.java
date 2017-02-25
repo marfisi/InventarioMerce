@@ -97,7 +97,8 @@ public class MainGenerator{
 		qty_originali.addStringProperty("data_inventario");
 		qty_originali.addFloatProperty("qty_scorta_min");
 		qty_originali.addFloatProperty("qty_scorta_max");
-		qty_originali.addFloatProperty("qty_trasf");
+		qty_originali.addFloatProperty("qty_trasf_arrivo");
+		qty_originali.addFloatProperty("qty_trasf_partenza");
 		return qty_originali;
 	}
 

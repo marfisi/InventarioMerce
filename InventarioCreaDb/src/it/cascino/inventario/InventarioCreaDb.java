@@ -215,8 +215,17 @@ public class InventarioCreaDb{
 					bdModelVal = new BigDecimal(0);
 				}
 				bdDisplayVal = bdModelVal.setScale(2,  BigDecimal.ROUND_HALF_UP);
-				sqliteQtyOriginali.setQty_trasf(bdDisplayVal);
-					
+				sqliteQtyOriginali.setQty_trasf_arrivo(bdDisplayVal);
+				
+				mtqua =  asNativeQueryDao.getDaMovtr0f_MtquaDaMtcodAndMtdpp(sqliteArticoli.getCodart(), asArdep0f.getId().getDcode());
+				if(mtqua != null){
+					bdModelVal = mtqua;
+				}else{
+					bdModelVal = new BigDecimal(0);
+				}
+				bdDisplayVal = bdModelVal.setScale(2,  BigDecimal.ROUND_HALF_UP);
+				sqliteQtyOriginali.setQty_trasf_partenza(bdDisplayVal);
+				
 				if(!(elaboraSoloModificati)){
 					idQtyOriginaliElaborato = sqliteQtyOriginaliDao.salva(sqliteQtyOriginali);
 					// log.info("QtyOriginali inserito " + idQtyOriginaliElaborato);

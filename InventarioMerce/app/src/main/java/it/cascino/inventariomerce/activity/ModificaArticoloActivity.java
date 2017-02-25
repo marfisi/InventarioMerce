@@ -42,7 +42,8 @@ public class ModificaArticoloActivity extends Activity{
 	private TextView qtyMagazzinoRilevate;
 	private TextView qtyDifettoseAttese;
 	// private TextView qtyDifettoseRilevate;
-	private TextView qtyInTrasferimentoAttese;
+	private TextView qtyInTrasferimentoArrivoAttese;
+	private TextView qtyInTrasferimentoPartenzaAttese;
 	private TextView qtyScortaMinAttese;
 	private TextView qtyScortaMinRilevate;
 	private ImageView qtyScortaMinImg;
@@ -129,7 +130,9 @@ public class ModificaArticoloActivity extends Activity{
 				gestioneQty(0f);
 			}
 		}); */
-		qtyInTrasferimentoAttese = (TextView)findViewById(R.id.qtyInTrasferimentoAttese);
+		qtyInTrasferimentoArrivoAttese = (TextView)findViewById(R.id.qtyInTrasferimentoArrivoAttese);
+
+		qtyInTrasferimentoPartenzaAttese = (TextView)findViewById(R.id.qtyInTrasferimentoPartenzaAttese);
 
 		qtyScortaMinAttese = (TextView)findViewById(R.id.qtyScortaMinAttese);
 		qtyScortaMinRilevate = (TextView)findViewById(R.id.qtyScortaMinRilevate);
@@ -311,7 +314,9 @@ public class ModificaArticoloActivity extends Activity{
 
 		qtyDifettoseAttese.setText(a.getQtyDifettOriginale() != null ? Support.floatToString(a.getQtyDifettOriginale()) : "n.d.");
 
-		qtyInTrasferimentoAttese.setText(a.getQtyInTrasferimentoOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoOriginale()) : "n.d.");
+		qtyInTrasferimentoArrivoAttese.setText("A: +" + (a.getQtyInTrasferimentoArrivoOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoArrivoOriginale()) : "n.d."));
+
+		qtyInTrasferimentoPartenzaAttese.setText("P: -" + (a.getQtyInTrasferimentoPartenzaOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoPartenzaOriginale()) : "n.d."));
 
 		valAtt = a.getScortaMinOriginale() != null ? Support.floatToString(a.getScortaMinOriginale()) : "n.d.";
 		qtyScortaMinAttese.setText(valAtt);

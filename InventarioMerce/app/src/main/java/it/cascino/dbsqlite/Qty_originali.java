@@ -24,7 +24,8 @@ public class Qty_originali {
     private String data_inventario;
     private Float qty_scorta_min;
     private Float qty_scorta_max;
-    private Float qty_trasf;
+    private Float qty_trasf_arrivo;
+    private Float qty_trasf_partenza;
     private long idart;
     private long iddep;
 
@@ -60,7 +61,7 @@ public class Qty_originali {
     }
 
     @Generated
-    public Qty_originali(Long id, float qty, float qty_difettosi, String data_carico, String data_scarico, String data_inventario, Float qty_scorta_min, Float qty_scorta_max, Float qty_trasf, long idart, long iddep) {
+    public Qty_originali(Long id, float qty, float qty_difettosi, String data_carico, String data_scarico, String data_inventario, Float qty_scorta_min, Float qty_scorta_max, Float qty_trasf_arrivo, Float qty_trasf_partenza, long idart, long iddep) {
         this.id = id;
         this.qty = qty;
         this.qty_difettosi = qty_difettosi;
@@ -69,7 +70,8 @@ public class Qty_originali {
         this.data_inventario = data_inventario;
         this.qty_scorta_min = qty_scorta_min;
         this.qty_scorta_max = qty_scorta_max;
-        this.qty_trasf = qty_trasf;
+        this.qty_trasf_arrivo = qty_trasf_arrivo;
+        this.qty_trasf_partenza = qty_trasf_partenza;
         this.idart = idart;
         this.iddep = iddep;
     }
@@ -145,12 +147,20 @@ public class Qty_originali {
         this.qty_scorta_max = qty_scorta_max;
     }
 
-    public Float getQty_trasf() {
-        return qty_trasf;
+    public Float getQty_trasf_arrivo() {
+        return qty_trasf_arrivo;
     }
 
-    public void setQty_trasf(Float qty_trasf) {
-        this.qty_trasf = qty_trasf;
+    public void setQty_trasf_arrivo(Float qty_trasf_arrivo) {
+        this.qty_trasf_arrivo = qty_trasf_arrivo;
+    }
+
+    public Float getQty_trasf_partenza() {
+        return qty_trasf_partenza;
+    }
+
+    public void setQty_trasf_partenza(Float qty_trasf_partenza) {
+        this.qty_trasf_partenza = qty_trasf_partenza;
     }
 
     public long getIdart() {

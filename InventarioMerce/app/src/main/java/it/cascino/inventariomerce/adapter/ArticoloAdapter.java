@@ -120,7 +120,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			viewHolder.qtyMagazzinoRilevate = (TextView)v.findViewById(R.id.qtyMagazzinoRilevate);
 			viewHolder.qtyDifettoseAttese = (TextView)v.findViewById(R.id.qtyDifettoseAttese);
 			//viewHolder.qtyDifettoseRilevate = (TextView)v.findViewById(R.id.qtyDifettoseRilevate);
-			viewHolder.qtyInTrasferimentoAttese = (TextView)v.findViewById(R.id.qtyInTrasferimentoAttese);
+			viewHolder.qtyInTrasferimentoArrivoAttese = (TextView)v.findViewById(R.id.qtyInTrasferimentoArrivoAttese);
+			viewHolder.qtyInTrasferimentoPartenzaAttese = (TextView)v.findViewById(R.id.qtyInTrasferimentoPartenzaAttese);
 			viewHolder.qtyScortaMinAttese = (TextView)v.findViewById(R.id.qtyScortaMinAttese);
 			viewHolder.qtyScortaMinRilevate = (TextView)v.findViewById(R.id.qtyScortaMinRilevate);
 			viewHolder.qtyScortaMinImg = (ImageView)v.findViewById(R.id.qtyScortaMinImg);
@@ -194,7 +195,9 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		viewHolder.qtyDifettoseAttese.setText(a.getQtyDifettOriginale() != null ? Support.floatToString(a.getQtyDifettOriginale()) : "n.d.");
 		//viewHolder.qtyDifettoseRilevate.setText(a.getQtyDifettRilevata() != null ? Support.floatToString(a.getQtyDifettRilevata()) : "n.r.");
 
-		viewHolder.qtyInTrasferimentoAttese.setText(a.getQtyInTrasferimentoOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoOriginale()) : "n.d.");
+		viewHolder.qtyInTrasferimentoArrivoAttese.setText("A: +" + (a.getQtyInTrasferimentoArrivoOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoArrivoOriginale()) : "n.d."));
+
+		viewHolder.qtyInTrasferimentoPartenzaAttese.setText("P: -" + (a.getQtyInTrasferimentoPartenzaOriginale() != null ? Support.floatToString(a.getQtyInTrasferimentoPartenzaOriginale()) : "n.d."));
 
 		valAtt = a.getScortaMinOriginale() != null ? Support.floatToString(a.getScortaMinOriginale()) : "n.d.";
 		viewHolder.qtyScortaMinAttese.setText(valAtt);
@@ -299,7 +302,8 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 		public TextView qtyMagazzinoRilevate;
 		public TextView qtyDifettoseAttese;
 		//public TextView qtyDifettoseRilevate;
-		public TextView qtyInTrasferimentoAttese;
+		public TextView qtyInTrasferimentoArrivoAttese;
+		public TextView qtyInTrasferimentoPartenzaAttese;
 		public TextView qtyScortaMinAttese;
 		public TextView qtyScortaMinRilevate;
 		public ImageView qtyScortaMinImg;

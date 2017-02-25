@@ -33,9 +33,10 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
         public final static Property Data_inventario = new Property(5, String.class, "data_inventario", false, "DATA_INVENTARIO");
         public final static Property Qty_scorta_min = new Property(6, Float.class, "qty_scorta_min", false, "QTY_SCORTA_MIN");
         public final static Property Qty_scorta_max = new Property(7, Float.class, "qty_scorta_max", false, "QTY_SCORTA_MAX");
-        public final static Property Qty_trasf = new Property(8, Float.class, "qty_trasf", false, "QTY_TRASF");
-        public final static Property Idart = new Property(9, long.class, "idart", false, "IDART");
-        public final static Property Iddep = new Property(10, long.class, "iddep", false, "IDDEP");
+        public final static Property Qty_trasf_arrivo = new Property(8, Float.class, "qty_trasf_arrivo", false, "QTY_TRASF_ARRIVO");
+        public final static Property Qty_trasf_partenza = new Property(9, Float.class, "qty_trasf_partenza", false, "QTY_TRASF_PARTENZA");
+        public final static Property Idart = new Property(10, long.class, "idart", false, "IDART");
+        public final static Property Iddep = new Property(11, long.class, "iddep", false, "IDDEP");
     }
 
     private DaoSession daoSession;
@@ -62,9 +63,10 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
                 "\"DATA_INVENTARIO\" TEXT," + // 5: data_inventario
                 "\"QTY_SCORTA_MIN\" REAL," + // 6: qty_scorta_min
                 "\"QTY_SCORTA_MAX\" REAL," + // 7: qty_scorta_max
-                "\"QTY_TRASF\" REAL," + // 8: qty_trasf
-                "\"IDART\" INTEGER NOT NULL ," + // 9: idart
-                "\"IDDEP\" INTEGER NOT NULL );"); // 10: iddep
+                "\"QTY_TRASF_ARRIVO\" REAL," + // 8: qty_trasf_arrivo
+                "\"QTY_TRASF_PARTENZA\" REAL," + // 9: qty_trasf_partenza
+                "\"IDART\" INTEGER NOT NULL ," + // 10: idart
+                "\"IDDEP\" INTEGER NOT NULL );"); // 11: iddep
     }
 
     /** Drops the underlying database table. */
@@ -109,12 +111,17 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
             stmt.bindDouble(8, qty_scorta_max);
         }
  
-        Float qty_trasf = entity.getQty_trasf();
-        if (qty_trasf != null) {
-            stmt.bindDouble(9, qty_trasf);
+        Float qty_trasf_arrivo = entity.getQty_trasf_arrivo();
+        if (qty_trasf_arrivo != null) {
+            stmt.bindDouble(9, qty_trasf_arrivo);
         }
-        stmt.bindLong(10, entity.getIdart());
-        stmt.bindLong(11, entity.getIddep());
+ 
+        Float qty_trasf_partenza = entity.getQty_trasf_partenza();
+        if (qty_trasf_partenza != null) {
+            stmt.bindDouble(10, qty_trasf_partenza);
+        }
+        stmt.bindLong(11, entity.getIdart());
+        stmt.bindLong(12, entity.getIddep());
     }
 
     @Override
@@ -153,12 +160,17 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
             stmt.bindDouble(8, qty_scorta_max);
         }
  
-        Float qty_trasf = entity.getQty_trasf();
-        if (qty_trasf != null) {
-            stmt.bindDouble(9, qty_trasf);
+        Float qty_trasf_arrivo = entity.getQty_trasf_arrivo();
+        if (qty_trasf_arrivo != null) {
+            stmt.bindDouble(9, qty_trasf_arrivo);
         }
-        stmt.bindLong(10, entity.getIdart());
-        stmt.bindLong(11, entity.getIddep());
+ 
+        Float qty_trasf_partenza = entity.getQty_trasf_partenza();
+        if (qty_trasf_partenza != null) {
+            stmt.bindDouble(10, qty_trasf_partenza);
+        }
+        stmt.bindLong(11, entity.getIdart());
+        stmt.bindLong(12, entity.getIddep());
     }
 
     @Override
@@ -183,9 +195,10 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
             cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // data_inventario
             cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6), // qty_scorta_min
             cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7), // qty_scorta_max
-            cursor.isNull(offset + 8) ? null : cursor.getFloat(offset + 8), // qty_trasf
-            cursor.getLong(offset + 9), // idart
-            cursor.getLong(offset + 10) // iddep
+            cursor.isNull(offset + 8) ? null : cursor.getFloat(offset + 8), // qty_trasf_arrivo
+            cursor.isNull(offset + 9) ? null : cursor.getFloat(offset + 9), // qty_trasf_partenza
+            cursor.getLong(offset + 10), // idart
+            cursor.getLong(offset + 11) // iddep
         );
         return entity;
     }
@@ -200,9 +213,10 @@ public class Qty_originaliDao extends AbstractDao<Qty_originali, Long> {
         entity.setData_inventario(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
         entity.setQty_scorta_min(cursor.isNull(offset + 6) ? null : cursor.getFloat(offset + 6));
         entity.setQty_scorta_max(cursor.isNull(offset + 7) ? null : cursor.getFloat(offset + 7));
-        entity.setQty_trasf(cursor.isNull(offset + 8) ? null : cursor.getFloat(offset + 8));
-        entity.setIdart(cursor.getLong(offset + 9));
-        entity.setIddep(cursor.getLong(offset + 10));
+        entity.setQty_trasf_arrivo(cursor.isNull(offset + 8) ? null : cursor.getFloat(offset + 8));
+        entity.setQty_trasf_partenza(cursor.isNull(offset + 9) ? null : cursor.getFloat(offset + 9));
+        entity.setIdart(cursor.getLong(offset + 10));
+        entity.setIddep(cursor.getLong(offset + 11));
      }
     
     @Override

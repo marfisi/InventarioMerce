@@ -21,6 +21,7 @@ public class AsNativeQueryDaoMng implements AsNativeQueryDao, Serializable{
 	
 	Logger log = Logger.getLogger(AsNativeQueryDaoMng.class);
 		
+	// in trasferimento verso deposito in Arrivo
 	public BigDecimal getDaMovtr0f_MtquaDaMtcodAndMtdpa(String mtcod, Integer mtdpa){
 		BigDecimal o = null;
 		try{
@@ -32,7 +33,32 @@ public class AsNativeQueryDaoMng implements AsNativeQueryDao, Serializable{
 				query.setParameter("mtdpa", mtdpa);
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 				LocalDateTime dateTime = LocalDateTime.now();
-				dateTime = dateTime.minusMonths(6);
+				dateTime = dateTime.minusMonths(6);	// 6 mesi
+				query.setParameter("mtdat", dateTime.format(formatter));
+				o = (BigDecimal)query.getSingleResult();
+			}catch(NoResultException e){
+				o = null;
+			}
+			utx.commit();
+		}catch(Exception e){
+			log.fatal(e.toString());
+		}
+		return o;
+	}
+	
+	// in trasferimento da deposito in Partenza
+	public BigDecimal getDaMovtr0f_MtquaDaMtcodAndMtdpp(String mtcod, Integer mtdpp){
+		BigDecimal o = null;
+		try{
+			try{
+				utx.begin();
+				String sql = "SELECT sum(a.mtqua) FROM Movtr0f a WHERE a.mtcod = :mtcod and a.mtsta = ' '  and a.mtdpp = :mtdpp and a.mtdat > :mtdat";
+				Query query = em.createNativeQuery(sql);
+				query.setParameter("mtcod", mtcod);
+				query.setParameter("mtdpp", mtdpp);
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+				LocalDateTime dateTime = LocalDateTime.now();
+				dateTime = dateTime.minusDays(7); // 7 giorni;
 				query.setParameter("mtdat", dateTime.format(formatter));
 				o = (BigDecimal)query.getSingleResult();
 			}catch(NoResultException e){

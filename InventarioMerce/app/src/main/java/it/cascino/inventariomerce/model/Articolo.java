@@ -31,7 +31,8 @@ public class Articolo{
 	private Float qtyMagazRilevata;
 	private Float qtyDifettOriginale;
 	private Float qtyDifettRilevata;
-	private Float qtyInTrasferimentoOriginale;
+	private Float qtyInTrasferimentoArrivoOriginale;
+	private Float qtyInTrasferimentoPartenzaOriginale;
 	private Float qtyPerConfezOriginale;
 	private Float qtyPerConfezRilevata;
 	private String dataCarico;
@@ -64,7 +65,8 @@ public class Articolo{
 		this.qtyMagazRilevata = null;
 		this.qtyDifettOriginale = null;
 		this.qtyDifettRilevata = null;
-		this.qtyInTrasferimentoOriginale = null;
+		this.qtyInTrasferimentoArrivoOriginale = null;
+		this.qtyInTrasferimentoPartenzaOriginale = null;
 		this.qtyPerConfezOriginale = null;
 		this.qtyPerConfezRilevata = null;
 		this.dataCarico = null;
@@ -80,40 +82,8 @@ public class Articolo{
 		this.ordinamento = null;
 		this.inModifica = false;
 	}
-/*	public Articolo(){
-		this.codice = "";
-		this.barcodeOriginale = null;
-		this.barcodeRilevata = null;
-		this.descOriginale = "";
-		this.descRilevata = "";
-		this.prezzoOriginale = -999.99f;
-		this.prezzoRilevata = -999.99f;
-		this.um = "";
-		this.qtyOriginale = -999.99f;
-		this.qtyRilevata = -999.99f;
-		this.qtyEsposteOriginale = -999.99f;
-		this.qtyEsposteRilevata = -999.99f;
-		this.qtyMagazOriginale = -999.99f;
-		this.qtyMagazRilevata = -999.99f;
-		this.qtyDifettOriginale = -999.99f;
-		this.qtyDifettRilevata = -999.99f;
-		this.qtyPerConfezOriginale = -999.99f;
-		this.qtyPerConfezRilevata = -999.99f;
-		this.dataCarico = "";
-		this.dataScarico = "";
-		this.dataUltimoInventario = "";
-		this.scortaMinOriginale = -999.99f;
-		this.scortaMinRilevata = -999.99f;
-		this.scortaMaxOriginale = -999.99f;
-		this.scortaMaxRilevata = -999.99f;
-		this.commento = "";
-		this.stato = -1;
-		this.timestamp = null;
-		this.ordinamento = -999;
-		this.inModifica = false;
-	}*/
 
-	public Articolo(String codice, Barcode[] barcodeOriginale, Barcode[] barcodeRilevata, String descOriginale, String descRilevata, Float prezzoOriginale, Float prezzoRilevata, String um, Float qtyOriginale, Float qtyRilevata, Float qtyEsposteOriginale, Float qtyEsposteRilevata, Float qtyMagazOriginale, Float qtyMagazRilevata, Float qtyDifettOriginale, Float qtyDifettRilevata, Float qtyInTrasferimentoOriginale, Float qtyPerConfezOriginale, Float qtyPerConfezRilevata, String dataCarico, String dataScarico, String dataUltimoInventario, Float scortaMinOriginale, Float scortaMinRilevata, Float scortaMaxOriginale, Float scortaMaxRilevata, String commento, Integer stato, Timestamp timestamp, Integer ordinamento, Boolean inModifica){
+	public Articolo(String codice, Barcode[] barcodeOriginale, Barcode[] barcodeRilevata, String descOriginale, String descRilevata, Float prezzoOriginale, Float prezzoRilevata, String um, Float qtyOriginale, Float qtyRilevata, Float qtyEsposteOriginale, Float qtyEsposteRilevata, Float qtyMagazOriginale, Float qtyMagazRilevata, Float qtyDifettOriginale, Float qtyDifettRilevata, Float qtyInTrasferimentoArrivoOriginale, Float qtyInTrasferimentoPartenzaOriginale, Float qtyPerConfezOriginale, Float qtyPerConfezRilevata, String dataCarico, String dataScarico, String dataUltimoInventario, Float scortaMinOriginale, Float scortaMinRilevata, Float scortaMaxOriginale, Float scortaMaxRilevata, String commento, Integer stato, Timestamp timestamp, Integer ordinamento, Boolean inModifica){
 		this.codice = codice;
 		this.barcodeOriginale = barcodeOriginale;
 		this.barcodeRilevata = barcodeRilevata;
@@ -130,7 +100,8 @@ public class Articolo{
 		this.qtyMagazRilevata = qtyMagazRilevata;
 		this.qtyDifettOriginale = qtyDifettOriginale;
 		this.qtyDifettRilevata = qtyDifettRilevata;
-		this.qtyInTrasferimentoOriginale = qtyInTrasferimentoOriginale;
+		this.qtyInTrasferimentoArrivoOriginale = qtyInTrasferimentoArrivoOriginale;
+		this.qtyInTrasferimentoPartenzaOriginale = qtyInTrasferimentoPartenzaOriginale;
 		this.qtyPerConfezOriginale = qtyPerConfezOriginale;
 		this.qtyPerConfezRilevata = qtyPerConfezRilevata;
 		this.dataCarico = dataCarico;
@@ -291,12 +262,20 @@ public class Articolo{
 		this.qtyDifettRilevata = qtyDifettRilevata;
 	}
 
-	public Float getQtyInTrasferimentoOriginale(){
-		return qtyInTrasferimentoOriginale;
+	public Float getQtyInTrasferimentoArrivoOriginale(){
+		return qtyInTrasferimentoArrivoOriginale;
 	}
 
-	public void setQtyInTrasferimentoOriginale(Float qtyInTrasferimentoOriginale){
-		this.qtyInTrasferimentoOriginale = qtyInTrasferimentoOriginale;
+	public void setQtyInTrasferimentoArrivoOriginale(Float qtyInTrasferimentoArrivoOriginale){
+		this.qtyInTrasferimentoArrivoOriginale = qtyInTrasferimentoArrivoOriginale;
+	}
+
+	public Float getQtyInTrasferimentoPartenzaOriginale(){
+		return qtyInTrasferimentoPartenzaOriginale;
+	}
+
+	public void setQtyInTrasferimentoPartenzaOriginale(Float qtyInTrasferimentoPartenzaOriginale){
+		this.qtyInTrasferimentoPartenzaOriginale = qtyInTrasferimentoPartenzaOriginale;
 	}
 
 	public String getDataCarico(){
