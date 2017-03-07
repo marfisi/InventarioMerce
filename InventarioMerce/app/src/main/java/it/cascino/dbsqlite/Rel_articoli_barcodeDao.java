@@ -111,7 +111,6 @@ public class Rel_articoli_barcodeDao extends AbstractDao<Rel_articoli_barcode, V
 
     @Override
     public boolean hasKey(Rel_articoli_barcode entity) {
-        // TODO
         return false;
     }
 

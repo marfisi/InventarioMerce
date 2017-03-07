@@ -267,11 +267,14 @@ public class ArticoloAdapter extends BaseAdapter implements Filterable{
 			case TipoStato.INVENTARIATO_OK:
 				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colBckgInventarioOK));
 				break;
+			case TipoStato.DA_INVENTARIARE:
+				v.setBackgroundColor(Color.TRANSPARENT);
+				break;
 			case TipoStato.INVENTARIATO_DIFFER:
 				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colBckgInventarioDiffer));
 				break;
-			case TipoStato.DA_INVENTARIARE:
-				v.setBackgroundColor(Color.TRANSPARENT);
+			case TipoStato.INVENTARIATO_DIFFER_MOLTO:
+				v.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colBckgInventarioDifferMolto));
 				break;
 			default:
 				v.setBackgroundColor(Color.TRANSPARENT);

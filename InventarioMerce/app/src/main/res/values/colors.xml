@@ -9,12 +9,13 @@
     <color name="colTxQtyAttese">#5f64fc</color>
     <color name="colTxQtyRilevate">#000479</color>
 
-    <color name="colTxArtCodice">#e14f00</color>
-    <color name="colTxArtDescrizione">#ff7b00</color>
+    <color name="colTxArtCodice">#2200e1</color>
+    <color name="colTxArtDescrizione">#00b7ff</color>
     <color name="colTxArtPrezzo">#000479</color>
 
-    <color name="colBckgInventarioOK">#c8d7ffe6</color>
-    <color name="colBckgInventarioDiffer">#c8ffd3a7</color>
+    <color name="colBckgInventarioOK">#3c00ff00</color>
+    <color name="colBckgInventarioDiffer">#3cff8000</color>
+    <color name="colBckgInventarioDifferMolto">#3cf000ff</color>
 
     <color name="colBckgQtySelezionabile">#b1fff8</color>
     <color name="colBckgQtySelezionato">#00d4ff</color>

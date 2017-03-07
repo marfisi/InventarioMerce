@@ -407,7 +407,7 @@ public class Articolo{
 	}
 
 	public String toStringPerFtpFile(){
-		String campiSep = "|";
+		String campiSep = ";";
 		String insideCampSep = ",";
 
 		StringBuilder stringBuilder = new StringBuilder();
@@ -663,6 +663,12 @@ public class Articolo{
 			setStato(TipoStato.INVENTARIATO_OK);
 		}else{
 			setStato(TipoStato.INVENTARIATO_DIFFER);
+			// se la squadratura supera in valore € 20, e' identificato come "MOLTO squadrato"
+			if((qtyOriginale != null)&&(qtyRilevata != null)&&(prezzoOriginale != null)){
+				if(Float.compare(Math.abs((qtyOriginale-qtyRilevata) * prezzoOriginale), 20.0f) > 0){	// (Float.compare(Math.abs((qtyOriginale-qtyRilevata)/qtyOriginale), 0.1f) > 0) ||
+					setStato(TipoStato.INVENTARIATO_DIFFER_MOLTO);
+				}
+			}
 		}
 	}
 }

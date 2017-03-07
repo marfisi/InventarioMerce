@@ -205,10 +205,10 @@ public class MainActivity extends Activity{
 				inventario.setTimeInvio(timestamp);
 
 				StringBuilder stringBuilder = new StringBuilder();
-				stringBuilder.append("deposito|").append(inventario.getDeposito()).append("\n");
-				stringBuilder.append("userCrea|").append(inventario.getUtenteCreatore()).append("\n");
-				stringBuilder.append("userInven|").append(inventario.getUtenteDestinatario()).append("\n");
-				stringBuilder.append("creazione|").append(formatter.format(inventario.getTimeCreazione())).append("\n");
+				stringBuilder.append("deposito;").append(inventario.getDeposito()).append("\n");
+				stringBuilder.append("userCrea;").append(inventario.getUtenteCreatore()).append("\n");
+				stringBuilder.append("userInven;").append(inventario.getUtenteDestinatario()).append("\n");
+				stringBuilder.append("creazione;").append(formatter.format(inventario.getTimeCreazione())).append("\n");
 
 				DateFormat formatterTesto = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 				infogenericheDao = daoSession.getInfogenericheDao();
@@ -220,11 +220,11 @@ public class MainActivity extends Activity{
 				}catch(ParseException e){
 					e.printStackTrace();
 				}
-				stringBuilder.append("database|").append(formatter.format(timestampCreazioneDb)).append("\n");
-				stringBuilder.append("conferma|").append(formatter.format(inventario.getTimeInvio())).append("\n");
-				stringBuilder.append("commento|").append(inventario.getCommento()).append("\n");
+				stringBuilder.append("database;").append(formatter.format(timestampCreazioneDb)).append("\n");
+				stringBuilder.append("conferma;").append(formatter.format(inventario.getTimeInvio())).append("\n");
+				stringBuilder.append("commento;").append(inventario.getCommento()).append("\n");
 				stringBuilder.append("\n");
-				stringBuilder.append("codice|barcode|desclunga|prezzo|qtyAttesa|qtyContate|qtyEsposteAttesa|qtyEsposteContate|qtyMagazAttesa|qtyMagazContate|difetAttesa|difetContate|scortaMinAttesa|scortaMinContate|scortaMaxAttesa|scortaMaxContate|perConfAttesa|perConfContate|commento|stato|timestamp").append("\n");
+				stringBuilder.append("codice;barcode;desclunga;prezzo;qtyAttesa;qtyContate;qtyEsposteAttesa;qtyEsposteContate;qtyMagazAttesa;qtyMagazContate;difetAttesa;difetContate;scortaMinAttesa;scortaMinContate;scortaMaxAttesa;scortaMaxContate;perConfAttesa;perConfContate;commento;stato;timestamp").append("\n");
 
 				List<Articolo> articoliLsDaSalv = inventario.getArticoliLs();
 				Iterator<Articolo> iter_articoliLs = articoliLsDaSalv.iterator();
@@ -634,6 +634,7 @@ public class MainActivity extends Activity{
 		ArrayList<Articolo> articoliLs0 = new ArrayList<Articolo>();
 		ArrayList<Articolo> articoliLs1 = new ArrayList<Articolo>();
 		ArrayList<Articolo> articoliLs2 = new ArrayList<Articolo>();
+		ArrayList<Articolo> articoliLs3 = new ArrayList<Articolo>();
 
 		Iterator<Articolo> iter_articoliLs = articoliLs.iterator();
 		Articolo art = null;
@@ -643,17 +644,22 @@ public class MainActivity extends Activity{
 				case TipoStato.INVENTARIATO_OK:
 					articoliLs0.add(art);
 					break;
+				case TipoStato.DA_INVENTARIARE:
+					articoliLs2.add(art);
+					break;
 				case TipoStato.INVENTARIATO_DIFFER:
 					articoliLs1.add(art);
 					break;
-				case TipoStato.DA_INVENTARIARE:
-					articoliLs2.add(art);
+				case TipoStato.INVENTARIATO_DIFFER_MOLTO:
+					articoliLs3.add(art);
 					break;
 				default:
 					break;
 			}
 		}
+		// l'ordine e' pin sequesnza, i molto squadrati, i non invent, i poco squadrati e gli ok
 		articoliLs.clear();
+		articoliLs.addAll(articoliLs3);
 		articoliLs.addAll(articoliLs2);
 		articoliLs.addAll(articoliLs1);
 		articoliLs.addAll(articoliLs0);
