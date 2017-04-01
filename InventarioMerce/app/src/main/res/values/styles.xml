@@ -146,5 +146,8 @@
         <item name="android:background">@android:color/darker_gray</item>
     </style>
 
+    <style name="styleImpostazioni">
+        <item name="android:background">@drawable/impostazioni</item>
+    </style>
 
 </resources>

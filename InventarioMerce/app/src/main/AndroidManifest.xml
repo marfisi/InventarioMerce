@@ -45,6 +45,12 @@
             <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
             <category android:name="android.intent.category.DEFAULT"/>
         </activity>
+        <activity
+            android:name=".activity.ImpostazioniActivity"
+            android:label="Impostazioni">
+            <action android:name="android.intent.action.ANOTHER_ACTIVITY"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </activity>
     </application>
 
 </manifest>

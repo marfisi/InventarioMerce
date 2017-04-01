@@ -23,6 +23,7 @@ import it.cascino.dbsqlite.DaoSession;
 import it.cascino.dbsqlite.Rel_articoli_barcode;
 import it.cascino.dbsqlite.Rel_articoli_barcodeDao;
 import it.cascino.inventariomerce.R;
+import it.cascino.inventariomerce.utils.DatiStatici;
 
 public class AggiungiArticoloDaBarcodeActivity extends Activity{
 	final private String MYDATABASE_NAME = "cascinoinventario.db";
@@ -104,6 +105,9 @@ public class AggiungiArticoloDaBarcodeActivity extends Activity{
 					finish();
 				}
 			});
+			if(DatiStatici.getInstance().getSelezionataCheckBoxAggiungiArtNoConferma()){
+				btnY.performClick();	// .callOnClick();
+			}
 		}
 		btnN = (ImageButton)findViewById(R.id.btnN);
 		btnN.setOnClickListener(new View.OnClickListener(){

@@ -62,6 +62,7 @@ import it.cascino.dbsqlite.Qty_originaliDao;
 import it.cascino.dbsqlite.Rel_articoli_barcode;
 import it.cascino.dbsqlite.Rel_articoli_barcodeDao;
 import it.cascino.inventariomerce.activity.AggiungiArticoloDaBarcodeActivity;
+import it.cascino.inventariomerce.activity.ImpostazioniActivity;
 import it.cascino.inventariomerce.activity.SyncActivity;
 import it.cascino.inventariomerce.adapter.ArticoloAdapter;
 import it.cascino.inventariomerce.model.Articolo;
@@ -474,6 +475,17 @@ public class MainActivity extends Activity{
 				}else{	// radioBtnPreselezioneNessuna
 					DatiStatici.getInstance().setTipoPreselezione(0);
 				}
+			}
+		});
+		
+		DatiStatici.getInstance().setSelezionataCheckBoxAggiungiArtNoConferma(false);
+		
+		ImageButton impostazioniButton = (ImageButton)findViewById(R.id.impostazioniButton);
+		impostazioniButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v){
+				Intent intentSyncActivity = new Intent(getApplicationContext(), ImpostazioniActivity.class);
+				startActivity(intentSyncActivity);
 			}
 		});
 	}
