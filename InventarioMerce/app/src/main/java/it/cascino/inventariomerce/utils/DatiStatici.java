@@ -25,7 +25,6 @@ public class DatiStatici{
 		this.tipoPreselezione = tipoPreselezione;
 	}
 	
-	
 	public Boolean getSelezionataCheckBoxAggiungiArtNoConferma(){
 		return selezionataCheckBoxAggiungiArtNoConferma;
 	}

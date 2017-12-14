@@ -12,19 +12,27 @@ import java.util.Locale;
 import it.cascino.inventariomerce.R;
 
 public class Support{
+	private static Support support;
 	private static String decimalSep;
 	private static DecimalFormatSymbols symbols;
 	private static DecimalFormat decimalFormat;
-
+	
+	public Support(){
+		decimalSep = ",";
+		symbols = new DecimalFormatSymbols(Locale.ITALY);
+		symbols.setDecimalSeparator(decimalSep.charAt(0));
+		decimalFormat = new DecimalFormat("0.00", symbols);
+		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+	}
+	
 	public static String floatToString(Float f){
 		if(f == null){
 			return "";
 		}
-		decimalSep = ",";
-		symbols = new DecimalFormatSymbols(Locale.ITALY);
-		symbols.setDecimalSeparator(decimalSep.charAt(0));
-		decimalFormat = new DecimalFormat("9.99", symbols);
-		decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+		if(support == null){
+			support = new Support();
+		}
+
 		String fToStr = decimalFormat.format(f);
 		return fToStr;
 	}
